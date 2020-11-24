@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "types": ["jest"],
+    "module": "commonjs",
+    "resolveJsonModule": true,
+    "target": "es5",
+    "outDir": "dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "preserveConstEnums": true,
+    "removeComments": true,
+    "sourceMap": false,
+    "strictNullChecks": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "keyofStringsOnly": true,
+    "jsx": "react",
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    ".*spec.tsx?"
+  ]
+}
