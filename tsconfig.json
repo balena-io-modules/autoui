@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "types": ["jest"],
-    "module": "commonjs",
+    "types": ["jest", "node"],
+    "module": "es2020",
     "resolveJsonModule": true,
-    "target": "es5",
+    "target": "es2015",
     "outDir": "dist",
     "rootDir": "./src",
     "declaration": true,
@@ -12,7 +12,7 @@
     "noUnusedParameters": true,
     "preserveConstEnums": true,
     "removeComments": true,
-    "sourceMap": false,
+    "sourceMap": true,
     "strictNullChecks": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
@@ -20,14 +20,15 @@
     "esModuleInterop": true,
     "baseUrl": ".",
     "keyofStringsOnly": true,
+    "skipLibCheck": true,
     "jsx": "react",
     "lib": [
-      "es2018",
+      "es2019",
       "dom"
     ],
   },
   "include": [
-    "src"
+    "src",
   ],
   "exclude": [
     ".*spec.tsx?"
