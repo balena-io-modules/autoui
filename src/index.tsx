@@ -1,4 +1,8 @@
 export {
+	AutoUIProvider
+} from './AutoUIProvider';
+
+export {
 	AutoUI,
 	AutoUIProps,
 	autoUIRunTransformers,
