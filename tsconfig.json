@@ -22,9 +22,19 @@
     "keyofStringsOnly": true,
     "jsx": "react",
     "lib": [
-      "es2018",
+      "es2019",
       "dom"
     ],
+    "skipLibCheck": true,
+    "paths": {
+      "~/*": [
+        "./src/*"
+      ],
+      "*": [
+        "./node_modules/@types/*",
+        "*"
+      ]
+    }
   },
   "include": [
     "src"
