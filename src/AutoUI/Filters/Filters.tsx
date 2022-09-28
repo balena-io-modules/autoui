@@ -2,11 +2,7 @@ import React from 'react';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import { PersistentFilters } from './PersistentFilters';
 import { AutoUIContext, AutoUIBaseResource } from '../schemaOps';
-import {
-	FilterRenderMode,
-	FiltersView,
-	Filters as RenditionFilters,
-} from 'rendition';
+import { FilterRenderMode, FiltersView, Filters as RenditionFilters } from 'rendition';
 import { useHistory } from '../../hooks/useHistory';
 
 interface FiltersProps<T> {

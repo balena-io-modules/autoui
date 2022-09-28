@@ -1,7 +1,6 @@
 import { AutoUIBaseResource, Permissions, Priorities } from './schemaOps';
 import castArray from 'lodash/castArray';
 import { createBrowserHistory } from 'history';
-import { getPropertyScheme } from './models/helpers';
 import get from 'lodash/get';
 import { TFunction } from '../hooks/useTranslation';
 import {
@@ -9,6 +8,7 @@ import {
 	JsonTypes,
 } from 'rendition/dist/components/Renderer/types';
 import { TableSortFunction } from 'rendition/dist/components/Table/TableRow';
+import { getPropertyScheme } from 'rendition/dist/components/Filters/SchemaSieve';
 
 export const history = createBrowserHistory();
 

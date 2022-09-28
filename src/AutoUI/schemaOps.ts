@@ -1,7 +1,6 @@
+import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import pick from 'lodash/pick';
-import { Dictionary } from 'rendition/dist/common-types';
-import { JSONSchema } from 'rendition/dist/components/Renderer/types';
-import { ResourceTagModelService } from 'rendition/dist/components/TagManagementModal/tag-management-service';
+import { Dictionary, ResourceTagModelService } from 'rendition';
 
 export interface AutoUIBaseResource<T> {
 	id: number;
@@ -38,6 +37,7 @@ export interface AutoUIModel<T> {
 export interface AutoUIAction<T> {
 	title: string;
 	type: 'create' | 'update' | 'delete';
+	section?: string;
 	renderer?: (props: {
 		schema: JSONSchema;
 		affectedEntries?: T[];

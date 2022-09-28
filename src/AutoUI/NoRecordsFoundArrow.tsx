@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Flex, Txt, useTheme } from 'rendition';
+import { Txt, Flex, useTheme } from 'rendition';
 import styled from 'styled-components';
 
 const Left = styled.div`

@@ -45,7 +45,7 @@ export const Sidebar = ({
 	isCollapsed = false,
 	...flexProps
 }: SidebarProps & FlexProps) => {
-	const { pathname }: { pathname: string } = useLocation();
+	const { pathname } = useLocation();
 	const menuItems = React.useMemo(
 		() =>
 			Object.entries(openApiJson.components.schemas)
@@ -64,7 +64,7 @@ export const Sidebar = ({
 	return (
 		<SidebarWrapper {...flexProps}>
 			{menuItems.map((item) => {
-				const isCurrent = pathname.split('/').some((i) => i === item.resource);
+				const isCurrent = pathname.split('/').some((i: string) => i === item.resource);
 
 				return (
 					<NavLink key={item.resource} to={`/${item.resource}`}>

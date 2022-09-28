@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'react-router';
 import { AutoUIModel, AutoUIBaseResource } from '../AutoUI/schemaOps';
 import { OpenApiJson } from './openApiJson';
 import {
@@ -13,9 +14,7 @@ import { findInObject, history } from '../AutoUI/utils';
 import isEmpty from 'lodash/isEmpty';
 import { ActionMethods } from '.';
 import { ActionSidebarProps } from './ActionSidebar';
-import { JSONSchema } from 'rendition/dist/components/Renderer/types';
-import { useLocation } from 'react-router';
-import { useRequest } from 'rendition';
+import { JSONSchema, useRequest } from 'rendition';
 
 interface ContentProps {
 	openApiJson: OpenApiJson;

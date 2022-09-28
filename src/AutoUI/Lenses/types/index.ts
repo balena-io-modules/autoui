@@ -1,4 +1,4 @@
-import { BoxProps } from 'rendition';
+import type { BoxProps } from 'rendition';
 import { AutoUIEntityPropertyDefinition } from '../../';
 import { AutoUIContext, AutoUIModel } from '../../schemaOps';
 export { table } from './table';

@@ -8,11 +8,11 @@ import {
 	autoUIJsonSchemaPick,
 } from '../schemaOps';
 import { ActionData } from '../schemaOps';
-import { faEllipsisH } from '@fortawesome/free-solid-svg-icons/faEllipsisH';
+import { autoUIGetDisabledReason } from '../utils';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons/faPenToSquare';
 import groupBy from 'lodash/groupBy';
 import map from 'lodash/map';
 import { useTranslation } from '../../hooks/useTranslation';
-import { autoUIGetDisabledReason } from '../utils';
 import { Box, Button, DropDownButton } from 'rendition';
 
 interface UpdateProps<T extends AutoUIBaseResource<T>> {
@@ -82,10 +82,7 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 		);
 	}
 
-	const groupedActions = groupBy(
-		updateActions,
-		(action) => !!action.isDangerous,
-	);
+	const groupedActions = groupBy(updateActions, (action) => action.section);
 	const actionHandlers = map(groupedActions, (actions) =>
 		actions.map((action) => {
 			const disabledReason =
@@ -134,8 +131,8 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 				secondary
 				disabled={!!disabledReason}
 				tooltip={disabledReason}
-				icon={<FontAwesomeIcon icon={faEllipsisH} />}
-				label={t('labels.actions')}
+				icon={<FontAwesomeIcon icon={faPenToSquare} />}
+				label={t('labels.modify')}
 				items={actionHandlers}
 			/>
 		</Box>

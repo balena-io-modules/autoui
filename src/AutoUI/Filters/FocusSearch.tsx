@@ -1,15 +1,11 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import reject from 'lodash/reject';
 import styled from 'styled-components';
-import { AutoUIContext } from '../schemaOps';
 import { AutoUIModel } from '..';
 import { getPropertyScheme } from '../models/helpers';
-import { Box, Checkbox, Flex, Txt } from 'rendition';
+import { Box, Checkbox, createFullTextSearchFilter, Flex, Txt, filter as schemaSieveFilter } from 'rendition';
+import { AutoUIContext } from '../schemaOps';
 import { useHistory } from '../../hooks/useHistory';
-import {
-	createFullTextSearchFilter,
-	filter as schemaSieveFilter,
-} from 'rendition/dist/components/Filters/SchemaSieve';
 import { stopEvent } from '../utils';
 
 const Focus = styled(Box)`
@@ -59,7 +55,7 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 }: FocusSearchProps<T>) => {
 	const history = useHistory();
 
-	const filteredFittingSearchTerms = useMemo(() => {
+	const filteredFittingSearchTerms = React.useMemo(() => {
 		const filter = createFullTextSearchFilter(model.schema, searchTerm);
 		return schemaSieveFilter(filter, filtered);
 	}, [searchTerm, filtered]);

@@ -13,9 +13,6 @@ import {
 	model as sshKeyModel,
 } from './models/example';
 import { Provider, Table } from 'rendition';
-import { AutoUIProvider } from '../AutoUIProvider';
-import { History } from 'history';
-
 const props = {} as AutoUIProps<AugmentedSshKey>;
 const TestAutoUI = () => <Demo {...props} />;
 
@@ -29,14 +26,12 @@ const Demo = ({ data, model, ...otherProps }: AutoUIProps<AugmentedSshKey>) => {
 	) as AugmentedSshKey[];
 
 	return (
-		<AutoUIProvider history={{ createHref: (_to: any) => 'porcodio' } as History} t={undefined}>
-			<AutoUI<AugmentedSshKey>
-				data={data ?? memoizedData}
-				model={model ?? autoUIGetModelForCollection(sshKeyModel)}
-				actions={[]}
-				{...otherProps}
-			/>
-		</AutoUIProvider>
+		<AutoUI<AugmentedSshKey>
+			data={data ?? memoizedData}
+			model={model ?? autoUIGetModelForCollection(sshKeyModel)}
+			actions={[]}
+			{...otherProps}
+		/>
 	);
 };
 

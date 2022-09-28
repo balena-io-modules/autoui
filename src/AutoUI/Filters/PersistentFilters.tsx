@@ -1,16 +1,11 @@
-import React from 'react';
+import * as React from 'react';
 import filter from 'lodash/filter';
 import qs from 'qs';
+import type { History } from 'history';
 import { Filters, FilterSignature, FiltersProps, FiltersView } from 'rendition';
-import type { JSONSchema } from 'rendition/dist/components/Renderer/types';
-import {
-	createFilter,
-	createFullTextSearchFilter,
-	FULL_TEXT_SLUG,
-	getSignatures,
-} from 'rendition/dist/components/Filters/SchemaSieve';
+import { JSONSchema } from 'rendition/dist/components/Renderer/types';
+import { createFilter, createFullTextSearchFilter, FULL_TEXT_SLUG, getSignatures } from 'rendition/dist/components/Filters/SchemaSieve';
 import { getFromLocalStorage, setToLocalStorage } from '../utils';
-import { History } from 'history';
 
 export interface ListQueryStringFilterObject {
 	t: FilterSignature['title'];

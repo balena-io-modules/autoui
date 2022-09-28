@@ -1,16 +1,16 @@
 import React from 'react';
+
 import {
 	AutoUIAction,
 	AutoUIModel,
 	AutoUIBaseResource,
 	getFieldForFormat,
+	AutoUIContext,
 	AutoUIRawModel,
 	autoUIJsonSchemaPick,
-	AutoUIContext,
 	ActionData,
 	Priorities,
 } from './schemaOps';
-import { getLenses, LensTemplate } from './Lenses';
 import { LensSelection } from './Lenses/LensSelection';
 import styled from 'styled-components';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
@@ -29,30 +29,13 @@ import {
 	getPropertyScheme,
 	getSchemaTitle,
 } from './models/helpers';
+import { autoUIGetDisabledReason, getFromLocalStorage, getTagsDisabledReason, setToLocalStorage } from './utils';
 import { FocusSearch } from './Filters/FocusSearch';
-import {
-	getSelected,
-	getSortingFunction,
-	autoUIGetDisabledReason,
-	getTagsDisabledReason,
-	getFromLocalStorage,
-	setToLocalStorage,
-} from './utils';
+import { getSelected, getSortingFunction } from './utils';
 import { CustomWidget } from './CustomWidget';
-import {
-	Box,
-	BoxProps,
-	FiltersView,
-	Flex,
-	Spinner,
-	TableColumn,
-} from 'rendition';
-import { Format } from 'rendition/dist/components/Renderer/types';
-import { ResourceTagModelService } from 'rendition/dist/components/TagManagementModal/tag-management-service';
-import { Dictionary } from 'rendition/dist/common-types';
+import { Box, BoxProps, defaultFormats, Dictionary, filter, FiltersView, Flex, Format, ResourceTagModelService, Spinner, TableColumn } from 'rendition';
+import { getLenses, LensTemplate } from './Lenses';
 import { useTranslation } from '../hooks/useTranslation';
-import { filter } from 'rendition/dist/components/Filters/SchemaSieve';
-import { defaultFormats } from 'rendition/dist/components/Renderer/widgets';
 import { useHistory } from '../hooks/useHistory';
 
 const HeaderGrid = styled(Flex)`
@@ -91,7 +74,10 @@ export interface AutoUIProps<T> extends Omit<BoxProps, 'onChange'> {
 	/** Method to refresh the rendered data when something is changed */
 	refresh?: () => void;
 	/** Event emitted on entity click */
-	onEntityClick?: (entry: T, event: React.MouseEvent) => void;
+	onEntityClick?: (
+		entry: T,
+		event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+	) => void;
 	// TODO: onChange should also be called when data in the table is sorted and when columns change
 	/** Function that gets called when filters change */
 	onChange?: (changes: { filters?: JSONSchema[] }) => void;
@@ -118,6 +104,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 }: AutoUIProps<T>) => {
 	const { t } = useTranslation();
 	const history = useHistory();
+
 	const modelRef = React.useRef(modelRaw);
 	// This allows the component to work even if
 	// consumers are passing a new model object every time.
@@ -189,9 +176,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		setLens(foundLens);
 	}, [lenses]);
 
-	const lensRendererOnEntityClick = React.useCallback<
-		NonNullable<typeof onEntityClick>
-	>(
+	const lensRendererOnEntityClick = React.useCallback<NonNullable<typeof onEntityClick>>(
 		(row, event) => {
 			onEntityClick?.(row, event);
 
@@ -216,22 +201,23 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		const tagField = getFieldForFormat(model.schema, 'tag');
 		const tagsAction: AutoUIAction<T> | null = !!sdk?.tags
 			? {
-				title: t('actions.manage_tags'),
-				type: 'update',
-				renderer: ({ affectedEntries, onDone }) =>
-					!!affectedEntries && (
-						<Tags
-							selected={affectedEntries}
-							autouiContext={autouiContext}
-							onDone={onDone}
-							setIsBusyMessage={setIsBusyMessage}
-							refresh={refresh}
-						/>
-					),
-				isDisabled: ({ affectedEntries }) =>
-					!!affectedEntries &&
-					getTagsDisabledReason(affectedEntries, tagField as keyof T, t),
-			}
+					title: t('actions.manage_tags'),
+					type: 'update',
+					section: 'settings',
+					renderer: ({ affectedEntries, onDone }) =>
+						!!affectedEntries && (
+							<Tags
+								selected={affectedEntries}
+								autouiContext={autouiContext}
+								onDone={onDone}
+								setIsBusyMessage={setIsBusyMessage}
+								refresh={refresh}
+							/>
+						),
+					isDisabled: ({ affectedEntries }) =>
+						!!affectedEntries &&
+						getTagsDisabledReason(affectedEntries, tagField as keyof T, t),
+			  }
 			: null;
 
 		return {
@@ -388,10 +374,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 								lens={lens}
 								setLens={(lens) => {
 									setLens(lens);
-									setToLocalStorage(
-										`${model.resource}__view_lens`,
-										lens.slug,
-									);
+									setToLocalStorage(`${model.resource}__view_lens`, lens.slug);
 								}}
 							/>
 						</HeaderGrid>
@@ -493,10 +476,10 @@ export const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 			)
 				? 'primary'
 				: definedPriorities.secondary.find(
-					(prioritizedKey) => prioritizedKey === key,
-				)
-					? 'secondary'
-					: 'tertiary';
+						(prioritizedKey) => prioritizedKey === key,
+				  )
+				? 'secondary'
+				: 'tertiary';
 
 			const widgetSchema = { ...val, title: undefined };
 			return {
@@ -507,7 +490,7 @@ export const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 				selected: getSelected(key as keyof T, priorities),
 				priority,
 				type: 'predefined',
-				sortable: customSort?.[key] ?? getSortingFunction<any>(key, val),
+				sortable: customSort?.[key] ?? getSortingFunction(key, val),
 				render: (fieldVal: string, entry: T) => {
 					const calculatedField = autoUIAdaptRefScheme(fieldVal, val);
 					return (

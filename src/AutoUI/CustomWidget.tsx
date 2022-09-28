@@ -1,14 +1,8 @@
 import React from 'react';
 import castArray from 'lodash/castArray';
 import { getSchemaFormat, getSubSchemaFromRefScheme } from './models/helpers';
-import {
-	Format,
-	JSONSchema,
-	JsonTypes,
-	UiSchema,
-	Value,
-} from 'rendition/dist/components/Renderer/types';
-import { transformUiSchema } from 'rendition/dist/components/Renderer/widgets/widget-util';
+import { Format, JSONSchema, JsonTypes, UiSchema, Value } from 'rendition/dist/components/Renderer/types';
+import { transformUiSchema } from 'rendition';
 import { getValue, getWidget } from 'rendition/dist/components/Renderer';
 
 interface CustomWidgetProps {
@@ -50,7 +44,7 @@ export const CustomWidget = ({
 		<Widget
 			extraContext={extraContext}
 			extraFormats={extraFormats}
-			value={processedValue || null}
+			value={processedValue ?? null}
 			schema={schema}
 		/>
 	);

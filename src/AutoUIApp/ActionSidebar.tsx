@@ -6,8 +6,7 @@ import { getFromRef, pine } from './odata';
 import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ISubmitEvent } from '@rjsf/core';
-import { JSONSchema } from 'rendition/dist/components/Renderer/types';
-import { Button, Flex, Form, notifications } from 'rendition';
+import { Button, Flex, Form, JSONSchema, notifications } from 'rendition';
 import { useTranslation } from '../hooks/useTranslation';
 
 const replaceRefValues = (

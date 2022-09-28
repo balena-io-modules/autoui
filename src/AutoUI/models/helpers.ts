@@ -8,10 +8,10 @@ import type {
 	JSONSchema7 as JSONSchema,
 	JSONSchema7Definition as JSONSchemaDefinition,
 } from 'json-schema';
-import { findInObject } from '../utils';
 import get from 'lodash/get';
 import pick from 'lodash/pick';
 import { Dictionary } from 'rendition/dist/common-types';
+import { findInObject } from '../utils';
 
 type Transformers<
 	T extends Dictionary<any>,
