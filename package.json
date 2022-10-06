@@ -1,6 +1,6 @@
 {
   "name": "autoui",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "./dist/index.js",
   "module": "./dist_esm5/index.js",
@@ -88,5 +88,8 @@
     "setupFiles": [
       "<rootDir>scripts/setupTests.ts"
     ]
+  },
+  "versionist": {
+    "publishedAt": "2022-10-06T21:32:46.368Z"
   }
 }
