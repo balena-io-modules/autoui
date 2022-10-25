@@ -1,6 +1,6 @@
 {
   "name": "@balena/autoui",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "dependencies": {
@@ -37,5 +37,8 @@
   "bugs": {
     "url": "https://github.com/balena-io-modules/autoui/issues"
   },
-  "homepage": "https://github.com/balena-io-modules/autoui#readme"
+  "homepage": "https://github.com/balena-io-modules/autoui#readme",
+  "versionist": {
+    "publishedAt": "2022-10-25T14:14:13.383Z"
+  }
 }

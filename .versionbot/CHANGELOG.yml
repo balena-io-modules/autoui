@@ -1,0 +1,22 @@
+- commits:
+    - subject: Add flowzone
+      hash: f2df00320763c10337790c7657713f782ca7a948
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+    - subject: Add initial repo setup
+      hash: 9fcda189362ec16ff37181b75ab49acd3cbdd2ff
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+  version: 0.1.0
+  title: ""
+  date: 2022-10-25T14:14:13.269Z
