@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "types": ["jest"],
+    "types": ["node"],
     "module": "commonjs",
     "resolveJsonModule": true,
     "target": "es5",
