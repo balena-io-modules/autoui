@@ -1,4 +1,17 @@
 - commits:
+    - subject: "feat: Add AutoUI and AutoUIAPP components"
+      hash: 043a844f68fad0bcda73e0108776ca670cbce490
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.2.0
+  title: ""
+  date: 2022-10-26T14:33:56.024Z
+- commits:
     - subject: Add flowzone
       hash: f2df00320763c10337790c7657713f782ca7a948
       body: ""
