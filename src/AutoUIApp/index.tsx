@@ -44,6 +44,7 @@ export interface AutoUIAppProps {
 }
 
 export const AutoUIApp = ({ openApiJson, title, logo }: AutoUIAppProps) => {
+	console.log('test publish')
 	const actionSidebarWrapper = React.useRef<HTMLDivElement>(null);
 	const history = useHistory();
 	const [actionSidebar, setActionSidebar] = React.useState<Omit<
