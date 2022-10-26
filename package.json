@@ -2,30 +2,59 @@
   "name": "@balena/autoui",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "module": "./dist_esm5/index.js",
+  "sideEffects": false,
+  "files": [
+    "dist/",
+    "dist_esm5/",
+    "docs/",
+    "README.md"
+  ],
   "dependencies": {
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "rendition": "^18.16.0",
-    "typescript": "^4.1.2"
+    "@types/history": "^4.7.11",
+    "json-e": "^4.4.3",
+    "lodash": "^4.17.21",
+    "qs": "^6.10.3",
+    "react-router": "^5.3.3",
+    "react-router-dom": "^5.3.3",
+    "rendition": "^33.0.4",
+    "skhema": "^5.3.4",
+    "styled-components": "^5.3.5"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.8",
-    "@storybook/addon-actions": "^6.1.5",
-    "@storybook/addon-essentials": "^6.1.5",
-    "@storybook/addon-links": "^6.1.5",
-    "@storybook/react": "^6.1.5",
-    "babel-loader": "^8.2.1",
-    "core-js": "^3.7.0",
-    "prettier": "^2.2.0"
+    "@balena/lint": "^6.2.0",
+    "@types/enzyme": "^3.10.12",
+    "@types/jest": "^26.0.24",
+    "@types/jsdom": "^20.0.0",
+    "@types/lodash": "^4.14.185",
+    "@types/node": "^14.18.29",
+    "@types/qs": "^6.9.7",
+    "@types/react": "^17.0.50",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/styled-components": "^5.1.26",
+    "@wojtekmaj/enzyme-adapter-react-17": "^0.6.7",
+    "enzyme": "^3.11.0",
+    "jest": "^26.6.3",
+    "jsdom": "^16.0.0",
+    "prettier": "^2.4.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-scripts": "^5.0.1",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^26.5.6",
+    "typescript": "^4.8.3"
   },
   "scripts": {
-    "start": "start-storybook -p 6006",
-    "test": "tsc",
+    "start": "react-scripts start",
     "build:cjs": "rimraf dist && tsc",
-    "build:storybook": "build-storybook -o .out",
+    "build:esm5": "rimraf dist_esm5 && tsc -p ./tsconfig.esm5.json",
+    "build": "npm run build:cjs && npm run build:esm5",
+    "test": "jest",
+    "eject": "react-scripts eject",
     "lint:fix": "balena-lint --typescript --fix src",
-    "lint": "balena-lint --typescript src"
+    "lint": "balena-lint --typescript src",
+    "prepack": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -38,6 +67,28 @@
     "url": "https://github.com/balena-io-modules/autoui/issues"
   },
   "homepage": "https://github.com/balena-io-modules/autoui#readme",
+  "jest": {
+    "preset": "ts-jest",
+    "transform": {
+      "^.+\\.[jt]sx?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(entity-decode|mermaid|monaco-editor|react-monaco-editor|d3|internmap|delaunator|robust-predicates))"
+    ],
+    "testRegex": "src/.*spec.tsx?$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "collectCoverage": true,
+    "setupFiles": [
+      "<rootDir>scripts/setupTests.ts"
+    ]
+  },
   "versionist": {
     "publishedAt": "2022-10-25T14:14:13.383Z"
   }
