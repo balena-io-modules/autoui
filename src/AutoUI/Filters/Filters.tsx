@@ -35,7 +35,6 @@ export const Filters = <T extends AutoUIBaseResource<T>>({
 		<>
 			{!!history ? (
 				<PersistentFilters
-					compact={[true, true, false, false]}
 					viewsRestorationKey={`${autouiContext.resource}__views`}
 					history={history}
 					schema={schema}
@@ -48,7 +47,6 @@ export const Filters = <T extends AutoUIBaseResource<T>>({
 				/>
 			) : (
 				<RenditionFilters
-					compact={[true, true, false, false]}
 					schema={schema}
 					filters={filters}
 					views={views}
