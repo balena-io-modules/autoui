@@ -14,6 +14,12 @@ import groupBy from 'lodash/groupBy';
 import map from 'lodash/map';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Box, Button, DropDownButton } from 'rendition';
+import styled from 'styled-components';
+
+const Wrapper = styled(Box)`
+	align-self: flex-start;
+	z-index: 10;
+`
 
 interface UpdateProps<T extends AutoUIBaseResource<T>> {
 	model: AutoUIModel<T>;
@@ -123,9 +129,8 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 	);
 
 	return (
-		<Box alignSelf="flex-start">
+		<Wrapper>
 			<DropDownButton
-				compact={[true, true, false, false]}
 				joined
 				alignRight
 				secondary
@@ -135,6 +140,6 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 				label={t('labels.modify')}
 				items={actionHandlers}
 			/>
-		</Box>
+		</Wrapper>
 	);
 };
