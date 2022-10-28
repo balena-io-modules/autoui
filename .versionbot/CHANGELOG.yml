@@ -1,4 +1,26 @@
 - commits:
+    - subject: Fix missing strings and visualization issues
+      hash: 4c41153c1b3a00818296a6fd59f0428ed53b3b85
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+    - subject: test
+      hash: ef98e23f7bcedad0f3555a0cb565de4fdd6f67ec
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.2.1
+  title: ""
+  date: 2022-10-28T12:56:52.452Z
+- commits:
     - subject: "feat: Add AutoUI and AutoUIAPP components"
       hash: 043a844f68fad0bcda73e0108776ca670cbce490
       body: ""
