@@ -12,7 +12,7 @@
     "noUnusedParameters": true,
     "preserveConstEnums": true,
     "removeComments": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "strictNullChecks": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
