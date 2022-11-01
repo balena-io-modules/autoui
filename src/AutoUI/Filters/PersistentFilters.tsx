@@ -31,7 +31,7 @@ const isListQueryStringFilterRule = (
 	// it should at least have an operator
 	((!!rule.o && typeof rule.o === 'string') ||
 		// or a value
-		!!rule.v);
+		(rule.v != null && rule.v !== ''));
 
 const isQueryStringFilterRuleset = (
 	rule: any,
@@ -63,6 +63,7 @@ export const loadRulesFromUrl = (
 	if (!searchLocation) {
 		return [];
 	}
+	console.log('***!!!')
 	const parsed = qs.parse(searchLocation, { ignoreQueryPrefix: true }) || {};
 	const rules = filter(parsed, isQueryStringFilterRuleset).map(
 		// @ts-expect-error
