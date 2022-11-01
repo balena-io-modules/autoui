@@ -1,14 +1,7 @@
 import * as React from 'react';
 import filter from 'lodash/filter';
 import qs from 'qs';
-import { Filters, FilterSignature, FiltersProps, FiltersView } from 'rendition';
-import { JSONSchema } from 'rendition/dist/components/Renderer/types';
-import {
-	createFilter,
-	createFullTextSearchFilter,
-	FULL_TEXT_SLUG,
-	getSignatures,
-} from 'rendition/dist/components/Filters/SchemaSieve';
+import { Filters, FilterSignature, FiltersProps, FiltersView, JSONSchema, SchemaSieve } from 'rendition';
 import { getFromLocalStorage, setToLocalStorage } from '../utils';
 import { History } from 'history';
 
@@ -42,7 +35,7 @@ const isQueryStringFilterRuleset = (
 
 export const listFilterQuery = (filters: JSONSchema[]) => {
 	const queryStringFilters = filters.map((filter) => {
-		const signatures = getSignatures(filter);
+		const signatures = SchemaSieve.getSignatures(filter);
 		return signatures.map<ListQueryStringFilterObject>(
 			({ title, field, operator, value, refScheme }) => ({
 				t: title,
@@ -81,13 +74,13 @@ export const loadRulesFromUrl = (
 				}),
 			);
 			// TODO: createFilter should handle this case as well.
-			if (signatures[0].operator.slug === FULL_TEXT_SLUG) {
+			if (signatures[0].operator.slug === SchemaSieve.FULL_TEXT_SLUG) {
 				// TODO: listFilterQuery serializes the already escaped value and this
 				// then re-escapes while de-serializing. Fix that loop, which can keep
 				// escaping regex characters (eg \) indefinitely on each call/reload from the url.
-				return createFullTextSearchFilter(schema, signatures[0].value);
+				return SchemaSieve.createFullTextSearchFilter(schema, signatures[0].value);
 			}
-			return createFilter(schema, signatures);
+			return SchemaSieve.createFilter(schema, signatures);
 		},
 	);
 

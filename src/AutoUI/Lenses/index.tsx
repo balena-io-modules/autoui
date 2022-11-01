@@ -1,7 +1,6 @@
 import groupBy from 'lodash/groupBy';
 import sortBy from 'lodash/sortBy';
 import find from 'lodash/find';
-import first from 'lodash/first';
 import flatten from 'lodash/flatten';
 import values from 'lodash/values';
 import skhema from 'skhema';
@@ -81,7 +80,7 @@ export const getLenses = <T extends any>(
 };
 
 export const getLens = <T extends any>(data: T[], context?: object) => {
-	return first(getLenses(data, context));
+	return getLenses(data, context)?.[0];
 };
 
 export const getLensBySlug = (slug: string) => {
