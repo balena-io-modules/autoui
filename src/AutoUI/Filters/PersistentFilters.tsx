@@ -63,7 +63,6 @@ export const loadRulesFromUrl = (
 	if (!searchLocation) {
 		return [];
 	}
-	console.log('***!!!')
 	const parsed = qs.parse(searchLocation, { ignoreQueryPrefix: true }) || {};
 	const rules = filter(parsed, isQueryStringFilterRuleset).map(
 		// @ts-expect-error
