@@ -5,9 +5,9 @@ import { TFunction } from '../hooks/useTranslation';
 import {
 	JSONSchema,
 	JsonTypes,
-} from 'rendition/dist/components/Renderer/types';
-import { TableSortFunction } from 'rendition/dist/components/Table/TableRow';
-import { getPropertyScheme } from 'rendition/dist/components/Filters/SchemaSieve';
+	TableSortFunction,
+	SchemaSieve
+} from 'rendition';
 
 export const diff = <T extends unknown>(a: T, b: T) => {
 	if (a === b) {
@@ -162,7 +162,7 @@ export const getSortingFunction = <T extends any>(
 	schemaValue: JSONSchema,
 ): TableSortFunction<T> => {
 	const types = castArray(schemaValue.type);
-	const refScheme = getPropertyScheme(schemaValue);
+	const refScheme = SchemaSieve.getPropertyScheme(schemaValue);
 	if (types.includes(JsonTypes.string)) {
 		return (a: T, b: T) => sortFn(a, b, schemaKey);
 	}

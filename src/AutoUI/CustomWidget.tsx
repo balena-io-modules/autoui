@@ -2,21 +2,16 @@ import React from 'react';
 import castArray from 'lodash/castArray';
 import { getSchemaFormat, getSubSchemaFromRefScheme } from './models/helpers';
 import {
-	Format,
-	JSONSchema,
 	JsonTypes,
-	UiSchema,
-	Value,
-} from 'rendition/dist/components/Renderer/types';
-import { transformUiSchema } from 'rendition';
-import { getValue, getWidget } from 'rendition/dist/components/Renderer';
+	WidgetProps,
+	getRendererWidget,
+	getSchemaNormalizedValue,
+	transformUiSchema,
+} from 'rendition';
 
-interface CustomWidgetProps {
-	value: Value;
-	extraContext: object | undefined;
-	schema: JSONSchema;
-	extraFormats: Format[];
-	uiSchema?: UiSchema;
+interface CustomWidgetProps extends Pick<WidgetProps<object>, 'value' | 'extraContext' | 'uiSchema'> {
+	schema: NonNullable<WidgetProps['schema']>;
+	extraFormats: NonNullable<WidgetProps['extraFormats']>;
 }
 
 export const CustomWidget = ({
@@ -36,7 +31,7 @@ export const CustomWidget = ({
 		extraContext,
 	});
 
-	const processedValue = getValue(value, schema, processedUiSchema);
+	const processedValue = getSchemaNormalizedValue(value, schema, processedUiSchema);
 	const subSchema = getSubSchemaFromRefScheme(schema);
 	const types = subSchema?.type != null ? castArray(subSchema.type) : [];
 
@@ -44,7 +39,7 @@ export const CustomWidget = ({
 		return null;
 	}
 
-	const Widget = getWidget(processedValue, format, undefined, extraFormats);
+	const Widget = getRendererWidget(processedValue, format, undefined, extraFormats);
 
 	return (
 		<Widget

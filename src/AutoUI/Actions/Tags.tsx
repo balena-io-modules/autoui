@@ -1,9 +1,10 @@
 import React from 'react';
-import { notifications, TagManagementModal } from 'rendition';
 import {
 	ResourceTagSubmitInfo,
 	SubmitInfo,
-} from 'rendition/dist/components/TagManagementModal/models';
+	TagManagementModal,
+	notifications,
+} from 'rendition';
 import { useTranslation } from '../../hooks/useTranslation';
 import { AutoUIContext, AutoUIBaseResource } from '../schemaOps';
 

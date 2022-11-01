@@ -10,7 +10,7 @@ import type {
 } from 'json-schema';
 import get from 'lodash/get';
 import pick from 'lodash/pick';
-import { Dictionary } from 'rendition/dist/common-types';
+import type { Dictionary } from 'rendition';
 import { findInObject } from '../utils';
 
 type Transformers<

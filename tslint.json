@@ -1,6 +1,15 @@
 {
   "extends": "./node_modules/@balena/lint/config/tslint-prettier.json",
   "rules": {
+    "import-blacklist": [
+      true,
+      "rendition/dist",
+      ["rendition/dist/.*"],
+      "lodash",
+      "lodash/assign",
+      "lodash/first",
+      "lodash/last"
+    ],
     "no-shadowed-variable": false
   }
 }
