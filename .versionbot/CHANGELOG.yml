@@ -1,4 +1,16 @@
 - commits:
+    - subject: Stop using deep imports from rendition
+      hash: 80cfcb8df21af7cf2408da9146e57f59391fd5e5
+      body: |
+        Update rendition from 34.0.2 to 34.1.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+  version: 0.2.6
+  title: ""
+  date: 2022-11-01T18:11:24.345Z
+- commits:
     - subject: Disable source maps since they do not work
       hash: 8c3d8d7bab517218e9402d6ebf3d70a8f77eb8f8
       body: |
