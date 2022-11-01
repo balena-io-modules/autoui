@@ -1,4 +1,15 @@
 - commits:
+    - subject: Remove forgotten console log
+      hash: 2221b1c626319224600df5639336aee3552ad17b
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+  version: 0.2.4
+  title: ""
+  date: 2022-11-01T10:50:29.680Z
+- commits:
     - subject: "PestistentFilters: Fix restoring falsy values"
       hash: 076e3a855105374304f30b7bc29c23b243305772
       body: ""
