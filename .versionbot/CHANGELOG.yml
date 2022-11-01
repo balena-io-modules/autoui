@@ -1,4 +1,25 @@
 - commits:
+    - subject: "PestistentFilters: Fix restoring falsy values"
+      hash: 076e3a855105374304f30b7bc29c23b243305772
+      body: ""
+      footer:
+        Resolves: "#8"
+        resolves: "#8"
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+    - subject: Update rendition to 34.0.2
+      hash: b04cb4aacfbe31b26ed8ce604cef7ddc46577f80
+      body: |
+        Update rendition from 34.0.1 to 34.0.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+  version: 0.2.3
+  title: ""
+  date: 2022-11-01T10:44:17.780Z
+- commits:
     - subject: Update rendition to 34.0.1
       hash: 7318a8d63a0c43cb4a7c03c0ac1b6ce41eda41e8
       body: |
