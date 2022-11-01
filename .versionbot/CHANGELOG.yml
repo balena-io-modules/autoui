@@ -1,4 +1,20 @@
 - commits:
+    - subject: Disable source maps since they do not work
+      hash: 8c3d8d7bab517218e9402d6ebf3d70a8f77eb8f8
+      body: |
+        The emitted files atm include paths like:
+        `"sources":["../../src/AutoUI/index.tsx"]`
+        which webpack can't load (and prints a lot
+        warnings about) since we do not include the
+        src files in the package.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+  version: 0.2.5
+  title: ""
+  date: 2022-11-01T12:27:23.099Z
+- commits:
     - subject: Remove forgotten console log
       hash: 2221b1c626319224600df5639336aee3552ad17b
       body: ""
