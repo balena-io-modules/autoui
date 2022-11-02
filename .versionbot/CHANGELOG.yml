@@ -1,4 +1,17 @@
 - commits:
+    - subject: Fix missing translations
+      hash: b981d0f82ca87a44a1caaa827c58d9babf59c077
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.2.7
+  title: ""
+  date: 2022-11-02T12:12:55.525Z
+- commits:
     - subject: Stop using deep imports from rendition
       hash: 80cfcb8df21af7cf2408da9146e57f59391fd5e5
       body: |
