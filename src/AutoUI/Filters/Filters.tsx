@@ -46,6 +46,7 @@ export const Filters = <T extends AutoUIBaseResource<T>>({
 					onViewsUpdate={changeViews}
 					renderMode={renderMode ?? DEFAULT_RENDER_MODE}
 					onSearch={onSearch}
+					compact={[true, true, false]}
 				/>
 			) : (
 				<RenditionFilters
@@ -56,6 +57,7 @@ export const Filters = <T extends AutoUIBaseResource<T>>({
 					onViewsUpdate={changeViews}
 					renderMode={renderMode ?? DEFAULT_RENDER_MODE}
 					onSearch={onSearch}
+					compact={[true, true, false]}
 				/>
 			)}
 		</>
