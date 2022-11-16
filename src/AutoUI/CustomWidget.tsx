@@ -9,7 +9,8 @@ import {
 	transformUiSchema,
 } from 'rendition';
 
-interface CustomWidgetProps extends Pick<WidgetProps<object>, 'value' | 'extraContext' | 'uiSchema'> {
+interface CustomWidgetProps
+	extends Pick<WidgetProps<object>, 'value' | 'extraContext' | 'uiSchema'> {
 	schema: NonNullable<WidgetProps['schema']>;
 	extraFormats: NonNullable<WidgetProps['extraFormats']>;
 }
@@ -31,7 +32,11 @@ export const CustomWidget = ({
 		extraContext,
 	});
 
-	const processedValue = getSchemaNormalizedValue(value, schema, processedUiSchema);
+	const processedValue = getSchemaNormalizedValue(
+		value,
+		schema,
+		processedUiSchema,
+	);
 	const subSchema = getSubSchemaFromRefScheme(schema);
 	const types = subSchema?.type != null ? castArray(subSchema.type) : [];
 
@@ -39,7 +44,12 @@ export const CustomWidget = ({
 		return null;
 	}
 
-	const Widget = getRendererWidget(processedValue, format, undefined, extraFormats);
+	const Widget = getRendererWidget(
+		processedValue,
+		format,
+		undefined,
+		extraFormats,
+	);
 
 	return (
 		<Widget

@@ -19,7 +19,7 @@ import styled from 'styled-components';
 const Wrapper = styled(Box)`
 	align-self: flex-start;
 	z-index: 10;
-`
+`;
 
 interface UpdateProps<T extends AutoUIBaseResource<T>> {
 	model: AutoUIModel<T>;

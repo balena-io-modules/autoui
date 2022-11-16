@@ -150,6 +150,7 @@ ReactDOM.render(
 Wrap your application in the `<Provider>` component so that child components can correctly inherit the following properties: 
   - `t`: used for translations (expected lib `i18n-next`)
   - `history`: used to allow persistent filters. (expected lib `history`)
+  - `externalTranslationMap`: used to add translations for resources (e.g. {'resource.application': 'Applications'}). Usually used if `i18n-next` is not used.
 
 ## Contributing
 

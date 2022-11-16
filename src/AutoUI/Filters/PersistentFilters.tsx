@@ -1,7 +1,14 @@
 import * as React from 'react';
 import filter from 'lodash/filter';
 import qs from 'qs';
-import { Filters, FilterSignature, FiltersProps, FiltersView, JSONSchema, SchemaSieve } from 'rendition';
+import {
+	Filters,
+	FilterSignature,
+	FiltersProps,
+	FiltersView,
+	JSONSchema,
+	SchemaSieve,
+} from 'rendition';
 import { getFromLocalStorage, setToLocalStorage } from '../utils';
 import { History } from 'history';
 
@@ -78,7 +85,10 @@ export const loadRulesFromUrl = (
 				// TODO: listFilterQuery serializes the already escaped value and this
 				// then re-escapes while de-serializing. Fix that loop, which can keep
 				// escaping regex characters (eg \) indefinitely on each call/reload from the url.
-				return SchemaSieve.createFullTextSearchFilter(schema, signatures[0].value);
+				return SchemaSieve.createFullTextSearchFilter(
+					schema,
+					signatures[0].value,
+				);
 			}
 			return SchemaSieve.createFilter(schema, signatures);
 		},
