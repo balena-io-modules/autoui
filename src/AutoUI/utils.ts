@@ -6,7 +6,7 @@ import {
 	JSONSchema,
 	JsonTypes,
 	TableSortFunction,
-	SchemaSieve
+	SchemaSieve,
 } from 'rendition';
 
 export const diff = <T extends unknown>(a: T, b: T) => {
