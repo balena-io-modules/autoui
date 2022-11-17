@@ -1,4 +1,17 @@
 - commits:
+    - subject: Add translations map in context
+      hash: 0ea03164e0bf8aac70dbd939b211a9091fac4a19
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.2.8
+  title: ""
+  date: 2022-11-17T12:28:48.108Z
+- commits:
     - subject: Fix missing translations
       hash: b981d0f82ca87a44a1caaa827c58d9babf59c077
       body: ""
