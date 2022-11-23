@@ -1,4 +1,15 @@
 - commits:
+    - subject: Removes duplicated call to onFiltersUpdate
+      hash: 3f2e0d2a3c9274198986296576f7f2b0f1edd543
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otávio Jacobi
+  version: 0.2.9
+  title: ""
+  date: 2022-11-23T16:13:48.857Z
+- commits:
     - subject: Add translations map in context
       hash: 0ea03164e0bf8aac70dbd939b211a9091fac4a19
       body: ""
