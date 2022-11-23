@@ -150,20 +150,12 @@ export const PersistentFilters = ({
 		}
 	};
 
-	const filtersUpdate = (filters: JSONSchema[]) => {
-		updateUrl(filters);
-
-		if (onFiltersUpdate) {
-			onFiltersUpdate(filters);
-		}
-	};
-
 	return (
 		<Filters
 			schema={schema}
 			filters={filters ?? storedFilters}
 			views={views ?? storedViews}
-			onFiltersUpdate={filtersUpdate}
+			onFiltersUpdate={updateUrl}
 			onViewsUpdate={viewsUpdate}
 			{...otherProps}
 			onSearch={onSearch}
