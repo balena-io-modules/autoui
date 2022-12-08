@@ -1,5 +1,4 @@
 import React from 'react';
-
 import {
 	AutoUIAction,
 	AutoUIModel,
@@ -26,8 +25,7 @@ import {
 	autoUIDefaultPermissions,
 	autoUIGetModelForCollection,
 	autoUIRunTransformers,
-	getPropertyScheme,
-	getSchemaTitle,
+	getHeaderLink,
 } from './models/helpers';
 import {
 	autoUIGetDisabledReason,
@@ -51,10 +49,13 @@ import {
 	Spinner,
 	TableColumn,
 	SchemaSieve as sieve,
+	Link,
 } from 'rendition';
 import { getLenses, LensTemplate } from './Lenses';
 import { useTranslation } from '../hooks/useTranslation';
 import { useHistory } from '../hooks/useHistory';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleQuestion } from '@fortawesome/free-regular-svg-icons';
 
 const HeaderGrid = styled(Flex)`
 	> * {
@@ -450,9 +451,37 @@ export {
 export type AutoUIEntityPropertyDefinition<T> = Required<
 	Pick<
 		TableColumn<T>,
-		'title' | 'field' | 'key' | 'selected' | 'sortable' | 'render'
+		'label' | 'field' | 'key' | 'selected' | 'sortable' | 'render'
 	>
 > & { type: string; priority: string };
+
+const schemaTitle = (
+	jsonSchema: JSONSchema,
+	propertyKey: string,
+	refScheme?: string | undefined,
+) => {
+	const { t } = useTranslation();
+	const subSchema = sieve.getSubSchemaFromRefScheme(jsonSchema, refScheme);
+	const title = subSchema?.title || jsonSchema.title || propertyKey;
+	const headerLink = getHeaderLink(subSchema);
+	if (headerLink?.href || headerLink?.tooltip) {
+		return (
+			<>
+				<Link
+					mr={1}
+					blank
+					tooltip={t('info.click_to_read_more', { title })}
+					color="info.main"
+					{...headerLink}
+				>
+					<FontAwesomeIcon icon={faCircleQuestion} />
+				</Link>
+				{title}
+			</>
+		);
+	}
+	return title;
+};
 
 export const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 	schema,
@@ -475,7 +504,7 @@ export const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 			return entry[0] !== tagField && entry[0] !== idField;
 		})
 		.flatMap(([key, val]) => {
-			const refScheme = getPropertyScheme(val);
+			const refScheme = sieve.getPropertyScheme(val);
 			if (!refScheme || refScheme.length <= 1 || typeof val !== 'object') {
 				return [[key, val]];
 			}
@@ -488,9 +517,8 @@ export const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 			if (typeof val !== 'object') {
 				return;
 			}
-
 			const definedPriorities = priorities ?? ({} as Priorities<T>);
-			const refScheme = getPropertyScheme(val);
+			const refScheme = sieve.getPropertyScheme(val);
 			const priority = definedPriorities.primary.find(
 				(prioritizedKey) => prioritizedKey === key,
 			)
@@ -503,7 +531,7 @@ export const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 
 			const widgetSchema = { ...val, title: undefined };
 			return {
-				title: getSchemaTitle(val, key, refScheme?.[0]),
+				label: schemaTitle(val, key, refScheme?.[0]),
 				field: key,
 				// This is used for storing columns and views
 				key: `${key}_${index}`,
