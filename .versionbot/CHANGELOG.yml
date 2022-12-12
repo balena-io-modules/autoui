@@ -1,4 +1,24 @@
 - commits:
+    - subject: Add header info link to describe table column
+      hash: 3e52f6b062db929af9b2a16f18b26c831326c630
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+    - subject: Disable the creation of package-lock.json
+      hash: c9464018a47932774d713195dd6fa2557c62c897
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+  version: 0.3.0
+  title: ""
+  date: 2022-12-12T09:57:48.372Z
+- commits:
     - subject: Removes duplicated call to onFiltersUpdate
       hash: 3f2e0d2a3c9274198986296576f7f2b0f1edd543
       body: ""
