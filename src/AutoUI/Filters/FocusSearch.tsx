@@ -2,7 +2,6 @@ import React from 'react';
 import reject from 'lodash/reject';
 import styled from 'styled-components';
 import { AutoUIModel } from '..';
-import { getPropertyScheme } from '../models/helpers';
 import { Box, Checkbox, Flex, Txt, SchemaSieve as sieve } from 'rendition';
 import { AutoUIContext } from '../schemaOps';
 import { useHistory } from '../../hooks/useHistory';
@@ -63,7 +62,9 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 	const getEntityValue = (entity: T) => {
 		const property = model.priorities?.primary[0]!;
 		const schemaProperty = model.schema.properties?.[property];
-		const refScheme = schemaProperty ? getPropertyScheme(schemaProperty) : null;
+		const refScheme = schemaProperty
+			? sieve.getPropertyScheme(schemaProperty)
+			: null;
 		if (!refScheme || typeof schemaProperty === 'boolean') {
 			return entity[property];
 		}

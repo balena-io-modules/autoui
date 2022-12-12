@@ -12,6 +12,7 @@ import get from 'lodash/get';
 import pick from 'lodash/pick';
 import type { Dictionary } from 'rendition';
 import { findInObject } from '../utils';
+import { SchemaSieve as sieve } from 'rendition';
 
 type Transformers<
 	T extends Dictionary<any>,
@@ -90,7 +91,7 @@ export const autoUIAdaptRefScheme = (
 	) {
 		return value;
 	}
-	const refScheme = getPropertyScheme(property);
+	const refScheme = sieve.getPropertyScheme(property);
 	const transformed =
 		(Array.isArray(value) && value.length <= 1 ? value[0] : value) ?? null;
 	if (refScheme) {
@@ -145,7 +146,7 @@ export const autoUIAddToSchema = (
 	};
 };
 
-export const getPropertyScheme = (
+export const getHeaderLink = (
 	schemaValue: JSONSchema | JSONSchemaDefinition,
 ) => {
 	if (typeof schemaValue === 'boolean' || !schemaValue.description) {
@@ -153,7 +154,7 @@ export const getPropertyScheme = (
 	}
 	try {
 		const json = JSON.parse(schemaValue.description!);
-		return json['x-foreign-key-scheme'] ?? json['x-ref-scheme'];
+		return json['x-header-link'];
 	} catch (err) {
 		return null;
 	}
@@ -167,21 +168,6 @@ export const convertRefSchemeToSchemaPath = (refScheme: string | undefined) => {
 				.replace(/\[\d+\]/g, '.items')
 		: // TODO: This atm doesn't support ['my property']
 		  refScheme;
-};
-
-export const getSchemaTitle = (
-	jsonSchema: JSONSchema,
-	propertyKey: string,
-	refScheme?: string | undefined,
-) => {
-	if (!refScheme) {
-		return jsonSchema?.title || propertyKey;
-	}
-	return (
-		getSubSchemaFromRefScheme(jsonSchema, refScheme)?.title ??
-		jsonSchema.title ??
-		propertyKey
-	);
 };
 
 export const generateSchemaFromRefScheme = (
@@ -222,7 +208,7 @@ export const getSubSchemaFromRefScheme = (
 	schema: JSONSchema | JSONSchemaDefinition,
 	refScheme?: string,
 ): JSONSchema => {
-	const referenceScheme = refScheme || getPropertyScheme(schema)?.[0];
+	const referenceScheme = refScheme || sieve.getPropertyScheme(schema)?.[0];
 	const convertedRefScheme = convertRefSchemeToSchemaPath(referenceScheme);
 	if (!convertedRefScheme) {
 		return schema as JSONSchema;

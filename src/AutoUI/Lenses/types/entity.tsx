@@ -85,7 +85,7 @@ export const entity: LensTemplate = {
 												key={property.key}
 												flex={['100%', '0 0 30%']}
 											>
-												<Label>{property.title}</Label>
+												<Label>{property.label}</Label>
 												<Txt>{property.render(data[property.field], data)}</Txt>
 											</Flex>
 										),
