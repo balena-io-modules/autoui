@@ -1,4 +1,18 @@
 - commits:
+    - subject: Update rendition to 34.4.1
+      hash: 9b0595b7047086afd247803ca520a9e96f5fb058
+      body: |
+        Update rendition from 34.1.0 to 34.4.1
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.3.1
+  title: ""
+  date: 2022-12-15T14:21:43.633Z
+- commits:
     - subject: Add header info link to describe table column
       hash: 3e52f6b062db929af9b2a16f18b26c831326c630
       body: ""
