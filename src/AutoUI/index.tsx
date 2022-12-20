@@ -236,7 +236,6 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							/>
 						),
 					isDisabled: ({ affectedEntries }) =>
-						!!affectedEntries &&
 						getTagsDisabledReason(affectedEntries, tagField as keyof T, t),
 			  }
 			: null;

@@ -72,11 +72,11 @@ export const ObjectFromEntries = (entries: any[]) => {
 };
 
 export const getTagsDisabledReason = <T extends AutoUIBaseResource<T>>(
-	selected: T[],
+	selected: T[] | undefined,
 	tagField: keyof T,
 	t: TFunction,
 ) => {
-	if (selected.length === 0) {
+	if (!selected || selected.length === 0) {
 		return t('info.no_selected');
 	}
 
@@ -92,8 +92,6 @@ export const getTagsDisabledReason = <T extends AutoUIBaseResource<T>>(
 		// TODO: Pass the resource name instead.
 		return t('info.edit_tag_no_permissions', { resource: 'item' });
 	}
-
-	return false;
 };
 
 export const getCreateDisabledReason = <T extends AutoUIBaseResource<T>>(
