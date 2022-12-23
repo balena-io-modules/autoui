@@ -1,4 +1,17 @@
 - commits:
+    - subject: "Collection: Fix the column dropdown showing empty column names"
+      hash: eea878c399228deab02d92ccc15de2c508c3df93
+      body: ""
+      footer:
+        Resolves: "#22"
+        resolves: "#22"
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+  version: 0.3.3
+  title: ""
+  date: 2022-12-23T17:16:26.499Z
+- commits:
     - subject: Update rendition to 34.5.0
       hash: 1db7dc408a5c3d097267043c26f48ae72549e10f
       body: |
