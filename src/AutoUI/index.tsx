@@ -451,21 +451,23 @@ export {
 export type AutoUIEntityPropertyDefinition<T> = Required<
 	Pick<
 		TableColumn<T>,
-		'label' | 'field' | 'key' | 'selected' | 'sortable' | 'render'
+		'title' | 'label' | 'field' | 'key' | 'selected' | 'sortable' | 'render'
 	>
 > & { type: string; priority: string };
 
-const schemaTitle = (
+const getTitleAndLabel = (
 	jsonSchema: JSONSchema,
 	propertyKey: string,
-	refScheme?: string | undefined,
+	refScheme: string | undefined,
 ) => {
 	const { t } = useTranslation();
 	const subSchema = sieve.getSubSchemaFromRefScheme(jsonSchema, refScheme);
 	const title = subSchema?.title || jsonSchema.title || propertyKey;
 	const headerLink = getHeaderLink(subSchema);
+	let label: TableColumn<unknown>['label'] = title;
+
 	if (headerLink?.href || headerLink?.tooltip) {
-		return (
+		label = (
 			<>
 				<Link
 					mr={1}
@@ -480,7 +482,10 @@ const schemaTitle = (
 			</>
 		);
 	}
-	return title;
+	return {
+		title,
+		label,
+	};
 };
 
 export const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
@@ -531,7 +536,7 @@ export const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 
 			const widgetSchema = { ...val, title: undefined };
 			return {
-				label: schemaTitle(val, key, refScheme?.[0]),
+				...getTitleAndLabel(val, key, refScheme?.[0]),
 				field: key,
 				// This is used for storing columns and views
 				key: `${key}_${index}`,
