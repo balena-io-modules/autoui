@@ -2,6 +2,8 @@ import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import pick from 'lodash/pick';
 import { Dictionary, ResourceTagModelService } from 'rendition';
 
+type MaybePromise<T> = T | Promise<T>;
+
 export interface AutoUIBaseResource<T> {
 	id: number;
 	__permissions: Permissions<T>;
@@ -44,7 +46,9 @@ export interface AutoUIAction<T> {
 		onDone: () => void;
 	}) => React.ReactNode;
 	actionFn?: (props: { affectedEntries?: T[] }) => void;
-	isDisabled?: (props: { affectedEntries?: T[] }) => string | false;
+	isDisabled?: (props: {
+		affectedEntries?: T[];
+	}) => MaybePromise<string | undefined>;
 	isDangerous?: boolean;
 }
 
