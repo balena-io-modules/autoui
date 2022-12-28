@@ -52,7 +52,7 @@ import {
 	Link,
 } from 'rendition';
 import { getLenses, LensTemplate } from './Lenses';
-import { useTranslation } from '../hooks/useTranslation';
+import { TFunction, useTranslation } from '../hooks/useTranslation';
 import { useHistory } from '../hooks/useHistory';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleQuestion } from '@fortawesome/free-regular-svg-icons';
@@ -256,6 +256,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	const properties = React.useMemo(
 		() =>
 			getColumnsFromSchema<T>({
+				t,
 				schema: model.schema,
 				idField: autouiContext.idField,
 				tagField: autouiContext.tagField,
@@ -455,11 +456,11 @@ export type AutoUIEntityPropertyDefinition<T> = Required<
 > & { type: string; priority: string };
 
 const getTitleAndLabel = (
+	t: TFunction,
 	jsonSchema: JSONSchema,
 	propertyKey: string,
 	refScheme: string | undefined,
 ) => {
-	const { t } = useTranslation();
 	const subSchema = sieve.getSubSchemaFromRefScheme(jsonSchema, refScheme);
 	const title = subSchema?.title || jsonSchema.title || propertyKey;
 	const headerLink = getHeaderLink(subSchema);
@@ -487,7 +488,8 @@ const getTitleAndLabel = (
 	};
 };
 
-export const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
+const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
+	t,
 	schema,
 	idField,
 	tagField,
@@ -495,6 +497,7 @@ export const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 	priorities,
 	formats,
 }: {
+	t: TFunction;
 	schema: JSONSchema;
 	idField: AutoUIContext<T>['idField'];
 	tagField: AutoUIContext<T>['tagField'];
@@ -535,7 +538,7 @@ export const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 
 			const widgetSchema = { ...val, title: undefined };
 			return {
-				...getTitleAndLabel(val, key, refScheme?.[0]),
+				...getTitleAndLabel(t, val, key, refScheme?.[0]),
 				field: key,
 				// This is used for storing columns and views
 				key: `${key}_${index}`,
