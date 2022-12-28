@@ -1,4 +1,17 @@
 - commits:
+    - subject: Fix invalid hook call error
+      hash: 9eb1da74bdcd1915b727d91364ca376440a487c2
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.4.1
+  title: ""
+  date: 2022-12-28T13:20:28.701Z
+- commits:
     - subject: Change action isDisabled to accept promise
       hash: 55d4ef07e6928081974bad84b6f4c290d1776cd1
       body: ""
