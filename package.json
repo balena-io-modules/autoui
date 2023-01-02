@@ -18,7 +18,7 @@
     "qs": "^6.10.3",
     "react-router": "^5.3.3",
     "react-router-dom": "^5.3.3",
-    "rendition": "^34.5.0",
+    "rendition": "^34.6.0",
     "skhema": "^5.3.4",
     "styled-components": "^5.3.5"
   },
