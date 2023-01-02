@@ -1,4 +1,18 @@
 - commits:
+    - subject: Update rendition to 34.6.0
+      hash: 39546f75ae814a8ddcf2efe207d417affff421ff
+      body: |
+        Update rendition from 34.5.0 to 34.6.0
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.4.2
+  title: ""
+  date: 2023-01-02T15:03:19.922Z
+- commits:
     - subject: Fix invalid hook call error
       hash: 9eb1da74bdcd1915b727d91364ca376440a487c2
       body: ""
