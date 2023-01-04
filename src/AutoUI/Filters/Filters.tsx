@@ -20,6 +20,8 @@ interface FiltersProps<T> {
 	onSearch?: (searchTerm: string) => React.ReactElement | null;
 }
 
+const DEFAULT_RENDER_MODE = (['add', 'search', 'views'] as const).slice();
+
 export const Filters = <T extends AutoUIBaseResource<T>>({
 	schema,
 	filters,
@@ -42,7 +44,7 @@ export const Filters = <T extends AutoUIBaseResource<T>>({
 					views={views}
 					onFiltersUpdate={changeFilters}
 					onViewsUpdate={changeViews}
-					renderMode={renderMode ?? ['add', 'search', 'views']}
+					renderMode={renderMode ?? DEFAULT_RENDER_MODE}
 					onSearch={onSearch}
 				/>
 			) : (
@@ -52,7 +54,7 @@ export const Filters = <T extends AutoUIBaseResource<T>>({
 					views={views}
 					onFiltersUpdate={changeFilters}
 					onViewsUpdate={changeViews}
-					renderMode={renderMode ?? ['add', 'search', 'views']}
+					renderMode={renderMode ?? DEFAULT_RENDER_MODE}
 					onSearch={onSearch}
 				/>
 			)}
