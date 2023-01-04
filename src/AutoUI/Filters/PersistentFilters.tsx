@@ -128,19 +128,21 @@ export const PersistentFilters = ({
 		}
 	}, []);
 
-	const updateUrl = (filters: JSONSchema[]) => {
+	const updateUrl = React.useCallback((filters: JSONSchema[]) => {
 		const { pathname } = window.location;
 		history?.replace?.({
 			pathname,
 			search: listFilterQuery(filters),
 		});
-	};
+		
+		onFiltersUpdate?.(filters);
+	}, [window.location.pathname, onFiltersUpdate]);
 
 	// When the component mounts, filters from the page URL,
 	// then communicate them back to the parent component.
 	React.useEffect(() => {
 		onFiltersUpdate?.(storedFilters);
-	}, [storedFilters]);
+	}, []);
 
 	const viewsUpdate = (views: FiltersView[]) => {
 		setToLocalStorage(viewsRestorationKey, views);
