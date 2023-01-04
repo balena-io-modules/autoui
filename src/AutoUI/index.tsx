@@ -134,7 +134,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		return modelRaw;
 	}, [modelRaw]);
 
-	const [filters, setFilters] = React.useState<JSONSchema[]>([]);
+	const [filters, $setFilters] = React.useState<JSONSchema[]>([]);
 	const [views, setViews] = React.useState<FiltersView[]>([]);
 	const [selected, $setSelected] = React.useState<T[]>([]);
 	const [isBusyMessage, setIsBusyMessage] = React.useState<
@@ -143,6 +143,13 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	const [actionData, setActionData] = React.useState<
 		ActionData<T> | undefined
 	>();
+
+	const setFilters = React.useCallback((updatedFilters: JSONSchema[]) => {
+		$setFilters(updatedFilters);
+		onChange?.({
+			filters: updatedFilters,
+		});
+	}, [$setFilters, onChange]);
 
 	const setSelected = React.useCallback(
 		(items: T[]) => {
@@ -328,14 +335,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 												filters={filters}
 												views={views}
 												autouiContext={autouiContext}
-												changeFilters={(updatedFilters) => {
-													setFilters(updatedFilters);
-													if (onChange) {
-														onChange({
-															filters: updatedFilters,
-														});
-													}
-												}}
+												changeFilters={setFilters}
 												changeViews={setViews}
 												onSearch={(term) => (
 													<FocusSearch
