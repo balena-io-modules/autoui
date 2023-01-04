@@ -1,4 +1,29 @@
 - commits:
+    - subject: Fix not calling onChange when filters get deleted
+      hash: 4bbdea05a500d4ee89e599a89bd663fc018cf82d
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+    - subject: Avoid calling onChange on mount twice when filters already exist
+      hash: fe7d973702d2b46c3e1b441ed6a726b0be312ac5
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+    - subject: Fix filters not updating immediately on search
+      hash: 94a207b8ddb3d778f98ca10a85e55f4a960ce5f4
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 0.4.3
+  title: ""
+  date: 2023-01-04T19:39:31.273Z
+- commits:
     - subject: Update rendition to 34.6.0
       hash: 39546f75ae814a8ddcf2efe207d417affff421ff
       body: |
