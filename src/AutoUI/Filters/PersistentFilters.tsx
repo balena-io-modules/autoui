@@ -107,12 +107,12 @@ export const PersistentFilters = ({
 	views,
 	filters,
 	onViewsUpdate,
-	onFiltersUpdate,
+	onFiltersUpdate: $onFiltersUpdate,
 	viewsRestorationKey,
 	history,
 	onSearch,
 	...otherProps
-}: PersistentFiltersProps) => {
+}: PersistentFiltersProps & Required<Pick<PersistentFiltersProps, 'renderMode'>>) => {
 	const storedViews = React.useMemo(
 		() => getFromLocalStorage<FiltersView[]>(viewsRestorationKey) ?? [],
 		[viewsRestorationKey],
@@ -128,20 +128,25 @@ export const PersistentFilters = ({
 		}
 	}, []);
 
-	const updateUrl = React.useCallback((filters: JSONSchema[]) => {
+	const onFiltersUpdate = React.useCallback((filters: JSONSchema[]) => {
 		const { pathname } = window.location;
 		history?.replace?.({
 			pathname,
 			search: listFilterQuery(filters),
 		});
 		
-		onFiltersUpdate?.(filters);
-	}, [window.location.pathname, onFiltersUpdate]);
+		$onFiltersUpdate?.(filters);
+	}, [window.location.pathname, $onFiltersUpdate]);
 
 	// When the component mounts, filters from the page URL,
 	// then communicate them back to the parent component.
 	React.useEffect(() => {
-		onFiltersUpdate?.(storedFilters);
+		// Make sure we only call onFiltersUpdate on mount once, even if
+		// we are rendering each part of the Filter component separately.
+		const normalizedRenderMode = new Set(Array.isArray(otherProps.renderMode) ? otherProps.renderMode : [otherProps.renderMode]);
+		if (normalizedRenderMode.has('all') || normalizedRenderMode.has('add')) {
+			onFiltersUpdate?.(storedFilters);
+		}
 	}, []);
 
 	const viewsUpdate = (views: FiltersView[]) => {
@@ -157,7 +162,7 @@ export const PersistentFilters = ({
 			schema={schema}
 			filters={filters ?? storedFilters}
 			views={views ?? storedViews}
-			onFiltersUpdate={updateUrl}
+			onFiltersUpdate={onFiltersUpdate}
 			onViewsUpdate={viewsUpdate}
 			{...otherProps}
 			onSearch={onSearch}
