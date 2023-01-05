@@ -50,12 +50,20 @@ import {
 	TableColumn,
 	SchemaSieve as sieve,
 	Link,
+	Pagination,
+	TableSortOptions,
 } from 'rendition';
 import { getLenses, LensTemplate } from './Lenses';
 import { TFunction, useTranslation } from '../hooks/useTranslation';
 import { useHistory } from '../hooks/useHistory';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleQuestion } from '@fortawesome/free-regular-svg-icons';
+import {
+	convertToPineClientFilter,
+	orderbyBuilder,
+} from '../oData/jsonToOData';
+
+const DEFAULT_ITEMS_PER_PAGE = 50;
 
 const HeaderGrid = styled(Flex)`
 	> * {
@@ -99,11 +107,25 @@ export interface AutoUIProps<T> extends Omit<BoxProps, 'onChange'> {
 	) => void;
 	// TODO: onChange should also be called when data in the table is sorted and when columns change
 	/** Function that gets called when filters change */
-	onChange?: (changes: { filters?: JSONSchema[] }) => void;
+	onChange?: (changes: {
+		filters?: JSONSchema[];
+		page: number;
+		itemsPerPage?: number;
+		oData?: {
+			$top?: number;
+			$skip?: number;
+			$filter?: any;
+			$orderby?: any;
+		} | null;
+	}) => void;
+	/** Information from a server side pagination */
+	pagination?: Pagination;
 	/** All the lenses available for this AutoUI component. Any default lenses will automatically be added to this array. */
 	customLenses?: LensTemplate[];
 	/** Additional context for picking the right lens */
 	lensContext?: object;
+	/** Loading property to show the Spinner */
+	loading?: boolean;
 }
 
 export const AutoUI = <T extends AutoUIBaseResource<T>>({
@@ -117,8 +139,10 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	getBaseUrl,
 	onEntityClick,
 	onChange,
+	pagination,
 	customLenses,
 	lensContext,
+	loading,
 	...boxProps
 }: AutoUIProps<T>) => {
 	const { t } = useTranslation();
@@ -134,7 +158,15 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		return modelRaw;
 	}, [modelRaw]);
 
-	const [filters, $setFilters] = React.useState<JSONSchema[]>([]);
+	const [filters, setFilters] = React.useState<JSONSchema[]>([]);
+	const [sort, setSort] = React.useState<TableSortOptions<T> | null>(null);
+	const [internalPagination, setInternalPagination] = React.useState<{
+		page: number;
+		itemsPerPage: number;
+	}>({
+		page: 0,
+		itemsPerPage: pagination?.itemsPerPage ?? DEFAULT_ITEMS_PER_PAGE,
+	});
 	const [views, setViews] = React.useState<FiltersView[]>([]);
 	const [selected, $setSelected] = React.useState<T[]>([]);
 	const [isBusyMessage, setIsBusyMessage] = React.useState<
@@ -144,12 +176,18 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		ActionData<T> | undefined
 	>();
 
-	const setFilters = React.useCallback((updatedFilters: JSONSchema[]) => {
-		$setFilters(updatedFilters);
-		onChange?.({
-			filters: updatedFilters,
-		});
-	}, [$setFilters, onChange]);
+	const $setFilters = React.useCallback(
+		(updatedFilters: JSONSchema[]) => {
+			setFilters(updatedFilters);
+			internalOnChange(
+				updatedFilters,
+				sort,
+				internalPagination.page,
+				internalPagination.itemsPerPage,
+			);
+		},
+		[setFilters, onChange],
+	);
 
 	const setSelected = React.useCallback(
 		(items: T[]) => {
@@ -162,14 +200,18 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	);
 
 	const showFilters = React.useMemo(
-		() => Array.isArray(data) && !!(data?.length && data.length > 0),
-		[data],
-	);
-
-	const filtered = React.useMemo(
-		() => (Array.isArray(data) ? sieve.filter(filters, data) : []) as T[],
+		() =>
+			filters.length > 0 ||
+			(Array.isArray(data) && !!(data?.length && data.length > 0)),
 		[data, filters],
 	);
+
+	const filtered = React.useMemo(() => {
+		if (pagination?.serverSide) {
+			return (data ?? []) as T[];
+		}
+		return (Array.isArray(data) ? sieve.filter(filters, data) : []) as T[];
+	}, [pagination?.serverSide, data, filters]);
 
 	React.useEffect(() => {
 		setSelected([]);
@@ -286,6 +328,32 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 			!!sdk?.tags,
 		[actions, sdk?.tags],
 	);
+
+	const internalOnChange = (
+		updatedFilters: JSONSchema[],
+		sortInfo: TableSortOptions<T> | null,
+		page: number,
+		itemsPerPage: number,
+	) => {
+		if (!onChange) {
+			return;
+		}
+		const oData = pagination?.serverSide
+				? {
+						$filter: convertToPineClientFilter([], updatedFilters),
+						$orderby: orderbyBuilder(sortInfo),
+						$top: itemsPerPage,
+						$skip: page * itemsPerPage,
+				  }
+				: null;
+		onChange?.({
+			filters: updatedFilters,
+			page,
+			itemsPerPage,
+			oData,
+		});
+	};
+
 	return (
 		<Flex flex={1} flexDirection="column" {...boxProps}>
 			<Spinner
@@ -296,7 +364,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 						resource: t(`resource.${model.resource}_plural`).toLowerCase(),
 					})
 				}
-				show={data == null || !!isBusyMessage}
+				show={data == null || !!isBusyMessage || !!loading}
 			>
 				<Flex height="100%" flexDirection="column">
 					{Array.isArray(data) && (
@@ -335,7 +403,15 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 												filters={filters}
 												views={views}
 												autouiContext={autouiContext}
-												changeFilters={setFilters}
+												changeFilters={(updatedFilters) => {
+													$setFilters(updatedFilters);
+													internalOnChange(
+														updatedFilters,
+														sort,
+														internalPagination.page,
+														internalPagination.itemsPerPage,
+													);
+												}}
 												changeViews={setViews}
 												onSearch={(term) => (
 													<FocusSearch
@@ -351,7 +427,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 											/>
 										</Box>
 									)}
-									{data.length > 0 && (
+									{(data.length > 0 || filters.length > 0) && (
 										<LensSelection
 											lenses={lenses}
 											lens={lens}
@@ -377,7 +453,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 									/>
 								)}
 							</Box>
-							{data.length === 0 && (
+							{data.length === 0 && !filters.length && (
 								<NoRecordsFoundArrow>
 									{t(`no_data.no_resource_data`, {
 										resource: t(`resource.item_plural`).toLowerCase(),
@@ -404,6 +480,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 					{lens &&
 						data &&
 						(!Array.isArray(data) ||
+							filters.length > 0 ||
 							(Array.isArray(data) && data.length > 0)) && (
 							<lens.data.renderer
 								flex={1}
@@ -412,6 +489,15 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 								properties={properties}
 								hasUpdateActions={hasUpdateActions}
 								changeSelected={setSelected}
+								onSort={(sortInfo) => {
+									setSort(sortInfo);
+									internalOnChange(
+										filters,
+										sortInfo,
+										internalPagination.page,
+										internalPagination.itemsPerPage,
+									);
+								}}
 								data={data}
 								autouiContext={autouiContext}
 								onEntityClick={
@@ -420,6 +506,11 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 										: undefined
 								}
 								model={model}
+								onPageChange={(page, itemsPerPage) => {
+									setInternalPagination({ page, itemsPerPage });
+									internalOnChange(filters, sort, page, itemsPerPage);
+								}}
+								pagination={pagination}
 							/>
 						)}
 
@@ -545,6 +636,7 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 				selected: getSelected(key as keyof T, priorities),
 				priority,
 				type: 'predefined',
+				refScheme: refScheme?.[0],
 				sortable: customSort?.[key] ?? getSortingFunction(key, val),
 				render: (fieldVal: string, entry: T) => {
 					const calculatedField = autoUIAdaptRefScheme(fieldVal, val);

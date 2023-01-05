@@ -19,24 +19,32 @@ export const table: LensTemplate = {
 			data,
 			autouiContext,
 			onEntityClick,
-		}: CollectionLensRendererProps<any>) => (
-			<Table<any>
-				rowKey="id"
-				data={filtered}
-				checkedItems={selected}
-				columns={properties}
-				{...(hasUpdateActions && { onCheck: changeSelected })}
-				usePager={data && data.length > 5}
-				pagerPosition="bottom"
-				itemsPerPage={50}
-				getRowHref={autouiContext.getBaseUrl}
-				onRowClick={onEntityClick}
-				columnStateRestorationKey={`${autouiContext.resource}__columns`}
-				sortingStateRestorationKey={`${autouiContext.resource}__sort`}
-				tagField={autouiContext.tagField}
-				enableCustomColumns
-			/>
-		),
+			onPageChange,
+			onSort,
+			pagination,
+		}: CollectionLensRendererProps<any>) => {
+			return (
+				<Table<any>
+					rowKey="id"
+					data={filtered}
+					checkedItems={selected}
+					columns={properties}
+					{...(hasUpdateActions && { onCheck: changeSelected })}
+					usePager={data && data.length > 5}
+					pagerPosition="bottom"
+					itemsPerPage={50}
+					getRowHref={autouiContext.getBaseUrl}
+					onRowClick={onEntityClick}
+					onPageChange={onPageChange}
+					onSort={onSort}
+					pagination={pagination}
+					columnStateRestorationKey={`${autouiContext.resource}__columns`}
+					sortingStateRestorationKey={`${autouiContext.resource}__sort`}
+					tagField={autouiContext.tagField}
+					enableCustomColumns
+				/>
+			);
+		},
 		icon: faTable,
 		type: '*',
 		filter: {
