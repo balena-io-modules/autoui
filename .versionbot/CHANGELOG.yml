@@ -1,4 +1,17 @@
 - commits:
+    - subject: Add server side pagination
+      hash: b29a4352cc0d3260a87bdeea0769ad5782d99304
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.5.0
+  title: ""
+  date: 2023-01-05T10:35:25.101Z
+- commits:
     - subject: Fix not calling onChange when filters get deleted
       hash: 4bbdea05a500d4ee89e599a89bd663fc018cf82d
       body: ""
