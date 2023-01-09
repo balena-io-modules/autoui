@@ -1,4 +1,18 @@
 - commits:
+    - subject: Update rendition to 34.7.1
+      hash: 66d75d8f5c78139d7605800631a96885ba99bfb3
+      body: |
+        Update rendition from 34.7.0 to 34.7.1
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.5.2
+  title: ""
+  date: 2023-01-09T16:00:54.251Z
+- commits:
     - subject: Update rendition to 34.7.0
       hash: 4664ba040a4f25b134b1336ccb7b8f8ce8869f00
       body: |
