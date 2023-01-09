@@ -77,6 +77,7 @@ export const Create = <T extends AutoUIBaseResource<T>>({
 				<ActionContent<T>
 					getDisabledReason={action.isDisabled}
 					affectedEntries={undefined}
+					checkedState={undefined}
 					onDisabledReady={(result) => {
 						setDisabledReasonsByAction((disabledReasonsState) => ({
 							...disabledReasonsState,

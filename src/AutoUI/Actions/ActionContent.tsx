@@ -1,4 +1,4 @@
-import { useRequest } from 'rendition';
+import { CheckedState, useRequest } from 'rendition';
 import { AutoUIAction } from '../schemaOps';
 
 export const LOADING_DISABLED_REASON = 'Loading';
@@ -6,6 +6,7 @@ export const LOADING_DISABLED_REASON = 'Loading';
 interface ActionContentProps<T> {
 	children: React.ReactElement;
 	affectedEntries: T[] | undefined;
+	checkedState: CheckedState | undefined;
 	getDisabledReason: AutoUIAction<T>['isDisabled'];
 	onDisabledReady: (arg: string | undefined) => void;
 }
@@ -16,12 +17,16 @@ interface ActionContentProps<T> {
 export const ActionContent = <T extends {}>({
 	children,
 	affectedEntries,
+	checkedState,
 	getDisabledReason,
 	onDisabledReady,
 }: ActionContentProps<T>) => {
 	useRequest(
 		async () => {
-			const disabled = await getDisabledReason?.({ affectedEntries });
+			const disabled = await getDisabledReason?.({
+				affectedEntries,
+				checkedState,
+			});
 			onDisabledReady(disabled);
 			return disabled;
 		},

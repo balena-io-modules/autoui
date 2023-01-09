@@ -1,6 +1,6 @@
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import pick from 'lodash/pick';
-import { Dictionary, ResourceTagModelService } from 'rendition';
+import { CheckedState, Dictionary, ResourceTagModelService } from 'rendition';
 
 type MaybePromise<T> = T | Promise<T>;
 
@@ -42,12 +42,20 @@ export interface AutoUIAction<T> {
 	section?: string;
 	renderer?: (props: {
 		schema: JSONSchema;
-		affectedEntries?: T[];
+		affectedEntries: T[] | undefined;
 		onDone: () => void;
 	}) => React.ReactNode;
-	actionFn?: (props: { affectedEntries?: T[] }) => void;
+	actionFn?: (props: {
+		/** affectedEntries will be undefined if pagination is server side and checkedState is "all" */
+		affectedEntries: T[] | undefined;
+		/** checkState can be undefined only for entity case, since card does not have a selection event  */
+		checkedState: CheckedState | undefined;
+	}) => void;
 	isDisabled?: (props: {
-		affectedEntries?: T[];
+		/** affectedEntries will be undefined if pagination is server side and checkedState is "all" */
+		affectedEntries: T[] | undefined;
+		/** checkState can be undefined only for entity case, since card does not have a selection event  */
+		checkedState: CheckedState | undefined;
 	}) => MaybePromise<string | undefined>;
 	isDangerous?: boolean;
 }
@@ -77,6 +85,7 @@ export interface ActionData<T> {
 	action: AutoUIAction<T>;
 	schema: JSONSchema;
 	affectedEntries?: T[];
+	checkedState?: CheckedState;
 }
 
 // The implementation lacks handling of nested schemas and some edge cases, but is enough for now.

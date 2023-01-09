@@ -62,6 +62,7 @@ import {
 	convertToPineClientFilter,
 	orderbyBuilder,
 } from '../oData/jsonToOData';
+import { CollectionLensRendererProps } from './Lenses/types';
 
 const DEFAULT_ITEMS_PER_PAGE = 50;
 
@@ -168,7 +169,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		itemsPerPage: pagination?.itemsPerPage ?? DEFAULT_ITEMS_PER_PAGE,
 	});
 	const [views, setViews] = React.useState<FiltersView[]>([]);
-	const [selected, $setSelected] = React.useState<T[]>([]);
+	const [selected, setSelected] = React.useState<T[] | undefined>([]);
 	const [isBusyMessage, setIsBusyMessage] = React.useState<
 		string | undefined
 	>();
@@ -189,14 +190,16 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		[setFilters, onChange],
 	);
 
-	const setSelected = React.useCallback(
-		(items: T[]) => {
-			$setSelected(items);
+	const $setSelected = React.useCallback<
+		CollectionLensRendererProps<T>['changeSelected']
+	>(
+		(items, checkedState = undefined) => {
+			setSelected(items);
 			if (!!actionData) {
-				setActionData({ ...actionData, affectedEntries: items });
+				setActionData({ ...actionData, affectedEntries: items, checkedState });
 			}
 		},
-		[$setSelected, setActionData, actionData],
+		[setSelected, setActionData, actionData],
 	);
 
 	const showFilters = React.useMemo(
@@ -214,14 +217,15 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	}, [pagination?.serverSide, data, filters]);
 
 	React.useEffect(() => {
-		setSelected([]);
+		$setSelected([], 'none');
 	}, [filters]);
 
 	const onActionTriggered = React.useCallback((actionData: ActionData<T>) => {
 		setActionData(actionData);
 		if (actionData.action.actionFn) {
 			actionData.action.actionFn({
-				affectedEntries: actionData.affectedEntries || [],
+				affectedEntries: actionData.affectedEntries,
+				checkedState: actionData.checkedState || 'none',
 			});
 		}
 	}, []);
@@ -339,13 +343,13 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 			return;
 		}
 		const oData = pagination?.serverSide
-				? {
-						$filter: convertToPineClientFilter([], updatedFilters),
-						$orderby: orderbyBuilder(sortInfo),
-						$top: itemsPerPage,
-						$skip: page * itemsPerPage,
-				  }
-				: null;
+			? {
+					$filter: convertToPineClientFilter([], updatedFilters),
+					$orderby: orderbyBuilder(sortInfo),
+					$top: itemsPerPage,
+					$skip: page * itemsPerPage,
+			  }
+			: null;
 		onChange?.({
 			filters: updatedFilters,
 			page,
@@ -388,6 +392,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 											autouiContext={autouiContext}
 											hasOngoingAction={false}
 											onActionTriggered={onActionTriggered}
+											checkedState={actionData?.checkedState}
 										/>
 									)}
 									{showFilters && (
@@ -417,8 +422,8 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 													<FocusSearch
 														searchTerm={term}
 														filtered={filtered}
-														selected={selected}
-														setSelected={setSelected}
+														selected={selected ?? []}
+														setSelected={$setSelected}
 														autouiContext={autouiContext}
 														model={model}
 														hasUpdateActions={hasUpdateActions}
@@ -488,7 +493,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 								selected={selected}
 								properties={properties}
 								hasUpdateActions={hasUpdateActions}
-								changeSelected={setSelected}
+								changeSelected={$setSelected}
 								onSort={(sortInfo) => {
 									setSort(sortInfo);
 									internalOnChange(
