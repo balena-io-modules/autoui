@@ -1,4 +1,18 @@
 - commits:
+    - subject: Update rendition to 34.7.0
+      hash: 4664ba040a4f25b134b1336ccb7b8f8ce8869f00
+      body: |
+        Update rendition from 34.6.0 to 34.7.0
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.5.1
+  title: ""
+  date: 2023-01-09T11:23:06.057Z
+- commits:
     - subject: Add server side pagination
       hash: b29a4352cc0d3260a87bdeea0769ad5782d99304
       body: ""
