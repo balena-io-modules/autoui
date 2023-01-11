@@ -1,4 +1,17 @@
 - commits:
+    - subject: Share checkedState information on check change
+      hash: 22ba138681821f623b1e69d00a0a60dff9cb1bfa
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.6.0
+  title: ""
+  date: 2023-01-11T17:27:25.866Z
+- commits:
     - subject: Update rendition to 34.7.1
       hash: 66d75d8f5c78139d7605800631a96885ba99bfb3
       body: |
