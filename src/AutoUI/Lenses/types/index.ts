@@ -1,4 +1,9 @@
-import type { BoxProps, TableSortOptions, Pagination } from 'rendition';
+import type {
+	BoxProps,
+	TableSortOptions,
+	Pagination,
+	CheckedState,
+} from 'rendition';
 import { AutoUIEntityPropertyDefinition } from '../../';
 import { AutoUIContext, AutoUIModel } from '../../schemaOps';
 export { table } from './table';
@@ -18,8 +23,11 @@ export interface LensRendererBaseProps<T> extends Pick<BoxProps, 'flex'> {
 export interface CollectionLensRendererProps<T>
 	extends LensRendererBaseProps<T> {
 	filtered: T[];
-	selected: T[];
-	changeSelected: (selected: T[]) => void;
+	selected: T[] | undefined;
+	changeSelected: (
+		selected: T[] | undefined,
+		allChecked?: CheckedState,
+	) => void;
 	data: T[];
 	onPageChange?: (page: number, itemsPerPage: number) => void;
 	onSort?: (sort: TableSortOptions<T>) => void;

@@ -12,7 +12,14 @@ import { faPenToSquare } from '@fortawesome/free-solid-svg-icons/faPenToSquare';
 import groupBy from 'lodash/groupBy';
 import map from 'lodash/map';
 import { useTranslation } from '../../hooks/useTranslation';
-import { Box, Button, DropDownButton, Flex, Spinner } from 'rendition';
+import {
+	Box,
+	Button,
+	CheckedState,
+	DropDownButton,
+	Flex,
+	Spinner,
+} from 'rendition';
 import styled from 'styled-components';
 import { ActionContent, LOADING_DISABLED_REASON } from './ActionContent';
 
@@ -24,7 +31,8 @@ const Wrapper = styled(Box)`
 interface UpdateProps<T extends AutoUIBaseResource<T>> {
 	model: AutoUIModel<T>;
 	autouiContext: AutoUIContext<T>;
-	selected: T[];
+	selected: T[] | undefined;
+	checkedState: CheckedState | undefined;
 	hasOngoingAction: boolean;
 	onActionTriggered: (data: ActionData<T>) => void;
 }
@@ -35,6 +43,7 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 	selected,
 	hasOngoingAction,
 	onActionTriggered,
+	checkedState,
 }: UpdateProps<T>) => {
 	const { t } = useTranslation();
 	const { actions } = autouiContext;
@@ -82,6 +91,7 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 							<ActionContent<T>
 								getDisabledReason={action.isDisabled}
 								affectedEntries={selected}
+								checkedState={checkedState}
 								onDisabledReady={(result) => {
 									setDisabledReasonsByAction((disabledReasonsState) => ({
 										...disabledReasonsState,
@@ -159,6 +169,7 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 					<ActionContent<T>
 						getDisabledReason={action.isDisabled}
 						affectedEntries={selected}
+						checkedState={checkedState}
 						onDisabledReady={(result) => {
 							setDisabledReasonsByAction((disabledReasonsState) => ({
 								...disabledReasonsState,

@@ -36,6 +36,7 @@ export const entity: LensTemplate = {
 					if (actionData.action.actionFn) {
 						actionData.action.actionFn({
 							affectedEntries: actionData.affectedEntries || [],
+							checkedState: undefined,
 						});
 					}
 				},
@@ -62,6 +63,7 @@ export const entity: LensTemplate = {
 										<Update
 											model={model}
 											selected={[data]}
+											checkedState={undefined}
 											autouiContext={autouiContext}
 											hasOngoingAction={false}
 											onActionTriggered={onActionTriggered}

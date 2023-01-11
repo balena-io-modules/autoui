@@ -109,21 +109,21 @@ export const getCreateDisabledReason = <T extends AutoUIBaseResource<T>>(
 };
 
 export const autoUIGetDisabledReason = <T extends AutoUIBaseResource<T>>(
-	selected: T[],
+	selected: T[] | undefined,
 	hasOngoingAction: boolean,
 	actionType: 'update' | 'delete' | null,
 	t: TFunction,
 ) => {
+	if (!selected || !actionType) {
+		return;
+	}
+
 	if (selected.length === 0) {
 		return t('info.no_selected');
 	}
 
 	if (hasOngoingAction) {
 		return t('info.ongoing_action_wait');
-	}
-
-	if (!actionType) {
-		return;
 	}
 
 	const lacksPermissionsOnSelected = selected.some((entry) => {
