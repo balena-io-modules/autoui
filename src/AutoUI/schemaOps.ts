@@ -44,12 +44,16 @@ export interface AutoUIAction<T> {
 		schema: JSONSchema;
 		affectedEntries: T[] | undefined;
 		onDone: () => void;
+		/** setSelected can be can be used for delete function on server side pagination */
+		setSelected?: (selected: Partial<T>[] | undefined, allChecked?: CheckedState | undefined) => void;
 	}) => React.ReactNode;
 	actionFn?: (props: {
 		/** affectedEntries will be undefined if pagination is server side and checkedState is "all" */
 		affectedEntries: T[] | undefined;
 		/** checkState can be undefined only for entity case, since card does not have a selection event  */
 		checkedState: CheckedState | undefined;
+		/** setSelected can be can be used for delete function on server side pagination */
+		setSelected?: (selected: Partial<T>[] | undefined, allChecked?: CheckedState | undefined) => void;
 	}) => void;
 	isDisabled?: (props: {
 		/** affectedEntries will be undefined if pagination is server side and checkedState is "all" */
