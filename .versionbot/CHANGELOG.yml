@@ -1,4 +1,17 @@
 - commits:
+    - subject: Remove FocusSearch on server side pagination
+      hash: 0e4e36fc49d268791be2e59e19b3847580245c34
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.6.2
+  title: ""
+  date: 2023-01-27T14:14:48.692Z
+- commits:
     - subject: Fix filters rule
       hash: 4c9fb74c7a46fd5ca4043ac8890f36a86bed6dfe
       body: ""
