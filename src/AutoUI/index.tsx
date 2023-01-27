@@ -201,11 +201,11 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		},
 		[setSelected, setActionData, actionData],
 	);
-
-	const showFilters = React.useMemo(
+	const hideUtils = React.useMemo(
 		() =>
-			filters.length > 0 ||
-			(Array.isArray(data) && !!(data?.length && data.length > 0)),
+			(!filters || filters.length === 0) &&
+			Array.isArray(data) &&
+			data.length === 0,
 		[data, filters],
 	);
 
@@ -385,78 +385,66 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 										hasOngoingAction={false}
 										onActionTriggered={onActionTriggered}
 									/>
-									{data.length > 0 && (
-										<Update
-											model={model}
-											selected={selected}
-											autouiContext={autouiContext}
-											hasOngoingAction={false}
-											onActionTriggered={onActionTriggered}
-											checkedState={actionData?.checkedState}
-										/>
-									)}
-									{showFilters && (
-										<Box
-											order={[-1, -1, -1, 0]}
-											flex={['1 0 100%', '1 0 100%', '1 0 100%', 'auto']}
-											alignSelf="flex-start"
-											mb={2}
-										>
-											<Filters
-												renderMode={['add', 'search', 'views']}
-												schema={model.schema}
-												filters={filters}
-												views={views}
+									{!hideUtils && (
+										<>
+											<Update
+												model={model}
+												selected={selected}
 												autouiContext={autouiContext}
-												changeFilters={(updatedFilters) => {
-													$setFilters(updatedFilters);
-													internalOnChange(
-														updatedFilters,
-														sort,
-														internalPagination.page,
-														internalPagination.itemsPerPage,
+												hasOngoingAction={false}
+												onActionTriggered={onActionTriggered}
+												checkedState={actionData?.checkedState}
+											/>
+											<Box
+												order={[-1, -1, -1, 0]}
+												flex={['1 0 100%', '1 0 100%', '1 0 100%', 'auto']}
+												alignSelf="flex-start"
+												mb={2}
+											>
+												<Filters
+													renderMode={['add', 'search', 'views']}
+													schema={model.schema}
+													filters={filters}
+													views={views}
+													autouiContext={autouiContext}
+													changeFilters={$setFilters}
+													changeViews={setViews}
+													onSearch={(term) => (
+														<FocusSearch
+															searchTerm={term}
+															filtered={filtered}
+															selected={selected ?? []}
+															setSelected={$setSelected}
+															autouiContext={autouiContext}
+															model={model}
+															hasUpdateActions={hasUpdateActions}
+														/>
+													)}
+												/>
+											</Box>
+											<LensSelection
+												lenses={lenses}
+												lens={lens}
+												setLens={(lens) => {
+													setLens(lens);
+													setToLocalStorage(
+														`${model.resource}__view_lens`,
+														lens.slug,
 													);
 												}}
-												changeViews={setViews}
-												onSearch={(term) => (
-													<FocusSearch
-														searchTerm={term}
-														filtered={filtered}
-														selected={selected ?? []}
-														setSelected={$setSelected}
-														autouiContext={autouiContext}
-														model={model}
-														hasUpdateActions={hasUpdateActions}
-													/>
-												)}
 											/>
-										</Box>
-									)}
-									{(data.length > 0 || filters.length > 0) && (
-										<LensSelection
-											lenses={lenses}
-											lens={lens}
-											setLens={(lens) => {
-												setLens(lens);
-												setToLocalStorage(
-													`${model.resource}__view_lens`,
-													lens.slug,
-												);
-											}}
-										/>
+										</>
 									)}
 								</HeaderGrid>
-								{filters.length > 0 && (
-									<Filters
-										renderMode={'summary'}
-										schema={model.schema}
-										filters={filters}
-										views={views}
-										autouiContext={autouiContext}
-										changeFilters={setFilters}
-										changeViews={setViews}
-									/>
-								)}
+								<Filters
+									renderMode={'summary'}
+									schema={model.schema}
+									filters={filters}
+									views={views}
+									autouiContext={autouiContext}
+									changeFilters={$setFilters}
+									changeViews={setViews}
+								/>
 							</Box>
 							{data.length === 0 && !filters.length && (
 								<NoRecordsFoundArrow>
