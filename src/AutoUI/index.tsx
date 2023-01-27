@@ -358,6 +358,8 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		});
 	};
 
+	console.log('diooo');
+
 	return (
 		<Flex flex={1} flexDirection="column" {...boxProps}>
 			<Spinner
@@ -409,17 +411,20 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 													autouiContext={autouiContext}
 													changeFilters={$setFilters}
 													changeViews={setViews}
-													onSearch={(term) => (
-														<FocusSearch
-															searchTerm={term}
-															filtered={filtered}
-															selected={selected ?? []}
-															setSelected={$setSelected}
-															autouiContext={autouiContext}
-															model={model}
-															hasUpdateActions={hasUpdateActions}
-														/>
-													)}
+													// TODO: add a way to handle the focus search on server side pagination as well
+													{...(!pagination?.serverSide && {
+														onSearch: (term) => (
+															<FocusSearch
+																searchTerm={term}
+																filtered={filtered}
+																selected={selected ?? []}
+																setSelected={$setSelected}
+																autouiContext={autouiContext}
+																model={model}
+																hasUpdateActions={hasUpdateActions}
+															/>
+														),
+													})}
 												/>
 											</Box>
 											<LensSelection
