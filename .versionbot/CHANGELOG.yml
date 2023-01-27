@@ -1,4 +1,17 @@
 - commits:
+    - subject: Fix filters rule
+      hash: 4c9fb74c7a46fd5ca4043ac8890f36a86bed6dfe
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.6.1
+  title: ""
+  date: 2023-01-27T13:26:24.842Z
+- commits:
     - subject: Share checkedState information on check change
       hash: 22ba138681821f623b1e69d00a0a60dff9cb1bfa
       body: ""
