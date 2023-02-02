@@ -1,4 +1,18 @@
 - commits:
+    - subject: Update rendition to 34.8.1
+      hash: a534d6e0c3387c39e186bda34b8fce21ffd651c6
+      body: |
+        Update rendition from 34.7.1 to 34.8.1
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.6.4
+  title: ""
+  date: 2023-02-02T16:54:56.764Z
+- commits:
     - subject: Fix itemsPerPage and usePager rules
       hash: dea8dbaead0716a94aa5ee6955d74ab1f5d4a509
       body: ""
