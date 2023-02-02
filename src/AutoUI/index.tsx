@@ -226,6 +226,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 			actionData.action.actionFn({
 				affectedEntries: actionData.affectedEntries,
 				checkedState: actionData.checkedState || 'none',
+				setSelected: $setSelected,
 			});
 		}
 	}, []);
@@ -517,6 +518,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							schema: actionData.schema,
 							affectedEntries: actionData.affectedEntries,
 							onDone: () => setActionData(undefined),
+							setSelected: $setSelected
 						})}
 				</Flex>
 			</Spinner>

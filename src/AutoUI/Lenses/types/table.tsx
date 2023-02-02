@@ -23,6 +23,8 @@ export const table: LensTemplate = {
 			onSort,
 			pagination,
 		}: CollectionLensRendererProps<any>) => {
+			const itemsPerPage = pagination?.itemsPerPage ?? 50;
+			const totalItems = pagination?.serverSide ? pagination.totalItems : data.length;
 			return (
 				<Table<any>
 					rowKey="id"
@@ -30,9 +32,9 @@ export const table: LensTemplate = {
 					checkedItems={selected}
 					columns={properties}
 					{...(hasUpdateActions && { onCheck: changeSelected })}
-					usePager={data && data.length > 5}
+					usePager={totalItems > itemsPerPage}
 					pagerPosition="bottom"
-					itemsPerPage={50}
+					itemsPerPage={pagination?.itemsPerPage ?? 50}
 					getRowHref={autouiContext.getBaseUrl}
 					onRowClick={onEntityClick}
 					onPageChange={onPageChange}
