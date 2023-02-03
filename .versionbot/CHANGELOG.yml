@@ -1,4 +1,17 @@
 - commits:
+    - subject: Minor fixes, remove unused code and lint fix
+      hash: 0094b0ff5b55ec9bac45749e40a75b2db7b8aab9
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.6.5
+  title: ""
+  date: 2023-02-03T13:27:31.190Z
+- commits:
     - subject: Update rendition to 34.8.1
       hash: a534d6e0c3387c39e186bda34b8fce21ffd651c6
       body: |
