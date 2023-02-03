@@ -359,8 +359,6 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		});
 	};
 
-	console.log('diooo');
-
 	return (
 		<Flex flex={1} flexDirection="column" {...boxProps}>
 			<Spinner
@@ -518,7 +516,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							schema: actionData.schema,
 							affectedEntries: actionData.affectedEntries,
 							onDone: () => setActionData(undefined),
-							setSelected: $setSelected
+							setSelected: $setSelected,
 						})}
 				</Flex>
 			</Spinner>
@@ -598,7 +596,7 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 }): Array<AutoUIEntityPropertyDefinition<T>> =>
 	Object.entries(schema.properties ?? {})
 		// The tables treats tags differently, handle it better
-		.filter((entry): entry is [keyof T, typeof entry[1]] => {
+		.filter((entry): entry is [keyof T, (typeof entry)[1]] => {
 			return entry[0] !== tagField && entry[0] !== idField;
 		})
 		.flatMap(([key, val]) => {
