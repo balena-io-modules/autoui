@@ -24,7 +24,9 @@ export const table: LensTemplate = {
 			pagination,
 		}: CollectionLensRendererProps<any>) => {
 			const itemsPerPage = pagination?.itemsPerPage ?? 50;
-			const totalItems = pagination?.serverSide ? pagination.totalItems : data.length;
+			const totalItems = pagination?.serverSide
+				? pagination.totalItems
+				: data.length;
 			return (
 				<Table<any>
 					rowKey="id"
