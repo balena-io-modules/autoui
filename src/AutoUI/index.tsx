@@ -63,6 +63,7 @@ import {
 	orderbyBuilder,
 } from '../oData/jsonToOData';
 import { CollectionLensRendererProps } from './Lenses/types';
+import pickBy from 'lodash/pickBy';
 
 const DEFAULT_ITEMS_PER_PAGE = 50;
 
@@ -344,12 +345,15 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 			return;
 		}
 		const oData = pagination?.serverSide
-			? {
-					$filter: convertToPineClientFilter([], updatedFilters),
-					$orderby: orderbyBuilder(sortInfo),
-					$top: itemsPerPage,
-					$skip: page * itemsPerPage,
-			  }
+			? pickBy(
+					{
+						$filter: convertToPineClientFilter([], updatedFilters),
+						$orderby: orderbyBuilder(sortInfo),
+						$top: itemsPerPage,
+						$skip: page * itemsPerPage,
+					},
+					(v) => v != null,
+			  )
 			: null;
 		onChange?.({
 			filters: updatedFilters,
