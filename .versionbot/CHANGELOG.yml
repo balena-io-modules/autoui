@@ -1,4 +1,18 @@
 - commits:
+    - subject: Update rendition to 34.8.3
+      hash: c899070892a2aaba46a469c7d65fa727d6e16be0
+      body: |
+        Update rendition from 34.8.1 to 34.8.3
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.6.7
+  title: ""
+  date: 2023-02-09T09:41:36.296Z
+- commits:
     - subject: Stop passing oData options with null values
       hash: 98e40f2ff2c8a92623c3e51471a1137a06602b8b
       body: ""
