@@ -52,6 +52,7 @@ import {
 	Link,
 	Pagination,
 	TableSortOptions,
+	CheckedState,
 } from 'rendition';
 import { getLenses, LensTemplate } from './Lenses';
 import { TFunction, useTranslation } from '../hooks/useTranslation';
@@ -171,6 +172,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	});
 	const [views, setViews] = React.useState<FiltersView[]>([]);
 	const [selected, setSelected] = React.useState<T[] | undefined>([]);
+	const [checkedState, setCheckedState] = React.useState<CheckedState>('none');
 	const [isBusyMessage, setIsBusyMessage] = React.useState<
 		string | undefined
 	>();
@@ -196,6 +198,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	>(
 		(items, checkedState = undefined) => {
 			setSelected(items);
+			setCheckedState(checkedState ?? 'none');
 			if (!!actionData) {
 				setActionData({ ...actionData, affectedEntries: items, checkedState });
 			}
@@ -226,7 +229,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		if (actionData.action.actionFn) {
 			actionData.action.actionFn({
 				affectedEntries: actionData.affectedEntries,
-				checkedState: actionData.checkedState || 'none',
+				checkedState: checkedState || 'none',
 				setSelected: $setSelected,
 			});
 		}
@@ -398,7 +401,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 												autouiContext={autouiContext}
 												hasOngoingAction={false}
 												onActionTriggered={onActionTriggered}
-												checkedState={actionData?.checkedState}
+												checkedState={checkedState}
 											/>
 											<Box
 												order={[-1, -1, -1, 0]}
