@@ -1,4 +1,17 @@
 - commits:
+    - subject: Fix disabled reason check on update actions
+      hash: 612dc85703bea08fbedf74ff775c4ec1b0900e56
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.6.9
+  title: ""
+  date: 2023-02-14T10:37:27.133Z
+- commits:
     - subject: Fix change selected state
       hash: b26e180a9f041537484d56fa1e5ee33c28a94fe6
       body: ""
