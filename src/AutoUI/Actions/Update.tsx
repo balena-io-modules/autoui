@@ -81,6 +81,7 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 					const disabledReason =
 						autoUIGetDisabledReason(
 							selected,
+							checkedState,
 							hasOngoingAction,
 							action.type as 'update' | 'delete',
 							t,
@@ -136,6 +137,7 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 		const disabledReason =
 			autoUIGetDisabledReason(
 				selected,
+				checkedState,
 				hasOngoingAction,
 				action.type as 'update' | 'delete',
 				t,
@@ -192,6 +194,7 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 
 	const disabledReason = autoUIGetDisabledReason(
 		selected,
+		checkedState,
 		hasOngoingAction,
 		null,
 		t,

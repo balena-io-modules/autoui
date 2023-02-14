@@ -7,6 +7,7 @@ import {
 	JsonTypes,
 	TableSortFunction,
 	SchemaSieve,
+	CheckedState,
 } from 'rendition';
 
 export const diff = <T extends unknown>(a: T, b: T) => {
@@ -110,20 +111,21 @@ export const getCreateDisabledReason = <T extends AutoUIBaseResource<T>>(
 
 export const autoUIGetDisabledReason = <T extends AutoUIBaseResource<T>>(
 	selected: T[] | undefined,
+	checkedState: CheckedState | undefined,
 	hasOngoingAction: boolean,
 	actionType: 'update' | 'delete' | null,
 	t: TFunction,
 ) => {
-	if (!selected || !actionType) {
-		return;
-	}
-
-	if (selected.length === 0) {
+	if ((!selected && checkedState === 'none') || selected?.length === 0) {
 		return t('info.no_selected');
 	}
 
 	if (hasOngoingAction) {
 		return t('info.ongoing_action_wait');
+	}
+
+	if (!selected || !actionType) {
+		return;
 	}
 
 	const lacksPermissionsOnSelected = selected.some((entry) => {
