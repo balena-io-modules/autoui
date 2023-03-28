@@ -29,6 +29,15 @@ export interface LensTemplate<T = any> {
 	};
 }
 
+interface LensData {
+	lens: LensTemplate;
+	match: {
+		valid: boolean;
+		errors: string[];
+		score: number;
+	};
+}
+
 const lenses: LensTemplate[] = Object.values(types);
 
 // Returns an array of lenses that can be used to render `data`.
@@ -49,7 +58,7 @@ export const getLenses = <T extends any>(
 	}
 
 	// pick the lenses with filters matching the data
-	let sortedData = filteredLenses
+	let sortedData: LensData[] = filteredLenses
 		.map((lens) => {
 			const filter = jsone(lens.data.filter, context);
 			return {
@@ -60,21 +69,23 @@ export const getLenses = <T extends any>(
 		.filter((value) => value.match.valid);
 
 	// pick the lens with the highest score for each format
-	sortedData = flatten(
+	sortedData = flatten<LensData>(
 		values(
-			map(groupBy(sortedData, 'lens.data.format'), (group) =>
-				group.reduce((prev, current) => {
-					if (current.match.score > prev.match.score) {
-						return current;
-					} else {
-						return prev;
-					}
-				}),
+			map(
+				groupBy<LensData>(sortedData, 'lens.data.format'),
+				(group: LensData[]) =>
+					group.reduce((prev, current) => {
+						if (current.match.score > prev.match.score) {
+							return current;
+						} else {
+							return prev;
+						}
+					}),
 			),
 		),
 	);
 
-	return sortBy(sortedData, 'match.score')
+	return sortBy<LensData>(sortedData, 'match.score')
 		.reverse()
 		.map((value) => value.lens);
 };
