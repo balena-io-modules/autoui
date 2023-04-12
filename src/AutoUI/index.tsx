@@ -34,6 +34,7 @@ import {
 	setToLocalStorage,
 	getSelected,
 	getSortingFunction,
+	getHeaderDocumentation,
 } from './utils';
 import { FocusSearch } from './Filters/FocusSearch';
 import { CustomWidget } from './CustomWidget';
@@ -547,7 +548,14 @@ export {
 export type AutoUIEntityPropertyDefinition<T> = Required<
 	Pick<
 		TableColumn<T>,
-		'title' | 'label' | 'field' | 'key' | 'selected' | 'sortable' | 'render'
+		| 'title'
+		| 'label'
+		| 'field'
+		| 'key'
+		| 'selected'
+		| 'sortable'
+		| 'render'
+		| 'headerDocumentation'
 	>
 > & { type: string; priority: string };
 
@@ -622,6 +630,7 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 			}
 			const definedPriorities = priorities ?? ({} as Priorities<T>);
 			const refScheme = sieve.getPropertyScheme(val);
+			const headerDocumentation = getHeaderDocumentation(val);
 			const priority = definedPriorities.primary.find(
 				(prioritizedKey) => prioritizedKey === key,
 			)
@@ -642,6 +651,7 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 				priority,
 				type: 'predefined',
 				refScheme: refScheme?.[0],
+				headerDocumentation,
 				sortable: customSort?.[key] ?? getSortingFunction(key, val),
 				render: (fieldVal: string, entry: T) => {
 					const calculatedField = autoUIAdaptRefScheme(fieldVal, val);

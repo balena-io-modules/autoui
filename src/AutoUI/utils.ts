@@ -212,3 +212,17 @@ export const onClickOutOrEsc = (
 	document.addEventListener('mousedown', handleClickOutside);
 	document.addEventListener('keydown', handleEsc);
 };
+
+export const getHeaderDocumentation = (
+	schemaValue: JSONSchema | NonNullable<JSONSchema['properties']>[number],
+) => {
+	if (typeof schemaValue === 'boolean' || !schemaValue.description) {
+		return null;
+	}
+	try {
+		const json = JSON.parse(schemaValue.description!);
+		return json['x-header-doc'];
+	} catch (err) {
+		return null;
+	}
+};
