@@ -41,6 +41,7 @@ interface FocusSearchProps<T extends { id: number; [key: string]: any }> {
 	autouiContext: AutoUIContext<T>;
 	model: AutoUIModel<T>;
 	hasUpdateActions?: boolean;
+	rowKey?: keyof T
 }
 
 export const FocusSearch = <T extends { id: number; [key: string]: any }>({
@@ -51,6 +52,7 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 	autouiContext,
 	model,
 	hasUpdateActions,
+	rowKey = 'id'
 }: FocusSearchProps<T>) => {
 	const history = useHistory();
 
@@ -92,7 +94,7 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 					<FocusItem
 						px={1}
 						py={2}
-						key={entity.id}
+						key={entity[rowKey]}
 						onClick={(e) => {
 							e.preventDefault();
 							if (autouiContext.getBaseUrl && history) {
@@ -112,16 +114,16 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 									<Checkbox
 										onChange={() => {
 											const isChecked = !!selected.find(
-												(s) => s.id === entity.id,
+												(s) => s[rowKey] === entity[rowKey],
 											);
 											const checkedItems = !isChecked
 												? selected.concat(entity)
 												: (reject(selected, {
-														id: entity.id,
+														[rowKey]: entity[rowKey],
 												  }) as unknown as Array<typeof entity>);
 											setSelected(checkedItems);
 										}}
-										checked={!!selected.find((s) => s.id === entity.id)}
+										checked={!!selected.find((s) => s[rowKey] === entity[rowKey])}
 										onClick={stopEvent}
 									/>
 								</Flex>

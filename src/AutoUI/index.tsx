@@ -129,6 +129,7 @@ export interface AutoUIProps<T> extends Omit<BoxProps, 'onChange'> {
 	lensContext?: object;
 	/** Loading property to show the Spinner */
 	loading?: boolean;
+	rowKey?: keyof T;
 }
 
 export const AutoUI = <T extends AutoUIBaseResource<T>>({
@@ -146,6 +147,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	customLenses,
 	lensContext,
 	loading,
+	rowKey,
 	...boxProps
 }: AutoUIProps<T>) => {
 	const { t } = useTranslation();
@@ -428,6 +430,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 																autouiContext={autouiContext}
 																model={model}
 																hasUpdateActions={hasUpdateActions}
+																rowKey={rowKey}
 															/>
 														),
 													})}
@@ -515,6 +518,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 									internalOnChange(filters, sort, page, itemsPerPage);
 								}}
 								pagination={pagination}
+								rowKey={rowKey}
 							/>
 						)}
 
