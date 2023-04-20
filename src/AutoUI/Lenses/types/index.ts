@@ -32,6 +32,7 @@ export interface CollectionLensRendererProps<T>
 	onPageChange?: (page: number, itemsPerPage: number) => void;
 	onSort?: (sort: TableSortOptions<T>) => void;
 	pagination?: Pagination;
+	rowKey?: keyof T;
 }
 
 export interface EntityLensRendererProps<T> extends LensRendererBaseProps<T> {
