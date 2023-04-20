@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add `rowKey` property
+      hash: 2c11851e34a136113ba4cc38e128cb81c5bafad0
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: myarmolinsky
+  version: 0.7.0
+  title: ""
+  date: 2023-04-20T11:49:54.976Z
+- commits:
     - subject: Update rendition from 34.8.3 to 34.8.5
       hash: e2e69f5b95195168a36e28befcf344ff30137a64
       body: ""
