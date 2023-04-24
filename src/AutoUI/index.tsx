@@ -65,6 +65,7 @@ import {
 } from '../oData/jsonToOData';
 import { CollectionLensRendererProps } from './Lenses/types';
 import pickBy from 'lodash/pickBy';
+import { DownloadCSV } from './Actions/DownloadCSV';
 
 const DEFAULT_ITEMS_PER_PAGE = 50;
 
@@ -129,7 +130,13 @@ export interface AutoUIProps<T> extends Omit<BoxProps, 'onChange'> {
 	lensContext?: object;
 	/** Loading property to show the Spinner */
 	loading?: boolean;
+	/** Property to use as the key for each rendered entity */
 	rowKey?: keyof T;
+	/** Passes $filter and expects all data */
+	downloadCSV?: {
+		getData: ($filter: any) => Promise<object[]>;
+		fileName: string;
+	};
 }
 
 export const AutoUI = <T extends AutoUIBaseResource<T>>({
@@ -148,6 +155,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	lensContext,
 	loading,
 	rowKey,
+	downloadCSV,
 	...boxProps
 }: AutoUIProps<T>) => {
 	const { t } = useTranslation();
@@ -340,6 +348,11 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		[actions, sdk?.tags],
 	);
 
+	const pineClientfilters = React.useMemo(
+		() => convertToPineClientFilter([], filters),
+		[filters],
+	);
+
 	const internalOnChange = (
 		updatedFilters: JSONSchema[],
 		sortInfo: TableSortOptions<T> | null,
@@ -446,6 +459,10 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 														lens.slug,
 													);
 												}}
+											/>
+											<DownloadCSV
+												downloadCSV={downloadCSV}
+												$filter={pineClientfilters}
 											/>
 										</>
 									)}
