@@ -22,7 +22,7 @@ export const table: LensTemplate = {
 			onPageChange,
 			onSort,
 			pagination,
-			rowKey = 'id'
+			rowKey = 'id',
 		}: CollectionLensRendererProps<any>) => {
 			const itemsPerPage = pagination?.itemsPerPage ?? 50;
 			const totalItems = pagination?.serverSide
