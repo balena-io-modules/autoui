@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix showing `no resources` text when there are resources
+      hash: a1ea566ca6155d6f19547d94460b1737dfed16e5
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 0.7.2
+  title: ""
+  date: 2023-04-24T17:20:03.804Z
+- commits:
     - subject: Use resource name instead of "items" when there are no items
       hash: d8d954eac403b5cdbd7a00f74f49702c4acb42f7
       body: ""
