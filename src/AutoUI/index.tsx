@@ -460,7 +460,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 									changeViews={setViews}
 								/>
 							</Box>
-							{data.length === 0 && !filters.length && (
+							{data.length === 0 && !filters.length && !!autouiContext.actions?.filter((action) => action.type === 'create').length ? (
 								<NoRecordsFoundArrow>
 									{t(`no_data.no_resource_data`, {
 										resource: t(`resource.item_plural`).toLowerCase(),
@@ -468,7 +468,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 									<br />
 									{t('questions.how_about_adding_one')}
 								</NoRecordsFoundArrow>
-							)}
+							) : t('no_data.no_resource_data', {resource: t(`resource.item_plural`).toLowerCase()})}
 						</>
 					)}
 					{!Array.isArray(data) && (
