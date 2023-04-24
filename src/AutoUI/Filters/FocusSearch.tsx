@@ -41,7 +41,7 @@ interface FocusSearchProps<T extends { id: number; [key: string]: any }> {
 	autouiContext: AutoUIContext<T>;
 	model: AutoUIModel<T>;
 	hasUpdateActions?: boolean;
-	rowKey?: keyof T
+	rowKey?: keyof T;
 }
 
 export const FocusSearch = <T extends { id: number; [key: string]: any }>({
@@ -52,7 +52,7 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 	autouiContext,
 	model,
 	hasUpdateActions,
-	rowKey = 'id'
+	rowKey = 'id',
 }: FocusSearchProps<T>) => {
 	const history = useHistory();
 
@@ -123,7 +123,9 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 												  }) as unknown as Array<typeof entity>);
 											setSelected(checkedItems);
 										}}
-										checked={!!selected.find((s) => s[rowKey] === entity[rowKey])}
+										checked={
+											!!selected.find((s) => s[rowKey] === entity[rowKey])
+										}
 										onClick={stopEvent}
 									/>
 								</Flex>
