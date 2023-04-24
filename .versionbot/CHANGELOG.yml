@@ -1,4 +1,22 @@
 - commits:
+    - subject: Use resource name instead of "items" when there are no items
+      hash: d8d954eac403b5cdbd7a00f74f49702c4acb42f7
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+    - subject: Do not show arrow pointing to create button if there is no create action
+      hash: f7d49ad7ae52877f13d40011c3744c26dce7d906
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 0.7.1
+  title: ""
+  date: 2023-04-24T13:24:18.019Z
+- commits:
     - subject: Add `rowKey` property
       hash: 2c11851e34a136113ba4cc38e128cb81c5bafad0
       body: ""
