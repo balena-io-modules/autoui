@@ -134,7 +134,7 @@ export interface AutoUIProps<T> extends Omit<BoxProps, 'onChange'> {
 	rowKey?: keyof T;
 	/** Passes $filter and expects all data */
 	downloadCSV?: {
-		getData: ($filter: any) => Promise<object[]>;
+		getData: ($filter: any) => Promise<T[]>;
 		fileName: string;
 	};
 }
@@ -461,6 +461,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 												}}
 											/>
 											<DownloadCSV
+												model={model}
 												downloadCSV={downloadCSV}
 												$filter={pineClientfilters}
 											/>
