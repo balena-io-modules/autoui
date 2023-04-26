@@ -1,4 +1,15 @@
 - commits:
+    - subject: Bump tsconfig target from es5 to es2015
+      hash: 66241e16de5a95e42a8922b3fc0e17b31a98eafc
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: myarmolinsky
+  version: 0.8.0
+  title: ""
+  date: 2023-04-26T17:08:45.952Z
+- commits:
     - subject: Fix showing `no resources` text when there are resources
       hash: a1ea566ca6155d6f19547d94460b1737dfed16e5
       body: ""
