@@ -99,6 +99,7 @@ nbproject
 # Dist files
 dist
 dist_esm5
+dist_esm2015
 .out
 
 .reg
