@@ -1,9 +1,9 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "es2015",
-    "target": "es5",
-    "outDir": "dist_esm5",
+    "module": "es2020",
+    "target": "es2015",
+    "outDir": "dist_esm2015",
     "declaration": true,
     "importHelpers": true
   }

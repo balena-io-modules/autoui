@@ -3,7 +3,7 @@
     "types": ["node", "jest"],
     "module": "commonjs",
     "resolveJsonModule": true,
-    "target": "es5",
+    "target": "ES2015",
     "outDir": "dist",
     "rootDir": "./src",
     "declaration": true,
