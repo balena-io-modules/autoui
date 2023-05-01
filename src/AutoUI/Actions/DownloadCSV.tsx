@@ -40,6 +40,7 @@ const toCsv = <T extends AutoUIBaseResource<T>>(
 	data: T[],
 	model: AutoUIModel<T>,
 ) => {
+	// TODO only use data from columns that the user has read permissions for
 	console.log('*** data', data);
 	console.log('*** model', model);
 	const { schema, priorities } = model;
@@ -47,16 +48,64 @@ const toCsv = <T extends AutoUIBaseResource<T>>(
 	if (!properties || !priorities) {
 		return '';
 	}
-	const allPriorities = [...priorities.primary, ...priorities.secondary, ...priorities.tertiary];
+	const allPriorities = [
+		...priorities.primary,
+		...priorities.secondary,
+		...priorities.tertiary,
+	];
 	const propertiesWithPriority = [
 		...allPriorities.map((priority) => properties[priority]),
-	].filter((property) => property != null)
+	].filter((property) => property != null);
 	const arr = [
-		propertiesWithPriority.map((property) => typeof property != 'boolean' && 'title' in property ? property.title : ''),
+		propertiesWithPriority.map((property) =>
+			typeof property !== 'boolean' && 'title' in property
+				? property.title ?? ''
+				: '',
+		),
 	];
+	for (const item of data) {
+		const row = [];
+		for (const column of allPriorities) {
+			const property = properties[column];
+			if (property) {
+				const itemColumn = item[column];
+				if (
+					typeof property !== 'boolean' &&
+					'description' in property &&
+					property.description != null
+				) {
+					if (
+						property.type === 'array' ||
+						(Array.isArray(property.type) && property.type.includes('array'))
+					) {
+						// array
+						row.push(
+							(itemColumn as Array<typeof itemColumn>)[0][
+								JSON.parse(property.description)[
+									'x-ref-scheme'
+								][0] as keyof typeof itemColumn
+							] as string,
+						);
+					} else {
+						// object
+						row.push(
+							itemColumn[
+								JSON.parse(property.description)[
+									'x-ref-scheme'
+								][0] as keyof typeof itemColumn
+							] as string,
+						);
+					}
+				} else {
+					row.push(itemColumn as string);
+				}
+			}
+		}
+		arr.push(row);
+	}
 	console.log('*** arr', arr);
 	return arr
-		.map((row) => row.map((val) => JSON.stringify(val)).join(','))
+		.map((row) => row.map((val) => `"${val}"`).join(','))
 		.join('\n');
 };
 
