@@ -7,6 +7,7 @@ export type TFunction = (str: string, options?: any) => string;
 
 const translationMap = {
 	'actions.manage_tags': 'Manage tags',
+	'actions.download_csv': 'Download CSV',
 	'info.update_item_no_permissions':
 		"You don't have permission to {{action}} the selected {{resource}}",
 	'info.ongoing_action_wait': 'There is an ongoing action, please wait',
