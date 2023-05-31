@@ -19,6 +19,9 @@ const translationMap = {
 	'labels.modify': 'Modify',
 	'loading.resource': 'Loading {{resource}}',
 	'no_data.no_resource_data': "You don't have any {{resource}} yet.",
+	'no_data.no_resource_data_title': 'This is where all your {{resource}} live.',
+	'no_data.no_resource_data_description':
+		"This is a bit empty now, let's go ahead and add one",
 	'questions.how_about_adding_one': 'How about adding one?',
 	'resource.item_plural': 'Items',
 	'success.resource_added_successfully': '{{name}} added successfully',

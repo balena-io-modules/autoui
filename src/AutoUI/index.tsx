@@ -14,7 +14,6 @@ import { LensSelection } from './Lenses/LensSelection';
 import styled from 'styled-components';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import isEqual from 'lodash/isEqual';
-import { NoRecordsFoundArrow } from './NoRecordsFoundArrow';
 import { Filters } from './Filters/Filters';
 import { Tags } from './Actions/Tags';
 import { Update } from './Actions/Update';
@@ -65,6 +64,7 @@ import {
 } from '../oData/jsonToOData';
 import { CollectionLensRendererProps } from './Lenses/types';
 import pickBy from 'lodash/pickBy';
+import { NoRecordsFoundView } from './NoRecordsFoundView';
 
 const DEFAULT_ITEMS_PER_PAGE = 50;
 
@@ -82,6 +82,15 @@ const HeaderGrid = styled(Flex)`
 		}
 	}
 `;
+
+export interface NoDataInfo {
+	title?: string | JSX.Element;
+	subtitle?: string | JSX.Element;
+	info?: string | JSX.Element;
+	description?: string | JSX.Element;
+	docsLink?: string;
+	docsLabel?: string;
+}
 
 export interface AutoUIProps<T> extends Omit<BoxProps, 'onChange'> {
 	/** Model is the property that describe the data to display with a JSON structure */
@@ -130,6 +139,7 @@ export interface AutoUIProps<T> extends Omit<BoxProps, 'onChange'> {
 	/** Loading property to show the Spinner */
 	loading?: boolean;
 	rowKey?: keyof T;
+	noDataInfo?: NoDataInfo;
 }
 
 export const AutoUI = <T extends AutoUIBaseResource<T>>({
@@ -148,6 +158,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	lensContext,
 	loading,
 	rowKey,
+	noDataInfo,
 	...boxProps
 }: AutoUIProps<T>) => {
 	const { t } = useTranslation();
@@ -303,7 +314,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		return {
 			resource: model.resource,
 			idField: 'id',
-			nameField: model.priorities?.primary[0] ?? 'id',
+			nameField: (model.priorities?.primary[0] as string) ?? 'id',
 			tagField,
 			getBaseUrl,
 			onEntityClick,
@@ -383,104 +394,100 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 				<Flex height="100%" flexDirection="column">
 					{Array.isArray(data) && (
 						<>
-							<Box mb={3}>
-								<HeaderGrid
-									flexWrap="wrap"
-									justifyContent="space-between"
-									alignItems="baseline"
-								>
-									<Create
-										model={model}
-										autouiContext={autouiContext}
-										hasOngoingAction={false}
-										onActionTriggered={onActionTriggered}
-									/>
-									{!hideUtils && (
-										<>
-											<Update
-												model={model}
-												selected={selected}
+							{!hideUtils ? (
+								<Box mb={3}>
+									<HeaderGrid
+										flexWrap="wrap"
+										justifyContent="space-between"
+										alignItems="baseline"
+									>
+										<Create
+											model={model}
+											autouiContext={autouiContext}
+											hasOngoingAction={false}
+											onActionTriggered={onActionTriggered}
+										/>
+
+										<Update
+											model={model}
+											selected={selected}
+											autouiContext={autouiContext}
+											hasOngoingAction={false}
+											onActionTriggered={onActionTriggered}
+											checkedState={checkedState}
+										/>
+										<Box
+											order={[-1, -1, -1, 0]}
+											flex={['1 0 100%', '1 0 100%', '1 0 100%', 'auto']}
+											alignSelf="flex-start"
+											mb={2}
+										>
+											<Filters
+												renderMode={['add', 'search', 'views']}
+												schema={model.schema}
+												filters={filters}
+												views={views}
 												autouiContext={autouiContext}
-												hasOngoingAction={false}
-												onActionTriggered={onActionTriggered}
-												checkedState={checkedState}
+												changeFilters={$setFilters}
+												changeViews={setViews}
+												// TODO: add a way to handle the focus search on server side pagination as well
+												{...(!pagination?.serverSide && {
+													onSearch: (term) => (
+														<FocusSearch
+															searchTerm={term}
+															filtered={filtered}
+															selected={selected ?? []}
+															setSelected={$setSelected}
+															autouiContext={autouiContext}
+															model={model}
+															hasUpdateActions={hasUpdateActions}
+															rowKey={rowKey}
+														/>
+													),
+												})}
 											/>
-											<Box
-												order={[-1, -1, -1, 0]}
-												flex={['1 0 100%', '1 0 100%', '1 0 100%', 'auto']}
-												alignSelf="flex-start"
-												mb={2}
-											>
-												<Filters
-													renderMode={['add', 'search', 'views']}
-													schema={model.schema}
-													filters={filters}
-													views={views}
-													autouiContext={autouiContext}
-													changeFilters={$setFilters}
-													changeViews={setViews}
-													// TODO: add a way to handle the focus search on server side pagination as well
-													{...(!pagination?.serverSide && {
-														onSearch: (term) => (
-															<FocusSearch
-																searchTerm={term}
-																filtered={filtered}
-																selected={selected ?? []}
-																setSelected={$setSelected}
-																autouiContext={autouiContext}
-																model={model}
-																hasUpdateActions={hasUpdateActions}
-																rowKey={rowKey}
-															/>
-														),
-													})}
-												/>
-											</Box>
-											<LensSelection
-												lenses={lenses}
-												lens={lens}
-												setLens={(lens) => {
-													setLens(lens);
-													setToLocalStorage(
-														`${model.resource}__view_lens`,
-														lens.slug,
-													);
-												}}
-											/>
-										</>
-									)}
-								</HeaderGrid>
-								<Filters
-									renderMode={'summary'}
-									schema={model.schema}
-									filters={filters}
-									views={views}
-									autouiContext={autouiContext}
-									changeFilters={$setFilters}
-									changeViews={setViews}
-								/>
-							</Box>
-							{data.length === 0 &&
+										</Box>
+										<LensSelection
+											lenses={lenses}
+											lens={lens}
+											setLens={(lens) => {
+												setLens(lens);
+												setToLocalStorage(
+													`${model.resource}__view_lens`,
+													lens.slug,
+												);
+											}}
+										/>
+									</HeaderGrid>
+									<Filters
+										renderMode={'summary'}
+										schema={model.schema}
+										filters={filters}
+										views={views}
+										autouiContext={autouiContext}
+										changeFilters={$setFilters}
+										changeViews={setViews}
+									/>
+								</Box>
+							) : (
 								!filters.length &&
 								(!!autouiContext.actions?.filter(
 									(action) => action.type === 'create',
 								).length ? (
-									<NoRecordsFoundArrow>
-										{t(`no_data.no_resource_data`, {
-											resource: t(
-												`resource.${model.resource}_plural`,
-											).toLowerCase(),
-										})}
-										<br />
-										{t('questions.how_about_adding_one')}
-									</NoRecordsFoundArrow>
+									<NoRecordsFoundView
+										model={model}
+										autouiContext={autouiContext}
+										onActionTriggered={onActionTriggered}
+										noDataInfo={noDataInfo}
+									/>
 								) : (
 									t('no_data.no_resource_data', {
 										resource: t(
 											`resource.${model.resource}_plural`,
 										).toLowerCase(),
 									})
-								))}
+								))
+							)}
 						</>
 					)}
 					{!Array.isArray(data) && (
@@ -619,7 +626,7 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 }): Array<AutoUIEntityPropertyDefinition<T>> =>
 	Object.entries(schema.properties ?? {})
 		// The tables treats tags differently, handle it better
-		.filter((entry): entry is [keyof T, (typeof entry)[1]] => {
+		.filter((entry): entry is [string, (typeof entry)[1]] => {
 			return entry[0] !== tagField && entry[0] !== idField;
 		})
 		.flatMap(([key, val]) => {

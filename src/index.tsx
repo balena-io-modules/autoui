@@ -13,6 +13,7 @@ export {
 	AutoUIModel,
 	autoUIJsonSchemaPick,
 	autoUIGetDisabledReason,
+	NoDataInfo,
 } from './AutoUI';
 
 export { Permissions } from './AutoUI/schemaOps';
