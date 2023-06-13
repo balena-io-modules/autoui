@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update rendition from 34.8.5 to 34.15.2
+      hash: a9c584f6368af7482af0371a53c8f52888294982
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.9.1
+  title: ""
+  date: 2023-06-13T13:34:24.864Z
+- commits:
     - subject: Restyle autoui no data view
       hash: d860be435161563ffcd300433d363b3b4b4d7efd
       body: ""
