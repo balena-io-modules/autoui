@@ -1,6 +1,6 @@
 {
   "name": "@balena/autoui",
-  "version": "0.9.0",
+  "version": "0.8.0",
   "description": "",
   "main": "./dist/index.js",
   "module": "./dist_esm2015/index.js",
@@ -18,7 +18,7 @@
     "qs": "^6.10.3",
     "react-router": "^5.3.3",
     "react-router-dom": "^5.3.3",
-    "rendition": "^34.8.5",
+    "rendition": "^34.15.2",
     "skhema": "^5.3.4",
     "styled-components": "^5.3.5"
   },
@@ -90,6 +90,6 @@
     ]
   },
   "versionist": {
-    "publishedAt": "2023-06-13T13:09:12.481Z"
+    "publishedAt": "2023-04-26T17:08:46.134Z"
   }
 }
