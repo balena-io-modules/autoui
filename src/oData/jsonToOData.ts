@@ -128,7 +128,7 @@ const handleFilterArray = (
 		const $alias = createAlias(parentKey);
 		const nestedFilters = convertToPineClientFilter(
 			[$alias],
-			filterObj.contains,
+			filterObj.contains as JSONSchema,
 		);
 		if (nestedFilters) {
 			filters.push({
