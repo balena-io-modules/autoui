@@ -1,4 +1,17 @@
 - commits:
+    - subject: Restyle autoui no data view
+      hash: d860be435161563ffcd300433d363b3b4b4d7efd
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.9.0
+  title: ""
+  date: 2023-06-13T13:09:12.352Z
+- commits:
     - subject: Bump tsconfig target from es5 to es2015
       hash: 66241e16de5a95e42a8922b3fc0e17b31a98eafc
       body: ""
