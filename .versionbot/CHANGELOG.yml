@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update rendition to 34.15.6
+      hash: 73cb506af9d2304b1e99ea84a4cc8703ff41a3d5
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 0.9.3
+  title: ""
+  date: 2023-06-22T13:40:37.444Z
+- commits:
     - subject: Fix typo for empty table views descriptions
       hash: 8d9daa852b67888a96639f428582c490f33543a0
       body: ""
