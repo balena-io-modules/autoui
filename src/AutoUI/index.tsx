@@ -467,6 +467,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 										autouiContext={autouiContext}
 										changeFilters={$setFilters}
 										changeViews={setViews}
+										showSaveView
 									/>
 								</Box>
 							) : (
