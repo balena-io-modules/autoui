@@ -18,6 +18,7 @@ interface FiltersProps<T> {
 	changeViews: (views: FiltersView[]) => void;
 	renderMode?: FilterRenderMode | FilterRenderMode[];
 	onSearch?: (searchTerm: string) => React.ReactElement | null;
+	showSaveView?: boolean;
 }
 
 const DEFAULT_RENDER_MODE = (['add', 'search', 'views'] as const).slice();
@@ -31,6 +32,7 @@ export const Filters = <T extends AutoUIBaseResource<T>>({
 	autouiContext,
 	renderMode,
 	onSearch,
+	showSaveView,
 }: FiltersProps<T>) => {
 	const history = useHistory();
 	return (
@@ -47,6 +49,7 @@ export const Filters = <T extends AutoUIBaseResource<T>>({
 					renderMode={renderMode ?? DEFAULT_RENDER_MODE}
 					onSearch={onSearch}
 					compact={[true, true, false]}
+					showSaveView={showSaveView}
 				/>
 			) : (
 				<RenditionFilters
@@ -58,6 +61,7 @@ export const Filters = <T extends AutoUIBaseResource<T>>({
 					renderMode={renderMode ?? DEFAULT_RENDER_MODE}
 					onSearch={onSearch}
 					compact={[true, true, false]}
+					showSaveView={showSaveView}
 				/>
 			)}
 		</>
