@@ -70,11 +70,12 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 		if (!refScheme || typeof schemaProperty === 'boolean') {
 			return entity[property];
 		}
-		return schemaProperty?.type === 'array'
-			? entity[property][0]?.[refScheme]
-			: schemaProperty?.type === 'object'
-			? entity[property][refScheme]
-			: entity[property];
+		const newEntity =
+			schemaProperty?.type === 'array' ? entity[property][0] : entity[property];
+		if (refScheme.length > 1) {
+			return refScheme.map((reference) => newEntity?.[reference]).join(' ');
+		}
+		return newEntity?.[refScheme[0]] ?? entity[property];
 	};
 
 	if (!filteredFittingSearchTerms.length) {
