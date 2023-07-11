@@ -608,6 +608,17 @@ const getTitleAndLabel = (
 	};
 };
 
+const isFilterOnly = (value: string[] | true | null, propertyKey: string) => {
+	if (!value) {
+		return false;
+	}
+	return Array.isArray(value) && value.some((v) => v === propertyKey)
+		? true
+		: typeof value === 'boolean'
+		? true
+		: false;
+};
+
 const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 	t,
 	schema,
@@ -626,21 +637,45 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 	formats?: Format[];
 }): Array<AutoUIEntityPropertyDefinition<T>> =>
 	Object.entries(schema.properties ?? {})
-		// The tables treats tags differently, handle it better
-		.filter((entry): entry is [string, (typeof entry)[1]] => {
-			return entry[0] !== tagField && entry[0] !== idField;
-		})
-		.flatMap(([key, val]) => {
+		.flatMap(([key, val]: [Extract<keyof T, string>, JSONSchema]) => {
 			const refScheme = sieve.getPropertyScheme(val);
 			if (!refScheme || refScheme.length <= 1 || typeof val !== 'object') {
 				return [[key, val]];
 			}
+			const entityFilterOnly = sieve.parseDescriptionProperty<string[] | true>(
+				val,
+				'x-filter-only',
+			);
 			return refScheme.map((propKey: string) => {
-				const description = JSON.stringify({ 'x-ref-scheme': [propKey] });
+				const referenceSchema = sieve.generateSchemaFromRefScheme(
+					val,
+					key,
+					propKey,
+				);
+				const referenceSchemaFilterOnly = sieve.parseDescriptionProperty<
+					string[] | true
+				>(referenceSchema, 'x-filter-only');
+				const xFilterOnly =
+					isFilterOnly(referenceSchemaFilterOnly, propKey) ||
+					isFilterOnly(entityFilterOnly, propKey);
+				const description = JSON.stringify({
+					'x-ref-scheme': [propKey],
+					...(xFilterOnly ? { 'x-filter-only': 'true' } : {}),
+				});
 				return [key, { ...val, description }];
 			});
 		})
-		.map(([key, val], index) => {
+		.filter(([key, val]: [Extract<keyof T, string>, JSONSchema]) => {
+			const entryDescription = sieve.parseDescription(val);
+			return (
+				!entryDescription ||
+				(entryDescription &&
+					!('x-filter-only' in entryDescription) &&
+					key !== tagField &&
+					key !== idField)
+			);
+		})
+		.map(([key, val]: [Extract<keyof T, string>, JSONSchema], index) => {
 			if (typeof val !== 'object') {
 				return;
 			}
