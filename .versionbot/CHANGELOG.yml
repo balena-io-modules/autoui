@@ -1,4 +1,27 @@
 - commits:
+    - subject: Add x-filter-only property that allow to generate only the filter for a
+        specific property
+      hash: 4eaec6ec2c7f7de68719c7ac1215622d3353c988
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+    - subject: Update rendition to 34.16.2
+      hash: 8956aebfb94f5e6e6ce31f2b44fbc113e2165244
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.10.0
+  title: ""
+  date: 2023-07-11T09:12:29.715Z
+- commits:
     - subject: Update rendition to 34.15.6
       hash: 73cb506af9d2304b1e99ea84a4cc8703ff41a3d5
       body: ""
