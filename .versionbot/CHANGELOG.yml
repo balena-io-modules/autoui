@@ -1,4 +1,17 @@
 - commits:
+    - subject: Fix tags filter on table columns creation
+      hash: 8da11c8b97d22bcb67b33412831a8375b6bf7573
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+  version: 0.10.1
+  title: ""
+  date: 2023-07-12T14:50:22.489Z
+- commits:
     - subject: Add x-filter-only property that allow to generate only the filter for a
         specific property
       hash: 4eaec6ec2c7f7de68719c7ac1215622d3353c988
