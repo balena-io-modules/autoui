@@ -668,11 +668,9 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 		.filter(([key, val]: [Extract<keyof T, string>, JSONSchema]) => {
 			const entryDescription = sieve.parseDescription(val);
 			return (
-				!entryDescription ||
-				(entryDescription &&
-					!('x-filter-only' in entryDescription) &&
-					key !== tagField &&
-					key !== idField)
+				key !== tagField &&
+				key !== idField &&
+				(!entryDescription || !('x-filter-only' in entryDescription))
 			);
 		})
 		.map(([key, val]: [Extract<keyof T, string>, JSONSchema], index) => {
