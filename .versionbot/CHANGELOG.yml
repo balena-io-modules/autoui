@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update rendition to 35.0.1
+      hash: 4b940ba240f211b2bd26fe22783801db7ff68292
+      body: |
+        Update rendition from 34.16.2 to 35.0.1
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+  version: 0.11.0
+  title: ""
+  date: 2023-08-09T14:41:59.944Z
+- commits:
     - subject: Fix tags filter on table columns creation
       hash: 8da11c8b97d22bcb67b33412831a8375b6bf7573
       body: ""
