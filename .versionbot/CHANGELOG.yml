@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix flickering of no-data info when loading
+      hash: 9fa3e7c30d492ccc1730ec2caf960ad27c99b72c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 0.11.1
+  title: ""
+  date: 2023-11-14T17:48:22.062Z
+- commits:
     - subject: Update rendition to 35.0.1
       hash: 4b940ba240f211b2bd26fe22783801db7ff68292
       body: |
