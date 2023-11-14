@@ -379,6 +379,18 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		});
 	};
 
+	if (!!loading) {
+		return (
+			<Spinner
+				width="100%"
+				height="100%"
+				label={t('loading.resource', {
+					resource: t(`resource.${model.resource}_plural`).toLowerCase(),
+				})}
+			/>
+		);
+	}
+
 	return (
 		<Flex flex={1} flexDirection="column" {...boxProps}>
 			<Spinner
@@ -389,7 +401,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 						resource: t(`resource.${model.resource}_plural`).toLowerCase(),
 					})
 				}
-				show={data == null || !!isBusyMessage || !!loading}
+				show={data == null || !!isBusyMessage}
 			>
 				<Flex height="100%" flexDirection="column">
 					{Array.isArray(data) && (
