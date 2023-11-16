@@ -379,7 +379,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		});
 	};
 
-	if (!!loading) {
+	if (!!loading && (!data || (Array.isArray(data) && !data?.length))) {
 		return (
 			<Spinner
 				width="100%"
