@@ -379,18 +379,6 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		});
 	};
 
-	if (!!loading && (!data || (Array.isArray(data) && !data?.length))) {
-		return (
-			<Spinner
-				width="100%"
-				height="100%"
-				label={t('loading.resource', {
-					resource: t(`resource.${model.resource}_plural`).toLowerCase(),
-				})}
-			/>
-		);
-	}
-
 	return (
 		<Flex flex={1} flexDirection="column" {...boxProps}>
 			<Spinner
@@ -401,13 +389,31 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 						resource: t(`resource.${model.resource}_plural`).toLowerCase(),
 					})
 				}
-				show={data == null || !!isBusyMessage}
+				show={data == null || loading || !!isBusyMessage}
+				{...(data == null
+					? { width: '100%', height: '100%' }
+					: undefined)}
 			>
-				<Flex height="100%" flexDirection="column">
-					{Array.isArray(data) && (
+				<Flex
+					height="100%"
+					flexDirection="column"
+				>
+					{
+						// We need to mount the Filters component so that it can load the filters
+						// & pagination state from the url (or use defaults) and provide them to
+						// the parent component (via $setFilters -> onChange) to use them for the
+						// initial data fetching request.
+						(data == null || Array.isArray(data)) && (
 						<>
 							{!hideUtils ? (
-								<Box mb={3}>
+								<Box mb={3}
+									display={
+										// This hides the Filters component during the initial load but keeps them mounted so that
+										// it can trigger onChange on mount to communicate to the parent component the pineOptions 
+										// that need to be used.
+										data == null ? 'none' : undefined
+									}
+								>
 									<HeaderGrid
 										flexWrap="wrap"
 										justifyContent="space-between"
