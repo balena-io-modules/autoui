@@ -56,10 +56,12 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 }: FocusSearchProps<T>) => {
 	const history = useHistory();
 
+	const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	
 	const filteredFittingSearchTerms = React.useMemo(() => {
-		const filter = sieve.createFullTextSearchFilter(model.schema, searchTerm);
+		const filter = sieve.createFullTextSearchFilter(model.schema, escapedSearchTerm);
 		return sieve.filter(filter, filtered);
-	}, [searchTerm, filtered]);
+	}, [escapedSearchTerm, filtered]);
 
 	const getEntityValue = (entity: T) => {
 		const property = model.priorities?.primary[0]!;
