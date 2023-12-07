@@ -12,6 +12,7 @@
     "README.md"
   ],
   "dependencies": {
+    "@balena/ui-shared-components": "^0.13.6",
     "@types/history": "^4.7.11",
     "json-e": "^4.4.3",
     "lodash": "^4.17.21",
