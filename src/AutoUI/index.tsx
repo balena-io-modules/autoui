@@ -14,7 +14,7 @@ import { LensSelection } from './Lenses/LensSelection';
 import styled from 'styled-components';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import isEqual from 'lodash/isEqual';
-import { Filters } from './Filters/Filters';
+import { Filters } from './Filters';
 import { Tags } from './Actions/Tags';
 import { Update } from './Actions/Update';
 import { Create } from './Actions/Create';
