@@ -1,69 +1,282 @@
 import React from 'react';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
-import { PersistentFilters } from './PersistentFilters';
-import { AutoUIContext, AutoUIBaseResource } from '../schemaOps';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter';
+import styled from 'styled-components';
+import cloneDeep from 'lodash/cloneDeep';
+import isEqual from 'lodash/isEqual';
 import {
-	FilterRenderMode,
-	FiltersView,
-	Filters as RenditionFilters,
+	Box,
+	Button,
+	ButtonProps,
+	DropDownButtonProps,
+	Flex,
+	Search,
 } from 'rendition';
-import { useHistory } from '../../hooks/useHistory';
+import { OperatorSlugs } from 'rendition/dist/components/DataTypes';
+import {
+	Operator,
+	createFullTextSearchFilter,
+} from 'rendition/dist/components/Filters/SchemaSieve';
+import { onClickOutOrEsc } from '../utils';
+import ViewsMenu from './ViewsMenu';
+import { Summary } from './Summary';
+import { FilterModal } from './FilterModal';
 
-interface FiltersProps<T> {
-	schema: JSONSchema;
-	filters: JSONSchema[];
-	views: FiltersView[];
-	autouiContext: AutoUIContext<T>;
-	changeFilters: (filters: JSONSchema[]) => void;
-	changeViews: (views: FiltersView[]) => void;
-	renderMode?: FilterRenderMode | FilterRenderMode[];
-	onSearch?: (searchTerm: string) => React.ReactElement | null;
-	showSaveView?: boolean;
+const randomString = (length = 16) => {
+	let text = '';
+	const possible =
+		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	for (let i = 0; i < length; i++) {
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	return text;
+};
+
+const SearchWrapper = styled(Box)`
+	width: 100%;
+	flex-basis: 100%;
+	position: relative;
+	margin-right: 4px;
+	padding: 0 4px;
+	align-self: center;
+`;
+
+export interface FilterSignature {
+	title: string | undefined;
+	field: string;
+	operator: Operator<OperatorSlugs>;
+	value: any;
+	label?: string;
+	refScheme?: string;
 }
 
-const DEFAULT_RENDER_MODE = (['add', 'search', 'views'] as const).slice();
+export interface FilterFieldOption {
+	field: string;
+	title: string;
+}
 
-export const Filters = <T extends AutoUIBaseResource<T>>({
-	schema,
+export type FilterFieldCompareFn = (
+	a: FilterFieldOption,
+	b: FilterFieldOption,
+) => number;
+
+export type FilterRenderMode = 'all' | 'add' | 'search' | 'views' | 'summary';
+
+export interface FiltersView {
+	id: string;
+	name: string;
+	filters: JSONSchema[];
+}
+
+export interface FiltersProps {
+	/** If true, disable the entire `Filters` interface */
+	disabled?: boolean;
+	/** An array of json schemas to be displayed as the currently selected filters, typically used when loading filters from storage */
+	filters?: JSONSchema[];
+	/** An array of views, as described above, typically used when loading views from storage */
+	views?: FiltersView[];
+	/** A function that is called when filters are updated */
+	onFiltersUpdate?: (filters: JSONSchema[]) => void;
+	/** A function that is called when views are updated */
+	onViewsUpdate?: (views: FiltersView[]) => void;
+	/** A function that is called when pressing serach on searchbar */
+	onSearch?: (searchTerm: string) => React.ReactElement | null;
+	/** A json schema describing the shape of the objects you want to filter */
+	schema: JSONSchema;
+	/** Properties that are passed to the "Add filter" button, these are the same props used for the [`Button`](#button) component */
+	addFilterButtonProps?: ButtonProps;
+	/** If true, show the `Save view` button in the `summary` renderMode. By default is set depending on whether `views` renderMode is included */
+	showSaveView?: boolean;
+	/** Properties that are passed to the "Views" button, these are the same props used for the [DropDownButton](#dropdownbutton) component */
+	viewsMenuButtonProps?: DropDownButtonProps;
+	/** Controls which parts of the Filters interface are displayed. One of `all`, `add`, `search`, `views`, `summary`, or an array containing any of these values */
+	renderMode?: FilterRenderMode | FilterRenderMode[];
+	/** If true, Set the `Filters` component against a dark background */
+	dark?: boolean;
+	/** Accept a boolean for each rendition breakpoint. If true remove `Filters` labels */
+	compact?: boolean[];
+	/** An optional callback used to sort filter field options */
+	filterFieldCompareFn?: FilterFieldCompareFn;
+}
+
+export const Filters = ({
+	disabled,
 	filters,
 	views,
-	changeFilters,
-	changeViews,
-	autouiContext,
+	schema,
+	addFilterButtonProps,
+	viewsMenuButtonProps,
 	renderMode,
-	onSearch,
+	dark,
+	compact,
 	showSaveView,
-}: FiltersProps<T>) => {
-	const history = useHistory();
+	onViewsUpdate,
+	onFiltersUpdate,
+	onSearch,
+}: FiltersProps) => {
+	const searchContainer = React.createRef<HTMLDivElement>();
+	const [showFilterModal, setShowFilterModal] = React.useState(false);
+	const [showSearchDropDown, setShowSearchDropDown] = React.useState(false);
+	const [searchString, setSearchString] = React.useState<string | undefined>();
+	const [internalFilters, setFilters] = React.useState<JSONSchema[]>(
+		filters ?? [],
+	);
+	const [internalViews, setViews] = React.useState<FiltersView[] | undefined>(
+		views,
+	);
+	const [editFilter, setEditFilter] = React.useState<JSONSchema>();
+
+	React.useEffect(() => {
+		if (isEqual(internalFilters, filters ?? [])) {
+			return;
+		}
+		setFilters(filters ?? []);
+	}, [filters]);
+
+	React.useEffect(() => {
+		if (isEqual(internalViews, views)) {
+			return;
+		}
+		setViews(views);
+	}, [views]);
+
+	const deleteView = (view: FiltersView) => {
+		if (!internalViews) {
+			return;
+		}
+		const newViews = internalViews.filter((i) => i.id !== view.id);
+		setViews(newViews);
+		onViewsUpdate?.(newViews);
+	};
+
+	const addFilter = (filter: JSONSchema) => {
+		let newFilters = internalFilters ?? [];
+		if (editFilter?.$id) {
+			newFilters = newFilters.filter((f) => f.$id !== editFilter.$id);
+		}
+		newFilters = [...newFilters, filter];
+		setFilters(newFilters);
+		onFiltersUpdate?.(newFilters);
+	};
+
+	const deleteFilter = (filter: JSONSchema) => {
+		const newFilters =
+			internalFilters?.filter((f) => f.$id !== filter.$id) ?? [];
+		setFilters(newFilters);
+		onFiltersUpdate?.(newFilters);
+	};
+
+	const saveView = (name: string) => {
+		const view: FiltersView = {
+			id: randomString(),
+			name,
+			filters: cloneDeep(filters) ?? [],
+		};
+		const newViews = [...(internalViews ?? []), view];
+		setViews(newViews);
+		onViewsUpdate?.(newViews);
+	};
+
 	return (
-		<>
-			{!!history ? (
-				<PersistentFilters
-					viewsRestorationKey={`${autouiContext.resource}__views`}
-					history={history}
+		<Box style={{ position: 'relative' }}>
+			<Flex flex="1">
+				{(!renderMode || renderMode.includes('search')) && (
+					<SearchWrapper
+						ref={searchContainer}
+						onFocus={() => {
+							setShowSearchDropDown(true);
+							if (searchContainer.current) {
+								onClickOutOrEsc(searchContainer.current, () => {
+									setShowSearchDropDown(false);
+								});
+							}
+						}}
+					>
+						<Search
+							dark={dark}
+							disabled={disabled}
+							value={searchString}
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+								setShowSearchDropDown(e.target.value !== '');
+								setSearchString(e.target.value);
+							}}
+							onEnter={(e) => {
+								e.preventDefault();
+								e.stopPropagation();
+								if (!searchString) {
+									return;
+								}
+								const newFilter = createFullTextSearchFilter(
+									schema,
+									searchString,
+								);
+								addFilter(newFilter);
+								setSearchString('');
+							}}
+						/>
+						{searchString && showSearchDropDown && onSearch?.(searchString)}
+					</SearchWrapper>
+				)}
+				{(!renderMode || renderMode.includes('add')) && (
+					<Button
+						disabled={disabled}
+						light={dark}
+						outline
+						quartenary
+						icon={<FontAwesomeIcon icon={faFilter} />}
+						onClick={() => setShowFilterModal(true)}
+						label="Add filter"
+						compact={compact}
+						{...addFilterButtonProps}
+					/>
+				)}
+				{(!renderMode || renderMode.includes('views')) && (
+					<ViewsMenu
+						dark={dark}
+						buttonProps={viewsMenuButtonProps}
+						disabled={disabled}
+						views={views || []}
+						schema={schema}
+						renderMode={renderMode}
+						setFilters={(f) => {
+							setFilters(f);
+							onFiltersUpdate?.(f);
+						}}
+						deleteView={deleteView}
+						compact={compact}
+					/>
+				)}
+			</Flex>
+			{(!renderMode || renderMode.includes('summary')) &&
+				internalFilters.length > 0 &&
+				!disabled && (
+					<Summary
+						onEdit={(filter) => {
+							setEditFilter(filter);
+							setShowFilterModal(true);
+						}}
+						onDelete={deleteFilter}
+						onClearFilters={() => {
+							setFilters([]);
+							onFiltersUpdate?.([]);
+						}}
+						showSaveView={showSaveView ?? renderMode?.includes('views')}
+						onSaveView={({ name }) => saveView(name)}
+						filters={internalFilters}
+					/>
+				)}
+			{showFilterModal && (
+				<FilterModal
 					schema={schema}
-					filters={filters}
-					views={views}
-					onFiltersUpdate={changeFilters}
-					onViewsUpdate={changeViews}
-					renderMode={renderMode ?? DEFAULT_RENDER_MODE}
-					onSearch={onSearch}
-					compact={[true, true, false]}
-					showSaveView={showSaveView}
-				/>
-			) : (
-				<RenditionFilters
-					schema={schema}
-					filters={filters}
-					views={views}
-					onFiltersUpdate={changeFilters}
-					onViewsUpdate={changeViews}
-					renderMode={renderMode ?? DEFAULT_RENDER_MODE}
-					onSearch={onSearch}
-					compact={[true, true, false]}
-					showSaveView={showSaveView}
+					editFilter={editFilter}
+					addFilter={(filter) => {
+						addFilter(filter);
+						setShowFilterModal(false);
+					}}
+					onClose={() => setShowFilterModal(false)}
 				/>
 			)}
-		</>
+		</Box>
 	);
 };
