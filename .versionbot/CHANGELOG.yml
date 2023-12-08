@@ -1,4 +1,15 @@
 - commits:
+    - subject: Always call onChange to provide the OData options on mount
+      hash: 228ee67a1405db40be4f3431255049d3d464c636
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+  version: 0.11.3
+  title: ""
+  date: 2023-12-08T09:08:16.222Z
+- commits:
     - subject: Fix main spinner rules
       hash: 37454592008a639b11df517f2e3f6f9b60af21c9
       body: ""
