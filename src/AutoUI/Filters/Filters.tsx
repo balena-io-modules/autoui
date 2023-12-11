@@ -19,6 +19,7 @@ interface FiltersProps<T> {
 	renderMode?: FilterRenderMode | FilterRenderMode[];
 	onSearch?: (searchTerm: string) => React.ReactElement | null;
 	showSaveView?: boolean;
+	persistFilters?: boolean;
 }
 
 const DEFAULT_RENDER_MODE = (['add', 'search', 'views'] as const).slice();
@@ -33,11 +34,12 @@ export const Filters = <T extends AutoUIBaseResource<T>>({
 	renderMode,
 	onSearch,
 	showSaveView,
+	persistFilters,
 }: FiltersProps<T>) => {
 	const history = useHistory();
 	return (
 		<>
-			{!!history ? (
+			{!!history && persistFilters ? (
 				<PersistentFilters
 					viewsRestorationKey={`${autouiContext.resource}__views`}
 					history={history}

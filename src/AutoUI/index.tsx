@@ -140,6 +140,7 @@ export interface AutoUIProps<T> extends Omit<BoxProps, 'onChange'> {
 	loading?: boolean;
 	rowKey?: keyof T;
 	noDataInfo?: NoDataInfo;
+	persistFilters?: boolean;
 }
 
 export const AutoUI = <T extends AutoUIBaseResource<T>>({
@@ -159,6 +160,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	loading,
 	rowKey,
 	noDataInfo,
+	persistFilters = true,
 	...boxProps
 }: AutoUIProps<T>) => {
 	const { t } = useTranslation();
@@ -446,6 +448,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 												filters={filters}
 												views={views}
 												autouiContext={autouiContext}
+												persistFilters={persistFilters}
 												changeFilters={$setFilters}
 												changeViews={setViews}
 												// TODO: add a way to handle the focus search on server side pagination as well
@@ -485,6 +488,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 										autouiContext={autouiContext}
 										changeFilters={$setFilters}
 										changeViews={setViews}
+										persistFilters={persistFilters}
 										showSaveView
 									/>
 								</Box>
