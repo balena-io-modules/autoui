@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add persistFilters property
+      hash: 04a2487a83aaefad31434942f8a5dd71a55fc60d
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 0.11.4
+  title: ""
+  date: 2023-12-11T12:17:22.386Z
+- commits:
     - subject: Always call onChange to provide the OData options on mount
       hash: 228ee67a1405db40be4f3431255049d3d464c636
       body: ""
