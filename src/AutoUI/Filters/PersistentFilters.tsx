@@ -5,11 +5,9 @@ import {
 	Filters,
 	FilterSignature,
 	FiltersProps,
-	FiltersView,
 	JSONSchema,
 	SchemaSieve,
 } from 'rendition';
-import { getFromLocalStorage, setToLocalStorage } from '../utils';
 import { History } from 'history';
 
 export interface ListQueryStringFilterObject {
@@ -114,20 +112,10 @@ export const PersistentFilters = ({
 	...otherProps
 }: PersistentFiltersProps &
 	Required<Pick<PersistentFiltersProps, 'renderMode'>>) => {
-	const storedViews = React.useMemo(
-		() => getFromLocalStorage<FiltersView[]>(viewsRestorationKey) ?? [],
-		[viewsRestorationKey],
-	);
 	const locationSearch = history?.location?.search ?? '';
 	const storedFilters = React.useMemo(() => {
 		return loadRulesFromUrl(locationSearch, schema);
 	}, [locationSearch, schema]);
-
-	React.useEffect(() => {
-		if (!views?.length && storedViews.length && onViewsUpdate) {
-			onViewsUpdate(storedViews);
-		}
-	}, []);
 
 	const onFiltersUpdate = React.useCallback(
 		(filters: JSONSchema[]) => {
@@ -157,21 +145,13 @@ export const PersistentFilters = ({
 		}
 	}, []);
 
-	const viewsUpdate = (views: FiltersView[]) => {
-		setToLocalStorage(viewsRestorationKey, views);
-
-		if (onViewsUpdate) {
-			onViewsUpdate(views);
-		}
-	};
-
 	return (
 		<Filters
 			schema={schema}
 			filters={filters ?? storedFilters}
-			views={views ?? storedViews}
+			views={views}
 			onFiltersUpdate={onFiltersUpdate}
-			onViewsUpdate={viewsUpdate}
+			onViewsUpdate={onViewsUpdate}
 			{...otherProps}
 			onSearch={onSearch}
 		/>

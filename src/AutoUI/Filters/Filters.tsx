@@ -8,6 +8,7 @@ import {
 	Filters as RenditionFilters,
 } from 'rendition';
 import { useHistory } from '../../hooks/useHistory';
+import { getFromLocalStorage, setToLocalStorage } from '../utils';
 
 interface FiltersProps<T> {
 	schema: JSONSchema;
@@ -37,17 +38,32 @@ export const Filters = <T extends AutoUIBaseResource<T>>({
 	persistFilters,
 }: FiltersProps<T>) => {
 	const history = useHistory();
+	// We store views in any case as views should persist in both cases PersistentFilters and RenditionFilters
+	const viewsRestorationKey = `${autouiContext.resource}__views`;
+	const storedViews = React.useMemo(
+		() =>
+			views.length
+				? views
+				: getFromLocalStorage<FiltersView[]>(viewsRestorationKey) ?? [],
+		[viewsRestorationKey, views],
+	);
+
+	const viewsUpdate = (views: FiltersView[]) => {
+		setToLocalStorage(viewsRestorationKey, views);
+		changeViews?.(views);
+	};
+
 	return (
 		<>
 			{!!history && persistFilters ? (
 				<PersistentFilters
-					viewsRestorationKey={`${autouiContext.resource}__views`}
+					viewsRestorationKey={viewsRestorationKey}
 					history={history}
 					schema={schema}
 					filters={filters}
-					views={views}
+					views={storedViews}
 					onFiltersUpdate={changeFilters}
-					onViewsUpdate={changeViews}
+					onViewsUpdate={viewsUpdate}
 					renderMode={renderMode ?? DEFAULT_RENDER_MODE}
 					onSearch={onSearch}
 					compact={[true, true, false]}
@@ -57,9 +73,9 @@ export const Filters = <T extends AutoUIBaseResource<T>>({
 				<RenditionFilters
 					schema={schema}
 					filters={filters}
-					views={views}
+					views={storedViews}
 					onFiltersUpdate={changeFilters}
-					onViewsUpdate={changeViews}
+					onViewsUpdate={viewsUpdate}
 					renderMode={renderMode ?? DEFAULT_RENDER_MODE}
 					onSearch={onSearch}
 					compact={[true, true, false]}
