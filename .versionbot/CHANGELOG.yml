@@ -1,4 +1,15 @@
 - commits:
+    - subject: "Filter views: store views regardless of the persistence of the filters"
+      hash: 3ee775e3347f9f441bce404761c4a3bc4fc1e319
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 0.11.5
+  title: ""
+  date: 2023-12-14T12:33:47.253Z
+- commits:
     - subject: Add persistFilters property
       hash: 04a2487a83aaefad31434942f8a5dd71a55fc60d
       body: ""
