@@ -5,13 +5,15 @@ import {
 	AutoUIBaseResource,
 	autoUIJsonSchemaPick,
 } from '../schemaOps';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ActionData } from '../schemaOps';
 import { getCreateDisabledReason } from '../utils';
-import { faMagic } from '@fortawesome/free-solid-svg-icons/faMagic';
 import { useTranslation } from '../../hooks/useTranslation';
-import { Box, Button, Flex, Spinner } from 'rendition';
+import { Spinner } from 'rendition';
 import { ActionContent, LOADING_DISABLED_REASON } from './ActionContent';
+import { Material, IconsMaterial, Tooltip } from '@balena/ui-shared-components';
+
+const { Button, Box } = Material;
+const { AutoFixNormal } = IconsMaterial;
 
 interface CreateProps<T extends AutoUIBaseResource<T>> {
 	model: AutoUIModel<T>;
@@ -55,42 +57,46 @@ export const Create = <T extends AutoUIBaseResource<T>>({
 		disabledReasonsByAction[action.title];
 
 	return (
-		<Box>
-			<Button
-				data-action={`create-${model.resource}`}
-				onClick={() =>
-					onActionTriggered({
-						action,
-						schema: autoUIJsonSchemaPick(
-							model.schema,
-							model.permissions.create,
-						),
-					})
-				}
-				icon={<FontAwesomeIcon icon={faMagic} />}
-				tooltip={
-					typeof disabledReason === 'string' ? disabledReason : undefined
-				}
-				disabled={!!disabledReason}
-				primary
+		<Box display="flex">
+			<Tooltip
+				title={typeof disabledReason === 'string' ? disabledReason : undefined}
 			>
-				<ActionContent<T>
-					getDisabledReason={action.isDisabled}
-					affectedEntries={undefined}
-					checkedState={undefined}
-					onDisabledReady={(result) => {
-						setDisabledReasonsByAction((disabledReasonsState) => ({
-							...disabledReasonsState,
-							[action.title]: result,
-						}));
-					}}
+				<Button
+					data-action={`create-${model.resource}`}
+					variant="contained"
+					onClick={() =>
+						onActionTriggered({
+							action,
+							schema: autoUIJsonSchemaPick(
+								model.schema,
+								model.permissions.create,
+							),
+						})
+					}
+					startIcon={<AutoFixNormal />}
+					disabled={!!disabledReason}
 				>
-					<Flex justifyContent="space-between">
-						{action.title}
-						<Spinner ml={2} show={disabledReason === LOADING_DISABLED_REASON} />
-					</Flex>
-				</ActionContent>
-			</Button>
+					<ActionContent<T>
+						getDisabledReason={action.isDisabled}
+						affectedEntries={undefined}
+						checkedState={undefined}
+						onDisabledReady={(result) => {
+							setDisabledReasonsByAction((disabledReasonsState) => ({
+								...disabledReasonsState,
+								[action.title]: result,
+							}));
+						}}
+					>
+						<Box display="flex" justifyContent="space-between">
+							{action.title}
+							<Spinner
+								ml={2}
+								show={disabledReason === LOADING_DISABLED_REASON}
+							/>
+						</Box>
+					</ActionContent>
+				</Button>
+			</Tooltip>
 		</Box>
 	);
 };

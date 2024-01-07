@@ -1,5 +1,4 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	AutoUIContext,
 	AutoUIModel,
@@ -8,25 +7,18 @@ import {
 } from '../schemaOps';
 import { ActionData } from '../schemaOps';
 import { autoUIGetDisabledReason } from '../utils';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons/faPenToSquare';
-import groupBy from 'lodash/groupBy';
-import map from 'lodash/map';
 import { useTranslation } from '../../hooks/useTranslation';
-import {
-	Box,
-	Button,
-	CheckedState,
-	DropDownButton,
-	Flex,
-	Spinner,
-} from 'rendition';
-import styled from 'styled-components';
+import { CheckedState, Spinner } from 'rendition';
 import { ActionContent, LOADING_DISABLED_REASON } from './ActionContent';
-
-const Wrapper = styled(Box)`
-	align-self: flex-start;
-	z-index: 10;
-`;
+import {
+	DropDownButton,
+	DropDownButtonProps,
+	Material,
+	IconsMaterial,
+	Tooltip,
+} from '@balena/ui-shared-components';
+const { Box, Button } = Material;
+const { Edit } = IconsMaterial;
 
 interface UpdateProps<T extends AutoUIBaseResource<T>> {
 	model: AutoUIModel<T>;
@@ -69,64 +61,69 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 		);
 	});
 
-	const groupedActions = React.useMemo(
-		() => groupBy(updateActions, (action) => action.section),
-		[updateActions],
-	);
+	const actionHandlers = React.useMemo<
+		DropDownButtonProps<{ section?: string }>['items']
+	>(() => {
+		if (!updateActions) {
+			return [];
+		}
+		return updateActions.map((action) => {
+			const disabledReason =
+				autoUIGetDisabledReason(
+					selected,
+					checkedState,
+					hasOngoingAction,
+					action.type as 'update' | 'delete',
+					t,
+				) ?? disabledReasonsByAction[action.title];
 
-	const actionHandlers = React.useMemo(
-		() =>
-			map(groupedActions, (actions) =>
-				actions.map((action) => {
-					const disabledReason =
-						autoUIGetDisabledReason(
-							selected,
-							checkedState,
-							hasOngoingAction,
-							action.type as 'update' | 'delete',
-							t,
-						) ?? disabledReasonsByAction[action.title];
-
-					return {
-						content: (
-							<ActionContent<T>
-								getDisabledReason={action.isDisabled}
-								affectedEntries={selected}
-								checkedState={checkedState}
-								onDisabledReady={(result) => {
-									setDisabledReasonsByAction((disabledReasonsState) => ({
-										...disabledReasonsState,
-										[action.title]: result,
-									}));
-								}}
-							>
-								<Flex justifyContent="space-between">
-									{action.title}
-									<Spinner show={disabledReason === LOADING_DISABLED_REASON} />
-								</Flex>
-							</ActionContent>
-						),
-						onClick: () =>
-							onActionTriggered({
-								action,
-								schema:
-									action.type === 'delete'
-										? {}
-										: autoUIJsonSchemaPick(
-												model.schema,
-												model.permissions[action.type],
-										  ),
-								affectedEntries: selected,
-							}),
-						tooltip:
-							typeof disabledReason === 'string' ? disabledReason : undefined,
-						disabled: !!disabledReason,
-						danger: action.isDangerous,
-					};
-				}),
-			),
-		[groupedActions, disabledReasonsByAction],
-	);
+			return {
+				eventName: `${model.resource} ${action.title}`,
+				children: (
+					<ActionContent<T>
+						getDisabledReason={action.isDisabled}
+						affectedEntries={selected}
+						checkedState={checkedState}
+						onDisabledReady={(result) => {
+							setDisabledReasonsByAction((disabledReasonsState) => ({
+								...disabledReasonsState,
+								[action.title]: result,
+							}));
+						}}
+					>
+						<Box
+							display="flex"
+							justifyContent="space-between"
+							color={
+								action.isDangerous && !disabledReasonsByAction[action.title]
+									? 'error.main'
+									: undefined
+							}
+						>
+							{action.title}
+							<Spinner show={disabledReason === LOADING_DISABLED_REASON} />
+						</Box>
+					</ActionContent>
+				),
+				onClick: () =>
+					onActionTriggered({
+						action,
+						schema:
+							action.type === 'delete'
+								? {}
+								: autoUIJsonSchemaPick(
+										model.schema,
+										model.permissions[action.type],
+								  ),
+						affectedEntries: selected,
+					}),
+				tooltip:
+					typeof disabledReason === 'string' ? disabledReason : undefined,
+				disabled: !!disabledReason,
+				section: action.section,
+			};
+		});
+	}, [updateActions, disabledReasonsByAction]);
 
 	if (!updateActions || updateActions.length < 1) {
 		return null;
@@ -144,50 +141,51 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 			) ?? disabledReasonsByAction[action.title];
 		return (
 			<Box alignSelf="flex-start">
-				<Button
-					key={action.title}
-					data-action={`${action.type}-${model.resource}`}
-					onClick={() =>
-						onActionTriggered({
-							action,
-							schema:
-								action.type === 'delete'
-									? {}
-									: autoUIJsonSchemaPick(
-											model.schema,
-											model.permissions[action.type],
-									  ),
-							affectedEntries: selected,
-						})
-					}
-					tooltip={
+				<Tooltip
+					title={
 						typeof disabledReason === 'string' ? disabledReason : undefined
 					}
-					disabled={!!disabledReason}
-					plain={updateActions.length > 1}
-					danger={action.isDangerous}
-					secondary
 				>
-					<ActionContent<T>
-						getDisabledReason={action.isDisabled}
-						affectedEntries={selected}
-						checkedState={checkedState}
-						onDisabledReady={(result) => {
-							setDisabledReasonsByAction((disabledReasonsState) => ({
-								...disabledReasonsState,
-								[action.title]: result,
-							}));
-						}}
+					<Button
+						key={action.title}
+						data-action={`${action.type}-${model.resource}`}
+						onClick={() =>
+							onActionTriggered({
+								action,
+								schema:
+									action.type === 'delete'
+										? {}
+										: autoUIJsonSchemaPick(
+												model.schema,
+												model.permissions[action.type],
+										  ),
+								affectedEntries: selected,
+							})
+						}
+						disabled={!!disabledReason}
+						color={action.isDangerous ? 'error' : 'secondary'}
 					>
-						<Flex justifyContent="space-between">
-							{action.title}
-							<Spinner
-								ml={2}
-								show={disabledReason === LOADING_DISABLED_REASON}
-							/>
-						</Flex>
-					</ActionContent>
-				</Button>
+						<ActionContent<T>
+							getDisabledReason={action.isDisabled}
+							affectedEntries={selected}
+							checkedState={checkedState}
+							onDisabledReady={(result) => {
+								setDisabledReasonsByAction((disabledReasonsState) => ({
+									...disabledReasonsState,
+									[action.title]: result,
+								}));
+							}}
+						>
+							<Box display="flex" justifyContent="space-between">
+								{action.title}
+								<Spinner
+									ml={2}
+									show={disabledReason === LOADING_DISABLED_REASON}
+								/>
+							</Box>
+						</ActionContent>
+					</Button>
+				</Tooltip>
 			</Box>
 		);
 	}
@@ -201,17 +199,15 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 	);
 
 	return (
-		<Wrapper>
-			<DropDownButton
-				joined
-				alignRight
-				secondary
-				disabled={!!disabledReason}
-				tooltip={disabledReason}
-				icon={<FontAwesomeIcon icon={faPenToSquare} />}
-				label={t('labels.modify')}
+		<Tooltip title={disabledReason}>
+			<DropDownButton<{ section?: string }>
 				items={actionHandlers}
+				disabled={!!disabledReason}
+				startIcon={<Edit />}
+				children={t('labels.modify')}
+				color="secondary"
+				groupByProp="section"
 			/>
-		</Wrapper>
+		</Tooltip>
 	);
 };
