@@ -389,7 +389,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 				label={
 					isBusyMessage ??
 					t('loading.resource', {
-						resource: t(`resource.${model.resource}_plural`).toLowerCase(),
+						resource: t(`resource.${model.resource}_other`).toLowerCase(),
 					})
 				}
 				show={data == null || loading || !!isBusyMessage}
@@ -503,7 +503,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 									) : (
 										t('no_data.no_resource_data', {
 											resource: t(
-												`resource.${model.resource}_plural`,
+												`resource.${model.resource}_other`,
 											).toLowerCase(),
 										})
 									))

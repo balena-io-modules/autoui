@@ -23,7 +23,7 @@ const translationMap = {
 	'no_data.no_resource_data_description':
 		"This is a bit empty right now, let's go ahead and add one",
 	'questions.how_about_adding_one': 'How about adding one?',
-	'resource.item_plural': 'Items',
+	'resource.item_other': 'Items',
 	'success.resource_added_successfully': '{{name}} added successfully',
 };
 
@@ -39,7 +39,7 @@ const getTranslation = (
 		return translation;
 	}
 	if (opts.count != null && opts.count > 1) {
-		const pluralKey = `${str}_plural` as keyof typeof translationMap;
+		const pluralKey = `${str}_other` as keyof typeof translationMap;
 		translation =
 			translationMap[pluralKey] ??
 			translationMap[str as keyof typeof translationMap];
