@@ -1,4 +1,5 @@
 import { JSONSchema, TableSortOptions } from 'rendition';
+import { AutoUIContext } from '~/AutoUI/schemaOps';
 
 type PineFilterObject = Record<string, any>;
 
@@ -215,18 +216,32 @@ export const convertToPineClientFilter = (
 	return handlePrimitiveFilter(parentKeys, filter);
 };
 
-export const orderbyBuilder = <T>(sortInfo: TableSortOptions<T> | null) => {
+export const orderbyBuilder = <T>(
+	sortInfo: TableSortOptions<T> | null,
+	customSort: AutoUIContext<T>['customSort'],
+) => {
 	if (!sortInfo) {
 		return null;
 	}
+
 	const { field, reverse, refScheme } = sortInfo;
 	if (!field) {
 		return null;
 	}
 	const direction = !reverse ? 'asc' : 'desc';
+	const customOrderByKey = customSort?.[field];
+	if (typeof customOrderByKey === 'string') {
+		return `${customOrderByKey} ${direction}`;
+	} else if (customOrderByKey != null && typeof customOrderByKey !== 'string') {
+		throw new Error(
+			`Field ${field} error: custom sort for this field must be of type string, ${typeof customOrderByKey} is not accepted.`,
+		);
+	}
 	let fieldPath: string = field;
 	if (refScheme) {
 		fieldPath += `/${refScheme.replace(/\[(.*?)\]/g, '').replace(/\./g, '/')}`;
 	}
-	return { [fieldPath]: direction };
+	return {
+		[fieldPath]: direction,
+	};
 };
