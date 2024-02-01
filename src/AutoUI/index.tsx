@@ -392,127 +392,124 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 					})
 				}
 				show={data == null || loading || !!isBusyMessage}
-				{...(data == null
-					? { width: '100%', height: '100%' }
-					: undefined)}
+				{...(data == null ? { width: '100%', height: '100%' } : undefined)}
 			>
-				<Flex
-					height="100%"
-					flexDirection="column"
-				>
+				<Flex height="100%" flexDirection="column">
 					{
 						// We need to mount the Filters component so that it can load the filters
 						// & pagination state from the url (or use defaults) and provide them to
 						// the parent component (via $setFilters -> onChange) to use them for the
 						// initial data fetching request.
 						(data == null || Array.isArray(data)) && (
-						<>
-							{!hideUtils ? (
-								<Box mb={3}
-									display={
-										// This hides the Filters component during the initial load but keeps them mounted so that
-										// it can trigger onChange on mount to communicate to the parent component the pineOptions 
-										// that need to be used.
-										data == null ? 'none' : undefined
-									}
-								>
-									<HeaderGrid
-										flexWrap="wrap"
-										justifyContent="space-between"
-										alignItems="baseline"
+							<>
+								{!hideUtils ? (
+									<Box
+										mb={3}
+										display={
+											// This hides the Filters component during the initial load but keeps them mounted so that
+											// it can trigger onChange on mount to communicate to the parent component the pineOptions
+											// that need to be used.
+											data == null ? 'none' : undefined
+										}
 									>
-										<Create
-											model={model}
-											autouiContext={autouiContext}
-											hasOngoingAction={false}
-											onActionTriggered={onActionTriggered}
-										/>
-
-										<Update
-											model={model}
-											selected={selected}
-											autouiContext={autouiContext}
-											hasOngoingAction={false}
-											onActionTriggered={onActionTriggered}
-											checkedState={checkedState}
-										/>
-										<Box
-											order={[-1, -1, -1, 0]}
-											flex={['1 0 100%', '1 0 100%', '1 0 100%', 'auto']}
-											alignSelf="flex-start"
-											mb={2}
+										<HeaderGrid
+											flexWrap="wrap"
+											justifyContent="space-between"
+											alignItems="baseline"
 										>
-											<Filters
-												renderMode={['add', 'search', 'views']}
-												schema={model.schema}
-												filters={filters}
-												views={views}
+											<Create
+												model={model}
 												autouiContext={autouiContext}
-												persistFilters={persistFilters}
-												changeFilters={$setFilters}
-												changeViews={setViews}
-												// TODO: add a way to handle the focus search on server side pagination as well
-												{...(!pagination?.serverSide && {
-													onSearch: (term) => (
-														<FocusSearch
-															searchTerm={term}
-															filtered={filtered}
-															selected={selected ?? []}
-															setSelected={$setSelected}
-															autouiContext={autouiContext}
-															model={model}
-															hasUpdateActions={hasUpdateActions}
-															rowKey={rowKey}
-														/>
-													),
-												})}
+												hasOngoingAction={false}
+												onActionTriggered={onActionTriggered}
 											/>
-										</Box>
-										<LensSelection
-											lenses={lenses}
-											lens={lens}
-											setLens={(lens) => {
-												setLens(lens);
-												setToLocalStorage(
-													`${model.resource}__view_lens`,
-													lens.slug,
-												);
-											}}
+
+											<Update
+												model={model}
+												selected={selected}
+												autouiContext={autouiContext}
+												hasOngoingAction={false}
+												onActionTriggered={onActionTriggered}
+												checkedState={checkedState}
+											/>
+											<Box
+												order={[-1, -1, -1, 0]}
+												flex={['1 0 100%', '1 0 100%', '1 0 100%', 'auto']}
+												alignSelf="flex-start"
+												mb={2}
+											>
+												<Filters
+													renderMode={['add', 'search', 'views']}
+													schema={model.schema}
+													filters={filters}
+													views={views}
+													autouiContext={autouiContext}
+													persistFilters={persistFilters}
+													changeFilters={$setFilters}
+													changeViews={setViews}
+													// TODO: add a way to handle the focus search on server side pagination as well
+													{...(!pagination?.serverSide && {
+														onSearch: (term) => (
+															<FocusSearch
+																searchTerm={term}
+																filtered={filtered}
+																selected={selected ?? []}
+																setSelected={$setSelected}
+																autouiContext={autouiContext}
+																model={model}
+																hasUpdateActions={hasUpdateActions}
+																rowKey={rowKey}
+															/>
+														),
+													})}
+												/>
+											</Box>
+											<LensSelection
+												lenses={lenses}
+												lens={lens}
+												setLens={(lens) => {
+													setLens(lens);
+													setToLocalStorage(
+														`${model.resource}__view_lens`,
+														lens.slug,
+													);
+												}}
+											/>
+										</HeaderGrid>
+										<Filters
+											renderMode={'summary'}
+											schema={model.schema}
+											filters={filters}
+											views={views}
+											autouiContext={autouiContext}
+											changeFilters={$setFilters}
+											changeViews={setViews}
+											persistFilters={persistFilters}
+											showSaveView
 										/>
-									</HeaderGrid>
-									<Filters
-										renderMode={'summary'}
-										schema={model.schema}
-										filters={filters}
-										views={views}
-										autouiContext={autouiContext}
-										changeFilters={$setFilters}
-										changeViews={setViews}
-										persistFilters={persistFilters}
-										showSaveView
-									/>
-								</Box>
-							) : (
-								!filters.length &&
-								(!!autouiContext.actions?.filter(
-									(action) => action.type === 'create',
-								).length ? (
-									<NoRecordsFoundView
-										model={model}
-										autouiContext={autouiContext}
-										onActionTriggered={onActionTriggered}
-										noDataInfo={noDataInfo}
-									/>
+									</Box>
 								) : (
-									t('no_data.no_resource_data', {
-										resource: t(
-											`resource.${model.resource}_plural`,
-										).toLowerCase(),
-									})
-								))
-							)}
-						</>
-					)}
+									!filters.length &&
+									(!!autouiContext.actions?.filter(
+										(action) => action.type === 'create',
+									).length ? (
+										<NoRecordsFoundView
+											model={model}
+											autouiContext={autouiContext}
+											onActionTriggered={onActionTriggered}
+											noDataInfo={noDataInfo}
+										/>
+									) : (
+										t('no_data.no_resource_data', {
+											resource: t(
+												`resource.${model.resource}_plural`,
+											).toLowerCase(),
+										})
+									))
+								)}
+							</>
+						)
+					}
 					{!Array.isArray(data) && (
 						<HeaderGrid>
 							<LensSelection
