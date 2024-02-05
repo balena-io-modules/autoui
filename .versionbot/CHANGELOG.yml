@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add x-no-filter property to remove a column from filters
+      hash: 3f1efc5d4ddac06c6fee14defce67ce62db09b1f
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Andrea Rosci
+  version: 0.12.0
+  title: ""
+  date: 2024-02-05T14:59:39.684Z
+- commits:
     - subject: "Filter views: store views regardless of the persistence of the filters"
       hash: 3ee775e3347f9f441bce404761c4a3bc4fc1e319
       body: ""
