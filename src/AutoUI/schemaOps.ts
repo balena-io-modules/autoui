@@ -85,7 +85,7 @@ export interface AutoUIContext<T> {
 		longitudeField?: string;
 	};
 	actions?: Array<AutoUIAction<T>>;
-	customSort?: Dictionary<(a: T, b: T) => number>;
+	customSort?: Dictionary<(a: T, b: T) => number> | Dictionary<string>;
 	sdk?: {
 		tags?: ResourceTagModelService;
 	};
