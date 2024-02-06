@@ -27,25 +27,10 @@ interface FiltersProps<T> {
 	persistFilters?: boolean;
 }
 
-const removeXNoFilterFromObj = (
-	properties: JSONSchema['properties'],
-	xNoFilter: string[] | boolean | undefined,
-): JSONSchema['properties'] => {
-	if (!properties || !Array.isArray(xNoFilter)) {
-		return properties;
-	}
-	const xNoFilterSet = new Set(xNoFilter);
-	return Object.fromEntries(
-		Object.keys(properties)
-			.filter((propKey) => !xNoFilterSet.has(propKey))
-			.map((propKey) => [propKey, properties[propKey]]),
-	);
-};
-
 const removeFieldsWithNoFilter = (schema: JSONSchema): JSONSchema => {
 	const processProperties = (
 		properties: JSONSchema['properties'] | undefined,
-		prevXNoFilter?: string[] | boolean,
+		parentXNoFilterSet?: Set<string>,
 	): JSONSchema['properties'] | undefined => {
 		if (!properties) {
 			return undefined;
@@ -58,12 +43,17 @@ const removeFieldsWithNoFilter = (schema: JSONSchema): JSONSchema => {
 				newProperties[key] = value;
 				continue;
 			}
+			// Apply removal logic in case our parent has defined an array x-no-filter for its children
+			// TODO: This only works with immediate children and NOT with nested properties.
+			if (parentXNoFilterSet?.has(key)) {
+				continue;
+			}
 			// Extract x-no-filter if available
 			const xNoFilter =
 				sieve.parseDescriptionProperty<string[] | boolean | undefined>(
 					value,
 					'x-no-filter',
-				) ?? prevXNoFilter;
+				);
 
 			if (xNoFilter === true) {
 				// Exclude property entirely if xNoFilter is true
@@ -71,9 +61,10 @@ const removeFieldsWithNoFilter = (schema: JSONSchema): JSONSchema => {
 			}
 
 			const newValue: JSONSchemaDefinition = { ...value };
+			const xNoFilterSet = Array.isArray(xNoFilter) ? new Set(xNoFilter) : undefined;
 
 			if ('properties' in value) {
-				newValue.properties = processProperties(value.properties, xNoFilter);
+				newValue.properties = processProperties(value.properties, xNoFilterSet);
 			}
 
 			// we are not considering the case where items is an array. Should be added if necessary
@@ -85,17 +76,9 @@ const removeFieldsWithNoFilter = (schema: JSONSchema): JSONSchema => {
 				if ('properties' in value.items) {
 					newValue.items = {
 						...value.items,
-						properties: processProperties(value.items.properties, xNoFilter),
+						properties: processProperties(value.items.properties, xNoFilterSet),
 					};
 				}
-			}
-
-			// Apply removal logic for specified properties if xNoFilter is an array
-			if (Array.isArray(xNoFilter) && newValue.properties) {
-				newValue.properties = removeXNoFilterFromObj(
-					newValue.properties,
-					xNoFilter,
-				);
 			}
 
 			newProperties[key] = newValue;
