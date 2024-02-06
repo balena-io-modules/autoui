@@ -698,8 +698,8 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 					);
 				const description = JSON.stringify({
 					'x-ref-scheme': [propKey],
-					...(xFilterOnly ? { 'x-filter-only': 'true' } : {}),
-					...(xNoSort ? { 'x-no-sort': 'true' } : {}),
+					...(xFilterOnly && { 'x-filter-only': 'true' }),
+					...(xNoSort && { 'x-no-sort': 'true' }),
 				});
 				return [key, { ...val, description }];
 			});
