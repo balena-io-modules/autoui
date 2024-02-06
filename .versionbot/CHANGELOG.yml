@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix translations for i18n bump to v23
+      hash: b52d658294b6e0f048f5ee6dcf7ca2c94aa870e9
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 0.12.2
+  title: ""
+  date: 2024-02-06T12:29:27.443Z
+- commits:
     - subject: "getColumnsFromSchema: Remove unnecessary type casting"
       hash: 2c18e2a321e36375d7db7a0fd10f352dcde17959
       body: ""
