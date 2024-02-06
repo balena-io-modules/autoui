@@ -52,7 +52,6 @@ import {
 	Pagination,
 	TableSortOptions,
 	CheckedState,
-	TableSortFunction,
 } from 'rendition';
 import { getLenses, LensTemplate } from './Lenses';
 import { TFunction, useTranslation } from '../hooks/useTranslation';
@@ -730,16 +729,21 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 				: 'tertiary';
 
 			const widgetSchema = { ...val, title: undefined };
-			const fieldCustomSort = customSort?.[key];
 
-			if (
-				fieldCustomSort &&
-				typeof fieldCustomSort !== 'function' &&
-				!isServerSide
-			) {
-				throw new Error(
-					`Field ${key} error: custom sort for this field must be a function, ${typeof fieldCustomSort} is not accepted.`,
-				);
+			const fieldCustomSort = customSort?.[key];
+			if (fieldCustomSort != null) {
+				if (isServerSide && typeof fieldCustomSort !== 'string') {
+					// We are also checking this in `orderbyBuilder()` to make TS happy, but better throw upfront
+					// when the model is invalid rather than only when the user issues a sorting based on
+					// an incorrectly configured property.
+					throw new Error(
+						`Field ${key} error: custom sort for this field must be of type string, ${typeof fieldCustomSort} is not accepted.`,
+					);
+				} else if (!isServerSide && typeof fieldCustomSort !== 'function') {
+					throw new Error(
+						`Field ${key} error: custom sort for this field must be a function, ${typeof fieldCustomSort} is not accepted.`,
+					);
+				}
 			}
 
 			return {
@@ -753,8 +757,8 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 				refScheme: refScheme?.[0],
 				sortable: xNoSort
 					? false
-					: typeof customSort?.[key] === 'function'
-					? (customSort[key] as TableSortFunction<T>)
+					: typeof fieldCustomSort === 'function'
+					? fieldCustomSort
 					: getSortingFunction<T>(key, val),
 				render: (fieldVal: string, entry: T) => {
 					const calculatedField = autoUIAdaptRefScheme(fieldVal, val);
