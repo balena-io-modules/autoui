@@ -38,7 +38,7 @@ export const NoRecordsFoundView = <T extends AutoUIBaseResource<T>>({
 			<Heading.h2 bold my="3">
 				{noDataInfo?.title ??
 					t('no_data.no_resource_data_title', {
-						resource: t(`resource.${model.resource}_plural`).toLowerCase(),
+						resource: t(`resource.${model.resource}_other`).toLowerCase(),
 					})}
 			</Heading.h2>
 			{noDataInfo?.subtitle && (
