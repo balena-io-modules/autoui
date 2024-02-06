@@ -1,4 +1,22 @@
 - commits:
+    - subject: "getColumnsFromSchema: Remove unnecessary type casting"
+      hash: 2c18e2a321e36375d7db7a0fd10f352dcde17959
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+    - subject: "getColumnsFromSchema: Use boolean guards for object destructuring"
+      hash: 1f02e86222bf31a947a08488dd3292034c1567b6
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+  version: 0.12.1
+  title: ""
+  date: 2024-02-06T10:53:12.541Z
+- commits:
     - subject: Add x-no-filter property to remove a column from filters
       hash: 3f1efc5d4ddac06c6fee14defce67ce62db09b1f
       body: ""
