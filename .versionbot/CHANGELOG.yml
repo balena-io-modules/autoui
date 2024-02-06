@@ -1,4 +1,15 @@
 - commits:
+    - subject: "Filters: Optimize the removal of x-no-filter fields"
+      hash: e8603aff7a1f419bb27aa64932667265681ee45d
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+  version: 0.12.3
+  title: ""
+  date: 2024-02-06T14:50:05.435Z
+- commits:
     - subject: Fix translations for i18n bump to v23
       hash: b52d658294b6e0f048f5ee6dcf7ca2c94aa870e9
       body: ""
