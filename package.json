@@ -3,11 +3,9 @@
   "version": "0.12.3",
   "description": "",
   "main": "./dist/index.js",
-  "module": "./dist_esm2015/index.js",
   "sideEffects": false,
   "files": [
     "dist/",
-    "dist_esm2015/",
     "docs/",
     "README.md"
   ],
@@ -47,9 +45,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build:cjs": "rimraf dist && tsc",
-    "build:esm2015": "rimraf dist_esm2015 && tsc -p ./tsconfig.esm2015.json",
-    "build": "npm run build:cjs && npm run build:esm2015",
+    "build": "rimraf dist && tsc",
     "test": "jest",
     "eject": "react-scripts eject",
     "lint:fix": "balena-lint --typescript --fix src",
