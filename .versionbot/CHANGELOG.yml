@@ -1,4 +1,15 @@
 - commits:
+    - subject: Publish only as esm
+      hash: f3e8ea0d6ffcd01b27121fc9995cca819721d9b7
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Jonathan Berger
+  version: 1.0.0
+  title: ""
+  date: 2024-02-20T20:51:39.296Z
+- commits:
     - subject: "Filters: Optimize the removal of x-no-filter fields"
       hash: e8603aff7a1f419bb27aa64932667265681ee45d
       body: ""
