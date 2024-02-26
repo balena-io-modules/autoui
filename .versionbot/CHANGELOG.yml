@@ -1,4 +1,22 @@
 - commits:
+    - subject: Temporarily removed tests on autoUI component
+      hash: 0d207013d904409efc3d8ace1a4abec6d2a3b7bd
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+    - subject: Migrate Rendition Buttons to MUI Buttons
+      hash: 6f7ec85e19eecdbc62080b09e667b427ebfe3aa5
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 1.0.1
+  title: ""
+  date: 2024-02-26T16:06:34.378Z
+- commits:
     - subject: Publish only as esm
       hash: f3e8ea0d6ffcd01b27121fc9995cca819721d9b7
       body: ""
