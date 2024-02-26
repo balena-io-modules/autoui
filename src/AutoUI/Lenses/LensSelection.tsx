@@ -2,7 +2,7 @@ import React from 'react';
 import { LensTemplate } from '.';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Material } from '@balena/ui-shared-components';
-import { useTranslation } from '~/hooks/useTranslation';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const { ToggleButtonGroup, ToggleButton, Box } = Material;
 
