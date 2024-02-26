@@ -69,6 +69,7 @@ import { NoRecordsFoundView } from './NoRecordsFoundView';
 const DEFAULT_ITEMS_PER_PAGE = 50;
 
 const HeaderGrid = styled(Flex)`
+	row-gap: 8px;
 	> * {
 		&:first-child {
 			margin-right: 4px;
@@ -416,7 +417,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 										<HeaderGrid
 											flexWrap="wrap"
 											justifyContent="space-between"
-											alignItems="baseline"
+											alignItems="center"
 										>
 											<Create
 												model={model}
@@ -436,8 +437,6 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 											<Box
 												order={[-1, -1, -1, 0]}
 												flex={['1 0 100%', '1 0 100%', '1 0 100%', 'auto']}
-												alignSelf="flex-start"
-												mb={2}
 											>
 												<Filters
 													renderMode={['add', 'search', 'views']}

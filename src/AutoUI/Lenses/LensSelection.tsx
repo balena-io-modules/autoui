@@ -1,7 +1,10 @@
 import React from 'react';
 import { LensTemplate } from '.';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Box, Button, ButtonGroup } from 'rendition';
+import { Material } from '@balena/ui-shared-components';
+import { useTranslation } from '~/hooks/useTranslation';
+
+const { ToggleButtonGroup, ToggleButton, Box } = Material;
 
 interface LensSelectionProps {
 	lenses: LensTemplate[];
@@ -16,31 +19,33 @@ export const LensSelection = ({
 	setLens,
 	...rest
 }: LensSelectionProps) => {
+	const { t } = useTranslation();
 	if (lenses.length <= 1) {
 		return null;
 	}
 	return (
 		<Box {...rest}>
-			<ButtonGroup>
+			<ToggleButtonGroup
+				exclusive
+				aria-label={t('labels.lenses')}
+				value={lens?.slug}
+			>
 				{lenses.map((item) => {
 					return (
-						<Button
+						<ToggleButton
+							aria-label={item.name}
+							title={item.name}
 							key={item.slug}
-							active={lens && lens.slug === item.slug}
+							value={item.slug}
 							data-test={`lens-selector--${item.slug}`}
 							data-slug={item.slug}
 							onClick={() => setLens(item)}
-							tooltip={{
-								text: item.data.label,
-								placement: 'bottom',
-							}}
-							icon={<FontAwesomeIcon icon={item.data.icon} />}
-							quartenary
-							outline
-						/>
+						>
+							<FontAwesomeIcon icon={item.data.icon} />
+						</ToggleButton>
 					);
 				})}
-			</ButtonGroup>
+			</ToggleButtonGroup>
 		</Box>
 	);
 };
