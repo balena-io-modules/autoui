@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix useTranslation import
+      hash: c130af3e2f7b49325528efa6c2e2e04a25bce828
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 1.0.2
+  title: ""
+  date: 2024-02-26T19:16:49.847Z
+- commits:
     - subject: Temporarily removed tests on autoUI component
       hash: 0d207013d904409efc3d8ace1a4abec6d2a3b7bd
       body: ""
