@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix dropdown tooltip preventing actions
+      hash: eb0ece29571e45eb3bc87e7f85f2a47e94a8ab8a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 1.0.3
+  title: ""
+  date: 2024-02-27T17:32:12.551Z
+- commits:
     - subject: Fix useTranslation import
       hash: c130af3e2f7b49325528efa6c2e2e04a25bce828
       body: ""
