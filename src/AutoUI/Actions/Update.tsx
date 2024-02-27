@@ -17,7 +17,7 @@ import {
 	IconsMaterial,
 	Tooltip,
 } from '@balena/ui-shared-components';
-const { Box, Button } = Material;
+const { Box, Button, useMediaQuery, useTheme } = Material;
 const { Edit } = IconsMaterial;
 
 interface UpdateProps<T extends AutoUIBaseResource<T>> {
@@ -38,6 +38,8 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 	checkedState,
 }: UpdateProps<T>) => {
 	const { t } = useTranslation();
+	const theme = useTheme();
+	const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 	const { actions } = autouiContext;
 	const updateActions = React.useMemo(
 		() =>
@@ -118,7 +120,12 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 						affectedEntries: selected,
 					}),
 				tooltip:
-					typeof disabledReason === 'string' ? disabledReason : undefined,
+					typeof disabledReason === 'string'
+						? {
+								title: disabledReason,
+								placement: isTablet ? 'top' : 'right',
+						  }
+						: undefined,
 				disabled: !!disabledReason,
 				section: action.section,
 			};
