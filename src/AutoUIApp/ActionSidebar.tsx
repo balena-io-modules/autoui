@@ -5,11 +5,12 @@ import { OpenApiJson } from './openApiJson';
 import { getFromRef, pine } from './odata';
 import { ISubmitEvent } from '@rjsf/core';
 import { Flex, Form, JSONSchema, notifications } from 'rendition';
-import { Material, IconsMaterial } from '@balena/ui-shared-components';
+import { Material } from '@balena/ui-shared-components';
 import { useTranslation } from '../hooks/useTranslation';
+import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const { Button } = Material;
-const { Close } = IconsMaterial;
 
 const replaceRefValues = (
 	object: JSONSchema,
@@ -109,7 +110,11 @@ export const ActionSidebar = ({
 	return (
 		<ActionSidebarWrapper p={3} flexDirection="column">
 			<Flex justifyContent="end">
-				<Button variant="text" onClick={onClose} startIcon={<Close />} />
+				<Button
+					variant="text"
+					onClick={onClose}
+					startIcon={<FontAwesomeIcon icon={faTimes} />}
+				/>
 			</Flex>
 			<Form my={2} schema={memoizedReferenceSchema} onFormSubmit={submit} />
 		</ActionSidebarWrapper>

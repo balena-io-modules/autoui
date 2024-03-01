@@ -14,11 +14,12 @@ import {
 	DropDownButton,
 	DropDownButtonProps,
 	Material,
-	IconsMaterial,
 	Tooltip,
 } from '@balena/ui-shared-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons/faPenToSquare';
+
 const { Box, Button, useMediaQuery, useTheme } = Material;
-const { Edit } = IconsMaterial;
 
 interface UpdateProps<T extends AutoUIBaseResource<T>> {
 	model: AutoUIModel<T>;
@@ -210,7 +211,7 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 			<DropDownButton<{ section?: string }>
 				items={actionHandlers}
 				disabled={!!disabledReason}
-				startIcon={<Edit />}
+				startIcon={<FontAwesomeIcon icon={faPenToSquare} />}
 				children={t('labels.modify')}
 				color="secondary"
 				groupByProp="section"
