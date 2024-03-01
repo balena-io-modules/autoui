@@ -1,4 +1,15 @@
 - commits:
+    - subject: Remove icons-material
+      hash: 39f31e80c754507b7ed8f4749106216febf922db
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 1.0.4
+  title: ""
+  date: 2024-03-01T12:39:26.398Z
+- commits:
     - subject: Fix dropdown tooltip preventing actions
       hash: eb0ece29571e45eb3bc87e7f85f2a47e94a8ab8a
       body: ""
