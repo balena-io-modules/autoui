@@ -10,10 +10,11 @@ import { getCreateDisabledReason } from '../utils';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Spinner } from 'rendition';
 import { ActionContent, LOADING_DISABLED_REASON } from './ActionContent';
-import { Material, IconsMaterial, Tooltip } from '@balena/ui-shared-components';
+import { Material, Tooltip } from '@balena/ui-shared-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagic } from '@fortawesome/free-solid-svg-icons/faMagic';
 
 const { Button, Box } = Material;
-const { AutoFixNormal } = IconsMaterial;
 
 interface CreateProps<T extends AutoUIBaseResource<T>> {
 	model: AutoUIModel<T>;
@@ -73,7 +74,7 @@ export const Create = <T extends AutoUIBaseResource<T>>({
 							),
 						})
 					}
-					startIcon={<AutoFixNormal />}
+					startIcon={<FontAwesomeIcon icon={faMagic} />}
 					disabled={!!disabledReason}
 				>
 					<ActionContent<T>
