@@ -1,4 +1,15 @@
 - commits:
+    - subject: Bump ui-shared-components, update TS target to es2017
+      hash: e069ffaf0e4c2a0555e18de1cbfc738fe63a1b5d
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Jonathan Berger
+  version: 2.0.0
+  title: ""
+  date: 2024-03-05T10:55:33.729Z
+- commits:
     - subject: Remove icons-material
       hash: 39f31e80c754507b7ed8f4749106216febf922db
       body: ""
