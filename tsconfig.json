@@ -3,7 +3,7 @@
     "types": ["node", "jest"],
     "module": "es2020",
     "resolveJsonModule": true,
-    "target": "es2015",
+    "target": "es2017",
     "outDir": "dist",
     "rootDir": "./src",
     "declaration": true,

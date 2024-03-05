@@ -10,7 +10,7 @@
     "README.md"
   ],
   "dependencies": {
-    "@balena/ui-shared-components": "^4.0.0",
+    "@balena/ui-shared-components": "^5.0.0",
     "json-e": "^4.4.3",
     "lodash": "^4.17.21",
     "qs": "^6.10.3",
