@@ -1,14 +1,8 @@
 import * as React from 'react';
-import filter from 'lodash/filter';
 import qs from 'qs';
-import {
-	Filters,
-	FilterSignature,
-	FiltersProps,
-	JSONSchema,
-	SchemaSieve,
-} from 'rendition';
-import { History } from 'history';
+import type { FilterSignature, FiltersProps, JSONSchema } from 'rendition';
+import { Filters, SchemaSieve } from 'rendition';
+import type { History } from 'history';
 
 export interface ListQueryStringFilterObject {
 	t: FilterSignature['title'];
@@ -62,22 +56,18 @@ export const loadRulesFromUrl = (
 		return [];
 	}
 	const parsed = qs.parse(searchLocation, { ignoreQueryPrefix: true }) || {};
-	const rules = filter(parsed, isQueryStringFilterRuleset).map(
-		// @ts-expect-error
-		(rules: ListQueryStringFilterObject[]) => {
-			if (!Array.isArray(rules)) {
-				rules = [rules];
-			}
+	const rules = Object.values(parsed)
+		.filter(isQueryStringFilterRuleset)
+		// @ts-expect-error incompatible ListQueryStringFilterObject type
+		.map((rules: ListQueryStringFilterObject[]) => {
+			const signatures = rules.map(({ t, n, o, v, r }) => ({
+				title: t,
+				field: n,
+				refScheme: r,
+				operator: o,
+				value: v,
+			}));
 
-			const signatures = rules.map(
-				({ t, n, o, v, r }: ListQueryStringFilterObject) => ({
-					title: t,
-					field: n,
-					refScheme: r,
-					operator: o,
-					value: v,
-				}),
-			);
 			// TODO: createFilter should handle this case as well.
 			if (signatures[0].operator.slug === SchemaSieve.FULL_TEXT_SLUG) {
 				// TODO: listFilterQuery serializes the already escaped value and this
@@ -89,8 +79,7 @@ export const loadRulesFromUrl = (
 				);
 			}
 			return SchemaSieve.createFilter(schema, signatures);
-		},
-	);
+		});
 
 	return rules;
 };

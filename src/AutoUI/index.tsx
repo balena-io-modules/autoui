@@ -1,14 +1,12 @@
 import React from 'react';
+import type { AutoUIContext, ActionData, Priorities } from './schemaOps';
 import {
 	AutoUIAction,
 	AutoUIModel,
 	AutoUIBaseResource,
 	getFieldForFormat,
-	AutoUIContext,
 	AutoUIRawModel,
 	autoUIJsonSchemaPick,
-	ActionData,
-	Priorities,
 } from './schemaOps';
 import { LensSelection } from './Lenses/LensSelection';
 import styled from 'styled-components';
@@ -36,25 +34,29 @@ import {
 } from './utils';
 import { FocusSearch } from './Filters/FocusSearch';
 import { CustomWidget } from './CustomWidget';
-import {
-	Box,
+import type {
 	BoxProps,
-	defaultFormats,
 	Dictionary,
 	FiltersView,
-	Flex,
 	Format,
 	ResourceTagModelService,
-	Spinner,
 	TableColumn,
-	SchemaSieve as sieve,
-	Link,
 	Pagination,
 	TableSortOptions,
 	CheckedState,
 } from 'rendition';
-import { getLenses, LensTemplate } from './Lenses';
-import { TFunction, useTranslation } from '../hooks/useTranslation';
+import {
+	Box,
+	defaultFormats,
+	Flex,
+	Spinner,
+	SchemaSieve as sieve,
+	Link,
+} from 'rendition';
+import type { LensTemplate } from './Lenses';
+import { getLenses } from './Lenses';
+import type { TFunction } from '../hooks/useTranslation';
+import { useTranslation } from '../hooks/useTranslation';
 import { useHistory } from '../hooks/useHistory';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleQuestion } from '@fortawesome/free-regular-svg-icons';
@@ -62,7 +64,7 @@ import {
 	convertToPineClientFilter,
 	orderbyBuilder,
 } from '../oData/jsonToOData';
-import { CollectionLensRendererProps } from './Lenses/types';
+import type { CollectionLensRendererProps } from './Lenses/types';
 import pickBy from 'lodash/pickBy';
 import { NoRecordsFoundView } from './NoRecordsFoundView';
 
@@ -215,7 +217,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		(items, checkedState = undefined) => {
 			setSelected(items);
 			setCheckedState(checkedState ?? 'none');
-			if (!!actionData) {
+			if (actionData) {
 				setActionData({ ...actionData, affectedEntries: items, checkedState });
 			}
 		},
@@ -294,7 +296,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 
 	const autouiContext = React.useMemo((): AutoUIContext<T> => {
 		const tagField = getFieldForFormat(model.schema, 'tag');
-		const tagsAction: AutoUIAction<T> | null = !!sdk?.tags
+		const tagsAction: AutoUIAction<T> | null = sdk?.tags
 			? {
 					title: t('actions.manage_tags'),
 					type: 'update',
@@ -311,7 +313,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 						),
 					isDisabled: ({ affectedEntries }) =>
 						getTagsDisabledReason(affectedEntries, tagField as keyof T, t),
-			  }
+				}
 			: null;
 
 		return {
@@ -321,7 +323,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 			tagField,
 			getBaseUrl,
 			onEntityClick,
-			actions: !!tagsAction ? (actions || []).concat(tagsAction) : actions,
+			actions: tagsAction ? (actions || []).concat(tagsAction) : actions,
 			customSort,
 			sdk,
 		};
@@ -373,7 +375,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 						$skip: page * itemsPerPage,
 					},
 					(v) => v != null,
-			  )
+				)
 			: null;
 		onChange?.({
 			filters: updatedFilters,
@@ -490,7 +492,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 									</Box>
 								) : (
 									!filters.length &&
-									(!!autouiContext.actions?.filter(
+									(autouiContext.actions?.filter(
 										(action) => action.type === 'create',
 									).length ? (
 										<NoRecordsFoundView
@@ -637,8 +639,8 @@ const hasPropertyEnabled = (
 	return Array.isArray(value) && value.some((v) => v === propertyKey)
 		? true
 		: typeof value === 'boolean'
-		? true
-		: false;
+			? true
+			: false;
 };
 
 const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
@@ -722,10 +724,10 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 			)
 				? 'primary'
 				: definedPriorities.secondary.find(
-						(prioritizedKey) => prioritizedKey === key,
-				  )
-				? 'secondary'
-				: 'tertiary';
+							(prioritizedKey) => prioritizedKey === key,
+					  )
+					? 'secondary'
+					: 'tertiary';
 
 			const widgetSchema = { ...val, title: undefined };
 
@@ -757,8 +759,8 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 				sortable: xNoSort
 					? false
 					: typeof fieldCustomSort === 'function'
-					? fieldCustomSort
-					: getSortingFunction<T>(key, val),
+						? fieldCustomSort
+						: getSortingFunction<T>(key, val),
 				render: (fieldVal: string, entry: T) => {
 					const calculatedField = autoUIAdaptRefScheme(fieldVal, val);
 					return (

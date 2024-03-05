@@ -1,6 +1,10 @@
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import pick from 'lodash/pick';
-import { CheckedState, Dictionary, ResourceTagModelService } from 'rendition';
+import type {
+	CheckedState,
+	Dictionary,
+	ResourceTagModelService,
+} from 'rendition';
 
 type MaybePromise<T> = T | Promise<T>;
 

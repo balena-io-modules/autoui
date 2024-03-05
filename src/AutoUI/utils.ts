@@ -1,16 +1,11 @@
-import { AutoUIBaseResource, Permissions, Priorities } from './schemaOps';
+import type { AutoUIBaseResource, Permissions, Priorities } from './schemaOps';
 import castArray from 'lodash/castArray';
 import get from 'lodash/get';
-import { TFunction } from '../hooks/useTranslation';
-import {
-	JSONSchema,
-	JsonTypes,
-	TableSortFunction,
-	SchemaSieve,
-	CheckedState,
-} from 'rendition';
+import type { TFunction } from '../hooks/useTranslation';
+import type { JSONSchema, TableSortFunction, CheckedState } from 'rendition';
+import { JsonTypes, SchemaSieve } from 'rendition';
 
-export const diff = <T extends unknown>(a: T, b: T) => {
+export const diff = <T>(a: T, b: T) => {
 	if (a === b) {
 		return 0;
 	}
@@ -22,9 +17,7 @@ export const stopEvent = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
 	event.stopPropagation();
 };
 
-export const getFromLocalStorage = <T extends any>(
-	key: string,
-): T | undefined => {
+export const getFromLocalStorage = <T>(key: string): T | undefined => {
 	try {
 		const val = localStorage.getItem(key);
 		if (val != null) {
@@ -49,7 +42,7 @@ export const setToLocalStorage = (key: string, value: any) => {
 export const findInObject = (obj: any, key: string): any => {
 	let result;
 	for (const property in obj) {
-		if (obj.hasOwnProperty(property)) {
+		if (Object.prototype.hasOwnProperty.call(obj, property)) {
 			if (property === key) {
 				return obj[key]; // returns the value
 			} else if (typeof obj[property] === 'object') {
@@ -157,7 +150,7 @@ const sortFn = (
 	return diff(aa, bb);
 };
 
-export const getSortingFunction = <T extends any>(
+export const getSortingFunction = <T>(
 	schemaKey: keyof T,
 	schemaValue: JSONSchema,
 ): TableSortFunction<T> => {

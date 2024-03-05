@@ -5,8 +5,9 @@ import { Router, Switch, Route } from 'react-router-dom';
 import { Content } from './Content';
 import { createGlobalStyle } from 'styled-components';
 import { onClickOutOrEsc } from '../AutoUI/utils';
-import { OpenApiJson } from './openApiJson';
-import { ActionSidebar, ActionSidebarProps } from './ActionSidebar';
+import type { OpenApiJson } from './openApiJson';
+import type { ActionSidebarProps } from './ActionSidebar';
+import { ActionSidebar } from './ActionSidebar';
 import { Box, Flex, Provider } from 'rendition';
 import { useHistory } from '../hooks/useHistory';
 

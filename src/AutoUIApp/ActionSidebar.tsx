@@ -1,10 +1,11 @@
 import React from 'react';
 import { ActionMethods, ACTION_SIDEBAR_WIDTH } from '.';
 import styled from 'styled-components';
-import { OpenApiJson } from './openApiJson';
+import type { OpenApiJson } from './openApiJson';
 import { getFromRef, pine } from './odata';
-import { ISubmitEvent } from '@rjsf/core';
-import { Flex, Form, JSONSchema, notifications } from 'rendition';
+import type { ISubmitEvent } from '@rjsf/core';
+import type { JSONSchema } from 'rendition';
+import { Flex, Form, notifications } from 'rendition';
 import { Material } from '@balena/ui-shared-components';
 import { useTranslation } from '../hooks/useTranslation';
 import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
@@ -29,7 +30,7 @@ const replaceRefValues = (
 
 	const build: any = {};
 	for (const key in object) {
-		if (object.hasOwnProperty(key)) {
+		if (Object.prototype.hasOwnProperty.call(object, key)) {
 			let value = object[key as keyof JSONSchema] as JSONSchema;
 
 			// If this is an object, containing the $ref, evaluate it

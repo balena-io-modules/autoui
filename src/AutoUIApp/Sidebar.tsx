@@ -2,8 +2,9 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import { useLocation } from 'react-router';
-import { OpenApiJson } from './openApiJson';
-import { Flex, FlexProps, Txt } from 'rendition';
+import type { OpenApiJson } from './openApiJson';
+import type { FlexProps } from 'rendition';
+import { Flex, Txt } from 'rendition';
 
 const SidebarWrapper = styled(Flex)`
 	overflow: auto;

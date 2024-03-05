@@ -4,13 +4,9 @@ import type {
 	JSONSchema7Definition as JSONSchemaDefinition,
 } from 'json-schema';
 import { PersistentFilters } from './PersistentFilters';
-import { AutoUIContext, AutoUIBaseResource } from '../schemaOps';
-import {
-	FilterRenderMode,
-	FiltersView,
-	Filters as RenditionFilters,
-	SchemaSieve as sieve,
-} from 'rendition';
+import type { AutoUIContext, AutoUIBaseResource } from '../schemaOps';
+import type { FilterRenderMode, FiltersView } from 'rendition';
+import { Filters as RenditionFilters, SchemaSieve as sieve } from 'rendition';
 import { useHistory } from '../../hooks/useHistory';
 import { getFromLocalStorage, setToLocalStorage } from '../utils';
 
@@ -49,11 +45,9 @@ const removeFieldsWithNoFilter = (schema: JSONSchema): JSONSchema => {
 				continue;
 			}
 			// Extract x-no-filter if available
-			const xNoFilter =
-				sieve.parseDescriptionProperty<string[] | boolean | undefined>(
-					value,
-					'x-no-filter',
-				);
+			const xNoFilter = sieve.parseDescriptionProperty<
+				string[] | boolean | undefined
+			>(value, 'x-no-filter');
 
 			if (xNoFilter === true) {
 				// Exclude property entirely if xNoFilter is true
@@ -61,7 +55,9 @@ const removeFieldsWithNoFilter = (schema: JSONSchema): JSONSchema => {
 			}
 
 			const newValue: JSONSchemaDefinition = { ...value };
-			const xNoFilterSet = Array.isArray(xNoFilter) ? new Set(xNoFilter) : undefined;
+			const xNoFilterSet = Array.isArray(xNoFilter)
+				? new Set(xNoFilter)
+				: undefined;
 
 			if ('properties' in value) {
 				newValue.properties = processProperties(value.properties, xNoFilterSet);

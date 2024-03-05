@@ -1,9 +1,9 @@
 import React from 'react';
 import reject from 'lodash/reject';
 import styled from 'styled-components';
-import { AutoUIModel } from '..';
+import type { AutoUIModel } from '..';
 import { Box, Checkbox, Flex, Txt, SchemaSieve as sieve } from 'rendition';
-import { AutoUIContext } from '../schemaOps';
+import type { AutoUIContext } from '../schemaOps';
 import { useHistory } from '../../hooks/useHistory';
 import { stopEvent } from '../utils';
 
@@ -62,7 +62,7 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 	}, [searchTerm, filtered]);
 
 	const getEntityValue = (entity: T) => {
-		const property = model.priorities?.primary[0]!;
+		const property = model.priorities!.primary[0]!;
 		const schemaProperty = model.schema.properties?.[property];
 		const refScheme = schemaProperty
 			? sieve.getPropertyScheme(schemaProperty)
@@ -121,7 +121,7 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 												? selected.concat(entity)
 												: (reject(selected, {
 														[rowKey]: entity[rowKey],
-												  }) as unknown as Array<typeof entity>);
+													}) as unknown as Array<typeof entity>);
 											setSelected(checkedItems);
 										}}
 										checked={

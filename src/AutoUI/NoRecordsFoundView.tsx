@@ -1,6 +1,6 @@
 import React from 'react';
 import { Flex, Heading, Link, useTheme } from 'rendition';
-import {
+import type {
 	ActionData,
 	AutoUIBaseResource,
 	AutoUIContext,
@@ -8,7 +8,7 @@ import {
 } from './schemaOps';
 import { Create } from './Actions/Create';
 
-import { NoDataInfo } from '.';
+import type { NoDataInfo } from '.';
 import { useTranslation } from '../hooks/useTranslation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfo } from '@fortawesome/free-solid-svg-icons';

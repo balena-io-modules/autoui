@@ -2,9 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { faCube } from '@fortawesome/free-solid-svg-icons/faCube';
 import { Update } from '../../Actions/Update';
-import { ActionData } from '../../schemaOps';
-import { LensTemplate } from '..';
-import { EntityLensRendererProps } from '.';
+import type { ActionData } from '../../schemaOps';
+import type { LensTemplate } from '..';
+import type { EntityLensRendererProps } from '.';
 import { Card, Divider, Flex, Heading, TagLabelList, Txt } from 'rendition';
 
 const Label = styled(Txt)`

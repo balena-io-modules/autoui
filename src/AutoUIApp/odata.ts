@@ -1,7 +1,7 @@
-import { Methods, OpenApiJson } from './openApiJson';
+import type { Methods, OpenApiJson } from './openApiJson';
 import PineClientFetch from 'pinejs-client-fetch';
 import get from 'lodash/get';
-import { JSONSchema } from 'rendition';
+import type { JSONSchema } from 'rendition';
 
 export const pine = new PineClientFetch(
 	{
@@ -32,10 +32,7 @@ export const getAllNaturalPropertiesKeys = (
 		.map(([key]) => key);
 };
 
-export const getSelectableOptions = (
-	pathObject: Methods | null,
-	_parameters: string[],
-) => {
+export const getSelectableOptions = (pathObject: Methods | null) => {
 	return (
 		pathObject?.get?.parameters?.find((p) => p.name === '$select')?.schema
 			?.items?.enum ?? []
