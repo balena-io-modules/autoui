@@ -231,7 +231,7 @@ export const orderbyBuilder = <T>(
 	const direction = !reverse ? 'asc' : 'desc';
 	const customOrderByKey = customSort?.[field];
 	if (typeof customOrderByKey === 'string') {
-		return `${customOrderByKey} ${direction}`;
+		return [`${customOrderByKey} ${direction}`, `id ${direction}`];
 	} else if (customOrderByKey != null && typeof customOrderByKey !== 'string') {
 		throw new Error(
 			`Field ${field} error: custom sort for this field must be of type string, ${typeof customOrderByKey} is not accepted.`,
@@ -241,7 +241,5 @@ export const orderbyBuilder = <T>(
 	if (refScheme) {
 		fieldPath += `/${refScheme.replace(/\[(.*?)\]/g, '').replace(/\./g, '/')}`;
 	}
-	return {
-		[fieldPath]: direction,
-	};
+	return [`${fieldPath} ${direction}`, `id ${direction}`];
 };
