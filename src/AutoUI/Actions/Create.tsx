@@ -1,11 +1,11 @@
 import React from 'react';
-import {
+import type {
 	AutoUIContext,
 	AutoUIModel,
 	AutoUIBaseResource,
-	autoUIJsonSchemaPick,
 } from '../schemaOps';
-import { ActionData } from '../schemaOps';
+import { autoUIJsonSchemaPick } from '../schemaOps';
+import type { ActionData } from '../schemaOps';
 import { getCreateDisabledReason } from '../utils';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Spinner } from 'rendition';

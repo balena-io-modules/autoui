@@ -1,12 +1,8 @@
 import React from 'react';
-import {
-	ResourceTagSubmitInfo,
-	SubmitInfo,
-	TagManagementModal,
-	notifications,
-} from 'rendition';
+import type { ResourceTagSubmitInfo, SubmitInfo } from 'rendition';
+import { TagManagementModal, notifications } from 'rendition';
 import { useTranslation } from '../../hooks/useTranslation';
-import { AutoUIContext, AutoUIBaseResource } from '../schemaOps';
+import type { AutoUIContext, AutoUIBaseResource } from '../schemaOps';
 
 interface TagsProps<T> {
 	selected: T[];
@@ -71,8 +67,8 @@ export const Tags = <T extends AutoUIBaseResource<T>>({
 			itemType={autouiContext.resource}
 			titleField={autouiContext.nameField as keyof T}
 			tagField={autouiContext.tagField as keyof T}
-			done={(tagSubmitInfo) => {
-				changeTags(tagSubmitInfo);
+			done={async (tagSubmitInfo) => {
+				await changeTags(tagSubmitInfo);
 				onDone();
 			}}
 			cancel={() => onDone()}

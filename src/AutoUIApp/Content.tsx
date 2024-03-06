@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router';
-import { AutoUIModel, AutoUIBaseResource } from '../AutoUI/schemaOps';
-import { OpenApiJson } from './openApiJson';
+import type { AutoUIModel, AutoUIBaseResource } from '../AutoUI/schemaOps';
+import type { OpenApiJson } from './openApiJson';
 import {
 	getAllNaturalPropertiesKeys,
 	getSelectableOptions,
@@ -9,12 +9,14 @@ import {
 	pine,
 	getFromRef,
 } from './odata';
-import { AutoUI, autoUIRunTransformers, AutoUIAction } from '../AutoUI';
+import type { AutoUIAction } from '../AutoUI';
+import { AutoUI, autoUIRunTransformers } from '../AutoUI';
 import { findInObject } from '../AutoUI/utils';
 import isEmpty from 'lodash/isEmpty';
 import { ActionMethods } from '.';
-import { ActionSidebarProps } from './ActionSidebar';
-import { JSONSchema, useRequest } from 'rendition';
+import type { ActionSidebarProps } from './ActionSidebar';
+import type { JSONSchema } from 'rendition';
+import { useRequest } from 'rendition';
 import { useHistory } from '../hooks/useHistory';
 
 interface ContentProps {
@@ -66,7 +68,7 @@ const generateModel = (
 export const Content = ({ openApiJson, openActionSidebar }: ContentProps) => {
 	const { pathname } = useLocation();
 	const history = useHistory();
-	const resourceName = pathname.replace(/^\/([^\/]*).*$/, '$1');
+	const resourceName = pathname.replace(/^\/([^/]*).*$/, '$1');
 	const id = pathname.substring(pathname.lastIndexOf('/') + 1);
 	const endsWithValidId = !isNaN(parseInt(id, 10));
 	const schema = getSchemaFromLocation(openApiJson, resourceName);
@@ -84,7 +86,7 @@ export const Content = ({ openApiJson, openActionSidebar }: ContentProps) => {
 				resource: resourceName,
 				...(endsWithValidId && { id }),
 				options: {
-					$select: [...getSelectableOptions(correspondingPath, [])],
+					$select: [...getSelectableOptions(correspondingPath)],
 				},
 			}),
 		[openApiJson, pathname],

@@ -1,9 +1,9 @@
 import React from 'react';
 import castArray from 'lodash/castArray';
 import { getSchemaFormat, getSubSchemaFromRefScheme } from './models/helpers';
+import type { WidgetProps } from 'rendition';
 import {
 	JsonTypes,
-	WidgetProps,
 	getRendererWidget,
 	getSchemaNormalizedValue,
 	transformUiSchema,

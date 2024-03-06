@@ -1,23 +1,20 @@
 import isEmpty from 'lodash/isEmpty';
-import {
-	AutoUIModel,
-	autoUIJsonSchemaPick,
-	AutoUIRawModel,
-} from '../schemaOps';
+import type { AutoUIModel, AutoUIRawModel } from '../schemaOps';
+import { autoUIJsonSchemaPick } from '../schemaOps';
 import type {
 	JSONSchema7 as JSONSchema,
 	JSONSchema7Definition as JSONSchemaDefinition,
 } from 'json-schema';
-import get from 'lodash/get';
 import pick from 'lodash/pick';
 import type { Dictionary } from 'rendition';
 import { findInObject } from '../utils';
 import { SchemaSieve as sieve } from 'rendition';
+import get from 'lodash/get';
 
 type Transformers<
 	T extends Dictionary<any>,
 	TTransformer extends Dictionary<any>,
-	TContext extends any,
+	TContext,
 > = {
 	[field in keyof TTransformer]: (
 		entry: T,
@@ -44,7 +41,7 @@ export const isJson = (str: string) => {
 export const autoUIRunTransformers = <
 	T extends Dictionary<any>,
 	TResult extends T,
-	TContext extends any,
+	TContext,
 >(
 	data: T | undefined,
 	transformers: Transformers<T, Omit<TResult, keyof T>, TContext>,
@@ -112,12 +109,12 @@ export const autoUIGetModelForCollection = <T>(
 	context?: { accessRole?: string | null },
 ): AutoUIModel<T> => {
 	const accessRole = context?.accessRole;
-	const schema = !!model.priorities
+	const schema = model.priorities
 		? autoUIJsonSchemaPick(model.schema, [
 				...model.priorities.primary,
 				...model.priorities.secondary,
 				...model.priorities.tertiary,
-		  ])
+			])
 		: model.schema;
 	return {
 		...model,
@@ -161,13 +158,13 @@ export const getHeaderLink = (
 };
 
 export const convertRefSchemeToSchemaPath = (refScheme: string | undefined) => {
-	return !!refScheme
+	return refScheme
 		? refScheme
 				.split('.')
 				.join('.properties.')
 				.replace(/\[\d+\]/g, '.items')
 		: // TODO: This atm doesn't support ['my property']
-		  refScheme;
+			refScheme;
 };
 
 export const generateSchemaFromRefScheme = (

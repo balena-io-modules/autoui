@@ -1,18 +1,19 @@
 import React from 'react';
-import {
+import type {
 	AutoUIContext,
 	AutoUIModel,
 	AutoUIBaseResource,
-	autoUIJsonSchemaPick,
 } from '../schemaOps';
-import { ActionData } from '../schemaOps';
+import { autoUIJsonSchemaPick } from '../schemaOps';
+import type { ActionData } from '../schemaOps';
 import { autoUIGetDisabledReason } from '../utils';
 import { useTranslation } from '../../hooks/useTranslation';
-import { CheckedState, Spinner } from 'rendition';
+import type { CheckedState } from 'rendition';
+import { Spinner } from 'rendition';
 import { ActionContent, LOADING_DISABLED_REASON } from './ActionContent';
+import type { DropDownButtonProps } from '@balena/ui-shared-components';
 import {
 	DropDownButton,
-	DropDownButtonProps,
 	Material,
 	Tooltip,
 } from '@balena/ui-shared-components';
@@ -117,7 +118,7 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 								: autoUIJsonSchemaPick(
 										model.schema,
 										model.permissions[action.type],
-								  ),
+									),
 						affectedEntries: selected,
 					}),
 				tooltip:
@@ -125,7 +126,7 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 						? {
 								title: disabledReason,
 								placement: isTablet ? 'top' : 'right',
-						  }
+							}
 						: undefined,
 				disabled: !!disabledReason,
 				section: action.section,
@@ -166,7 +167,7 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 										: autoUIJsonSchemaPick(
 												model.schema,
 												model.permissions[action.type],
-										  ),
+											),
 								affectedEntries: selected,
 							})
 						}

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Flex, FlexProps, Heading } from 'rendition';
+import type { FlexProps } from 'rendition';
+import { Flex, Heading } from 'rendition';
 
 interface NavbarProps extends FlexProps {
 	title: string;

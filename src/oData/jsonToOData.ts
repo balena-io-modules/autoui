@@ -1,5 +1,5 @@
-import { JSONSchema, TableSortOptions } from 'rendition';
-import { AutoUIContext } from '~/AutoUI/schemaOps';
+import type { JSONSchema, TableSortOptions } from 'rendition';
+import type { AutoUIContext } from '~/AutoUI/schemaOps';
 
 type PineFilterObject = Record<string, any>;
 

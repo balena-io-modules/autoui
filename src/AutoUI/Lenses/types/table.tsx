@@ -1,7 +1,7 @@
 import React from 'react';
 import { faTable } from '@fortawesome/free-solid-svg-icons/faTable';
-import { LensTemplate } from '..';
-import { CollectionLensRendererProps } from '.';
+import type { LensTemplate } from '..';
+import type { CollectionLensRendererProps } from '.';
 import { Table } from 'rendition';
 
 export const table: LensTemplate = {

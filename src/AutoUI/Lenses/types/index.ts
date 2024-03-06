@@ -4,8 +4,8 @@ import type {
 	Pagination,
 	CheckedState,
 } from 'rendition';
-import { AutoUIEntityPropertyDefinition } from '../../';
-import { AutoUIContext, AutoUIModel } from '../../schemaOps';
+import type { AutoUIEntityPropertyDefinition } from '../../';
+import type { AutoUIContext, AutoUIModel } from '../../schemaOps';
 export { table } from './table';
 export { entity } from './entity';
 
