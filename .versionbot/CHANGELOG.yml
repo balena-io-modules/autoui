@@ -1,4 +1,15 @@
 - commits:
+    - subject: Make OData sorting predictable and unique
+      hash: 9d1faf3ab5ce96cf5c01d99b3759d52a36f97842
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 2.0.1
+  title: ""
+  date: 2024-03-06T10:19:43.108Z
+- commits:
     - subject: Bump ui-shared-components, update TS target to es2017
       hash: e069ffaf0e4c2a0555e18de1cbfc738fe63a1b5d
       body: ""
