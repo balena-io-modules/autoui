@@ -758,6 +758,11 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 					? false
 					: typeof fieldCustomSort === 'function'
 					? fieldCustomSort
+					: isServerSide
+					? // This is a temporary solution to prevent clientside sorting for server side paginated tables
+					  // This is a noop for .sort
+					  // TODO: We should just avoid sorting in the Table component when isServerSide is true, look into this when rendition is gone
+					  () => 0
 					: getSortingFunction<T>(key, val),
 				render: (fieldVal: string, entry: T) => {
 					const calculatedField = autoUIAdaptRefScheme(fieldVal, val);
