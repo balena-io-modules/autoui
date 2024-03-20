@@ -1,4 +1,15 @@
 - commits:
+    - subject: Avoid clientside sorting when in serverside mode
+      hash: 51c1a8c60405222b3a6a91148d56a0c825ff0274
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 2.0.2
+  title: ""
+  date: 2024-03-20T15:55:42.876Z
+- commits:
     - subject: Make OData sorting predictable and unique
       hash: 9d1faf3ab5ce96cf5c01d99b3759d52a36f97842
       body: ""
