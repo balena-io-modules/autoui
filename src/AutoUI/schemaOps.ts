@@ -1,6 +1,7 @@
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import pick from 'lodash/pick';
 import { CheckedState, Dictionary, ResourceTagModelService } from 'rendition';
+import { PineFilterObject } from '~/oData/jsonToOData';
 
 type MaybePromise<T> = T | Promise<T>;
 
@@ -35,6 +36,18 @@ export interface AutoUIModel<T> {
 	permissions: Permissions<T>;
 	priorities?: Priorities<T>;
 }
+
+export type AutoUITagsSdk<T> = ResourceTagModelService &
+	(
+		| {}
+		| {
+				getAll: (itemsOrFilters: any) => T[] | Promise<T[]>;
+				canAccess: (param: {
+					checkedState?: CheckedState;
+					selected?: T[];
+				}) => Promise<boolean>;
+		  }
+	);
 
 export interface AutoUIAction<T> {
 	title: string;
@@ -87,8 +100,10 @@ export interface AutoUIContext<T> {
 	actions?: Array<AutoUIAction<T>>;
 	customSort?: Dictionary<(a: T, b: T) => number> | Dictionary<string>;
 	sdk?: {
-		tags?: ResourceTagModelService;
+		tags?: AutoUITagsSdk<T>;
 	};
+	internalPineFilter?: PineFilterObject | null;
+	checkedState: CheckedState;
 }
 
 export interface ActionData<T> {
