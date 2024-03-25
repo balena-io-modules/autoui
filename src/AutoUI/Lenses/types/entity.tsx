@@ -5,7 +5,9 @@ import { Update } from '../../Actions/Update';
 import { ActionData } from '../../schemaOps';
 import { LensTemplate } from '..';
 import { EntityLensRendererProps } from '.';
-import { Card, Divider, Flex, Heading, TagLabelList, Txt } from 'rendition';
+import { Heading, TagLabelList, Txt } from 'rendition';
+import { Material } from '@balena/ui-shared-components';
+const { Box, Card, Divider } = Material;
 
 const Label = styled(Txt)`
 	color: #252629;
@@ -51,14 +53,22 @@ export const entity: LensTemplate = {
 				<Card>
 					{data && (
 						<>
-							<Flex flexDirection="row" justifyContent="space-between">
-								<Flex flexDirection="column">
+							<Box
+								display="flex"
+								flexDirection="row"
+								justifyContent="space-between"
+							>
+								<Box display="flex" flexDirection="column">
 									<Heading.h2>
 										{properties.length > 0 &&
 											properties[0].render(data[properties[0].field], data)}
 									</Heading.h2>
-								</Flex>
-								<Flex flexDirection="column" alignItems="flex-end">
+								</Box>
+								<Box
+									display="flex"
+									flexDirection="column"
+									alignItems="flex-end"
+								>
 									{hasUpdateActions && (
 										<Update
 											model={model}
@@ -69,10 +79,11 @@ export const entity: LensTemplate = {
 											onActionTriggered={onActionTriggered}
 										/>
 									)}
-								</Flex>
-							</Flex>
+								</Box>
+							</Box>
 							<Divider />
-							<Flex
+							<Box
+								display="flex"
 								flexDirection="row"
 								flexWrap="wrap"
 								justifyContent="space-between"
@@ -81,7 +92,8 @@ export const entity: LensTemplate = {
 								{properties.map(
 									(property) =>
 										property.priority !== 'primary' && (
-											<Flex
+											<Box
+												display="flex"
 												flexDirection="column"
 												my={10}
 												key={property.key}
@@ -89,11 +101,12 @@ export const entity: LensTemplate = {
 											>
 												<Label>{property.label}</Label>
 												<Txt>{property.render(data[property.field], data)}</Txt>
-											</Flex>
+											</Box>
 										),
 								)}
 								{!!data[`${model.resource}_tag`]?.length && (
-									<Flex
+									<Box
+										display="flex"
 										flexDirection="column"
 										my={10}
 										key={'device_tag'}
@@ -103,9 +116,9 @@ export const entity: LensTemplate = {
 										<Txt>
 											<TagLabelList tags={data[`${model.resource}_tag`]} />
 										</Txt>
-									</Flex>
+									</Box>
 								)}
-							</Flex>
+							</Box>
 							{actionData?.action?.renderer &&
 								actionData.action.renderer({
 									schema: actionData.schema,

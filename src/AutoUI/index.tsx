@@ -11,7 +11,6 @@ import {
 	Priorities,
 } from './schemaOps';
 import { LensSelection } from './Lenses/LensSelection';
-import styled from 'styled-components';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import isEqual from 'lodash/isEqual';
 import { Filters } from './Filters/Filters';
@@ -37,12 +36,9 @@ import {
 import { FocusSearch } from './Filters/FocusSearch';
 import { CustomWidget } from './CustomWidget';
 import {
-	Box,
-	BoxProps,
 	defaultFormats,
 	Dictionary,
 	FiltersView,
-	Flex,
 	Format,
 	ResourceTagModelService,
 	Spinner,
@@ -65,24 +61,27 @@ import {
 import { CollectionLensRendererProps } from './Lenses/types';
 import pickBy from 'lodash/pickBy';
 import { NoRecordsFoundView } from './NoRecordsFoundView';
+import { Material } from '@balena/ui-shared-components';
+const { Box, styled } = Material;
 
 const DEFAULT_ITEMS_PER_PAGE = 50;
 
-const HeaderGrid = styled(Flex)`
-	row-gap: 8px;
-	> * {
-		&:first-child {
-			margin-right: 4px;
-		}
-		&:not(:last-child):not(:first-child) {
-			margin-left: 4px;
-			margin-right: 4px;
-		}
-		&:last-child {
-			margin-left: 4px;
-		}
-	}
-`;
+const HeaderGrid = styled(Box)(({ theme }) => ({
+	display: 'flex',
+	rowGap: theme.spacing(2),
+	'> *': {
+		'&:first-child': {
+			marginRight: 1,
+		},
+		'&:not(:last-child):not(:first-child)': {
+			marginRight: 1,
+			marginLeft: 1,
+		},
+		'&:last-child': {
+			marginLeft: 1,
+		},
+	},
+}));
 
 export interface NoDataInfo {
 	title?: string | JSX.Element;
@@ -93,7 +92,7 @@ export interface NoDataInfo {
 	docsLabel?: string;
 }
 
-export interface AutoUIProps<T> extends Omit<BoxProps, 'onChange'> {
+export interface AutoUIProps<T> extends Omit<Material.BoxProps, 'onChange'> {
 	/** Model is the property that describe the data to display with a JSON structure */
 	model: AutoUIModel<T>;
 	/** Array of data or data entity to display */
@@ -384,7 +383,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	};
 
 	return (
-		<Flex flex={1} flexDirection="column" {...boxProps}>
+		<Box display="flex" flex={1} flexDirection="column" {...boxProps}>
 			<Spinner
 				flex={1}
 				label={
@@ -396,7 +395,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 				show={data == null || loading || !!isBusyMessage}
 				{...(data == null ? { width: '100%', height: '100%' } : undefined)}
 			>
-				<Flex height="100%" flexDirection="column">
+				<Box display="flex" height="100%" flexDirection="column">
 					{
 						// We need to mount the Filters component so that it can load the filters
 						// & pagination state from the url (or use defaults) and provide them to
@@ -568,9 +567,9 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							onDone: () => setActionData(undefined),
 							setSelected: $setSelected,
 						})}
-				</Flex>
+				</Box>
 			</Spinner>
-		</Flex>
+		</Box>
 	);
 };
 

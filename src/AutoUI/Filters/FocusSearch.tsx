@@ -1,37 +1,39 @@
 import React from 'react';
 import reject from 'lodash/reject';
-import styled from 'styled-components';
 import { AutoUIModel } from '..';
-import { Box, Checkbox, Flex, Txt, SchemaSieve as sieve } from 'rendition';
+import { Checkbox, Txt, SchemaSieve as sieve } from 'rendition';
 import { AutoUIContext } from '../schemaOps';
 import { useHistory } from '../../hooks/useHistory';
 import { stopEvent } from '../utils';
+import { Material } from '@balena/ui-shared-components';
+const { Box, styled } = Material;
 
-const Focus = styled(Box)`
-	flex-basis: 100%;
-	background-color: white;
-	border: solid 1px ${(props) => props.theme.colors.quartenary.dark};
-	max-height: 200px;
-	position: absolute;
-	width: 100%;
-	z-index: 1;
-	border-radius: 0 0 ${(props) => props.theme.global.drop.border.radius}
-		${(props) => props.theme.global.drop.border.radius};
-	overflow: hidden;
-`;
+const Focus = styled(Box)(({ theme }) => ({
+	flexBasis: '100%',
+	backgroundColor: 'white',
+	border: `solid 1px ${theme.palette.divider}`, // TODO: ask Jon what color we should use here
+	maxHeight: '200px',
+	position: 'absolute',
+	width: '100%',
+	zIndex: 1,
+	borderRadius: '0 0 4px 4px',
+	overflow: 'hidden',
+}));
 
-const FocusContent = styled(Box)`
-	max-height: 180px;
-	overflow-y: auto;
-	overflow-x: auto;
-`;
+const FocusContent = styled(Box)(() => ({
+	maxHeight: '180px',
+	overflowY: 'auto',
+	overflowX: 'auto',
+}));
 
-const FocusItem = styled(Box)<{ hasGetBaseUrl: boolean }>`
-	cursor: ${(props) => (props.hasGetBaseUrl ? 'pointer' : 'default')};
-	&:hover {
-		background: #dde1f0; // This is the background color Select uses for entities on hover. We do not have it in our theme
-	}
-`;
+const FocusItem = styled(Box)<{ hasGetBaseUrl: boolean }>(
+	({ hasGetBaseUrl }) => ({
+		cursor: hasGetBaseUrl ? 'pointer' : 'default',
+		'&:hover': {
+			background: 'rgba(0, 0, 0, 0.04)', // This is the background color MUI Select uses for entities on hover. TODO: Find a better way to yse it
+		},
+	}),
+);
 
 interface FocusSearchProps<T extends { id: number; [key: string]: any }> {
 	searchTerm: string;
@@ -81,9 +83,9 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 	if (!filteredFittingSearchTerms.length) {
 		return (
 			<Focus>
-				<Flex justifyContent="space-around" py={2}>
+				<Box display="flex" justifyContent="space-around" py={2}>
 					<em>no results</em>
-				</Flex>
+				</Box>
 			</Focus>
 		);
 	}
@@ -109,9 +111,15 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 						}}
 						hasGetBaseUrl={!!autouiContext.getBaseUrl}
 					>
-						<Flex flexDirection="row">
+						<Box display="flex" flexDirection="row">
 							{hasUpdateActions && (
-								<Flex flexDirection="column" ml={1} mr={3} alignItems="center">
+								<Box
+									display="flex"
+									flexDirection="column"
+									ml={1}
+									mr={3}
+									alignItems="center"
+								>
 									<Checkbox
 										onChange={() => {
 											const isChecked = !!selected.find(
@@ -129,16 +137,17 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 										}
 										onClick={stopEvent}
 									/>
-								</Flex>
+								</Box>
 							)}
-							<Flex
+							<Box
+								display="flex"
 								flexDirection="column"
 								alignItems="center"
 								ml={!hasUpdateActions ? 1 : undefined}
 							>
 								<Txt>{getEntityValue(entity)}</Txt>
-							</Flex>
-						</Flex>
+							</Box>
+						</Box>
 					</FocusItem>
 				))}
 			</FocusContent>

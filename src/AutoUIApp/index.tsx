@@ -7,8 +7,10 @@ import { createGlobalStyle } from 'styled-components';
 import { onClickOutOrEsc } from '../AutoUI/utils';
 import { OpenApiJson } from './openApiJson';
 import { ActionSidebar, ActionSidebarProps } from './ActionSidebar';
-import { Box, Flex, Provider } from 'rendition';
+import { Provider } from 'rendition';
 import { useHistory } from '../hooks/useHistory';
+import { Material } from '@balena/ui-shared-components';
+const { Box } = Material;
 
 const SIDEBAR_WIDTH = 166;
 const NAVBAR_HEIGHT = 60;
@@ -65,7 +67,7 @@ export const AutoUIApp = ({ openApiJson, title, logo }: AutoUIAppProps) => {
 			<Router history={history}>
 				<GlobalStyle />
 				<Navbar height={NAVBAR_HEIGHT} title={title} logo={logo} />
-				<Flex style={{ position: 'relative' }}>
+				<Box sx={{ display: 'flex', position: 'relative' }}>
 					<Sidebar
 						width={`${SIDEBAR_WIDTH}px`}
 						height={`calc(100vh - ${NAVBAR_HEIGHT}px)`}
@@ -99,15 +101,15 @@ export const AutoUIApp = ({ openApiJson, title, logo }: AutoUIAppProps) => {
 						</Switch>
 					</Box>
 					{actionSidebar && (
-						<Flex ref={actionSidebarWrapper}>
+						<Box display="flex" ref={actionSidebarWrapper}>
 							<ActionSidebar
 								{...actionSidebar}
 								openApiJson={openApiJson}
 								onClose={() => setActionSidebar(null)}
 							/>
-						</Flex>
+						</Box>
 					)}
-				</Flex>
+				</Box>
 			</Router>
 		</Provider>
 	);
