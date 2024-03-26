@@ -1,15 +1,12 @@
-import type {
-	BoxProps,
-	TableSortOptions,
-	Pagination,
-	CheckedState,
-} from 'rendition';
+import type { TableSortOptions, Pagination, CheckedState } from 'rendition';
 import { AutoUIEntityPropertyDefinition } from '../../';
 import { AutoUIContext, AutoUIModel } from '../../schemaOps';
+import { Material } from '@balena/ui-shared-components';
 export { table } from './table';
 export { entity } from './entity';
 
-export interface LensRendererBaseProps<T> extends Pick<BoxProps, 'flex'> {
+export interface LensRendererBaseProps<T>
+	extends Pick<Material.BoxProps, 'flex'> {
 	properties: Array<AutoUIEntityPropertyDefinition<T>>;
 	autouiContext: AutoUIContext<T>;
 	model: AutoUIModel<T>;

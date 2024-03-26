@@ -1,39 +1,42 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import styled from 'styled-components';
 import { useLocation } from 'react-router';
 import { OpenApiJson } from './openApiJson';
-import { Flex, FlexProps, Txt } from 'rendition';
+import { Txt } from 'rendition';
+import { designTokens, Material } from '@balena/ui-shared-components';
+const { Box, styled } = Material;
 
-const SidebarWrapper = styled(Flex)`
-	overflow: auto;
-	background: ${(props) => props.theme.colors.secondary.main};
-	flex-direction: column;
-	flex-wrap: nowrap;
-`;
+const SidebarWrapper = styled(Box)(({ theme }) => ({
+	display: 'flex',
+	overflow: 'auto',
+	background: theme.palette.secondary.main,
+	flexDirection: 'column',
+	flexWrap: 'nowrap',
+}));
 
-const MenuItem = styled(Flex)<{ isCurrent: boolean }>`
-	height: 48px;
-	cursor: pointer;
-	border-bottom: 1px solid
-		${(props) =>
-			props.isCurrent
-				? props.theme.colors.quartenary.light
-				: props.theme.colors.tertiary.dark};
-	border-left: ${(props) =>
-		props.isCurrent ? `2px solid ${props.theme.colors.primary.main}` : 'none'};
-	background: ${(props) =>
-		props.isCurrent
-			? props.theme.colors.quartenary.light
-			: props.theme.colors.secondary.dark};
+const MenuItem = styled(Box)<{ isCurrent: boolean }>(
+	({ isCurrent, theme }) => ({
+		display: 'flex',
+		height: '48px',
+		cursor: 'pointer',
+		borderBottom: `1px solid
+		${
+			isCurrent
+				? designTokens.color.border.value
+				: designTokens.color.border.subtle.value
+		}`,
+		borderLeft: isCurrent
+			? `2px solid ${designTokens.color.border.accent.value}`
+			: 'none',
+		background: isCurrent
+			? designTokens.color.border.value
+			: designTokens.color.border.subtle.value,
 
-	&:hover {
-		background: ${(props) =>
-			props.isCurrent
-				? props.theme.colors.quartenary.light
-				: props.theme.colors.tertiary.dark};
-	}
-`;
+		'&:hover': {
+			background: isCurrent ? theme.palette.divider : theme.palette.grey[900],
+		},
+	}),
+);
 
 interface SidebarProps {
 	openApiJson: OpenApiJson;
@@ -44,7 +47,7 @@ export const Sidebar = ({
 	openApiJson,
 	isCollapsed = false,
 	...flexProps
-}: SidebarProps & FlexProps) => {
+}: SidebarProps & Material.BoxProps) => {
 	const { pathname } = useLocation();
 	const menuItems = React.useMemo(
 		() =>

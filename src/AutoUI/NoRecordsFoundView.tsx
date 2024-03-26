@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, Heading, Link, useTheme } from 'rendition';
+import { Heading, Link } from 'rendition';
 import {
 	ActionData,
 	AutoUIBaseResource,
@@ -7,11 +7,11 @@ import {
 	AutoUIModel,
 } from './schemaOps';
 import { Create } from './Actions/Create';
-
 import { NoDataInfo } from '.';
 import { useTranslation } from '../hooks/useTranslation';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfo } from '@fortawesome/free-solid-svg-icons';
+import { Material } from '@balena/ui-shared-components';
+const { Container, Box, Alert } = Material;
+
 export interface NoRecordsFoundViewProps<T> {
 	model: AutoUIModel<T>;
 	autouiContext: AutoUIContext<T>;
@@ -26,14 +26,16 @@ export const NoRecordsFoundView = <T extends AutoUIBaseResource<T>>({
 	noDataInfo,
 }: NoRecordsFoundViewProps<T>) => {
 	const { t } = useTranslation();
-	const theme = useTheme();
 	return (
-		<Flex
-			flexDirection="column"
-			alignItems="center"
-			maxWidth="600px"
-			margin="auto"
-			style={{ textAlign: 'center' }}
+		<Container
+			maxWidth="sm"
+			sx={{
+				textAlign: 'center',
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
+				my: 'auto',
+			}}
 		>
 			<Heading.h2 bold my="3">
 				{noDataInfo?.title ??
@@ -45,51 +47,26 @@ export const NoRecordsFoundView = <T extends AutoUIBaseResource<T>>({
 				<Heading.h3 my="3">{noDataInfo?.subtitle}</Heading.h3>
 			)}
 			{noDataInfo?.info && (
-				<Flex
-					bg="info.light"
-					my="3"
-					maxWidth="80%"
-					style={{ borderRadius: '8px' }}
-				>
-					<Flex
-						maxWidth={70}
-						minWidth={70}
-						justifyContent="center"
-						alignItems="center"
-					>
-						<FontAwesomeIcon
-							icon={faInfo}
-							fontSize={26}
-							style={{
-								border: `2.5px solid ${theme.colors.info.semilight}`,
-								padding: '5px 12px',
-								borderRadius: '50%',
-								fontSize: '22px',
-								color: `${theme.colors.info.semilight}`,
-							}}
-						/>
-					</Flex>
-					<Flex py={3} pr={4} justifyContent="flex-start">
-						<i style={{ textAlign: 'left' }}>{noDataInfo.info}</i>
-					</Flex>
-				</Flex>
+				<Alert sx={{ my: 3 }} severity="info">
+					{noDataInfo.info}
+				</Alert>
 			)}
 			<Heading.h3 my="3">
 				{noDataInfo?.description ?? t('no_data.no_resource_data_description')}
 			</Heading.h3>
-			<Flex my="3">
+			<Box display="flex" my={3}>
 				<Create
 					model={model}
 					autouiContext={autouiContext}
 					hasOngoingAction={false}
 					onActionTriggered={onActionTriggered}
 				/>
-			</Flex>
+			</Box>
 			{noDataInfo?.docsLink && (
 				<Link href={noDataInfo.docsLink} blank my="2">
 					{noDataInfo.docsLabel ?? noDataInfo.docsLink}
 				</Link>
 			)}
-		</Flex>
+		</Container>
 	);
 };

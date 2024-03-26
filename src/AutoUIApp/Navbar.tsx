@@ -1,16 +1,23 @@
 import React from 'react';
-import { Flex, FlexProps, Heading } from 'rendition';
+import { Heading } from 'rendition';
+import { Material } from '@balena/ui-shared-components';
+const { Box } = Material;
 
-interface NavbarProps extends FlexProps {
+interface NavbarProps extends Material.BoxProps {
 	title: string;
 	logo?: string;
 }
 
-export const Navbar = ({ title, logo, ...flexProps }: NavbarProps) => {
+export const Navbar = ({ title, logo, ...boxProps }: NavbarProps) => {
 	return (
-		<Flex bg="secondary.main" alignItems="center" {...flexProps}>
+		<Box
+			display="flex"
+			bgcolor="secondary.main"
+			alignItems="center"
+			{...boxProps}
+		>
 			{logo && <img src={logo} alt={title} height="50px" />}
 			<Heading color="white">{title}</Heading>
-		</Flex>
+		</Box>
 	);
 };

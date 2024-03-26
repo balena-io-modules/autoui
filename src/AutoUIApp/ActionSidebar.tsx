@@ -1,16 +1,15 @@
 import React from 'react';
 import { ActionMethods, ACTION_SIDEBAR_WIDTH } from '.';
-import styled from 'styled-components';
 import { OpenApiJson } from './openApiJson';
 import { getFromRef, pine } from './odata';
 import { ISubmitEvent } from '@rjsf/core';
-import { Flex, Form, JSONSchema, notifications } from 'rendition';
+import { Form, JSONSchema, notifications } from 'rendition';
 import { Material } from '@balena/ui-shared-components';
 import { useTranslation } from '../hooks/useTranslation';
 import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const { Button } = Material;
+const { Button, Box, styled } = Material;
 
 const replaceRefValues = (
 	object: JSONSchema,
@@ -48,17 +47,18 @@ const replaceRefValues = (
 	return build as JSONSchema;
 };
 
-const ActionSidebarWrapper = styled(Flex)`
-	border-left: 1px solid black;
-	position: absolute;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	z-index: 9;
-	width: ${() => ACTION_SIDEBAR_WIDTH}px;
-	background: white;
-	overflow: scroll;
-`;
+const ActionSidebarWrapper = styled(Box)(() => ({
+	display: 'flex',
+	borderLeft: '1px solid black',
+	position: 'absolute',
+	right: 0,
+	top: 0,
+	bottom: 0,
+	zIndex: 9,
+	width: `${ACTION_SIDEBAR_WIDTH}px`,
+	background: 'white',
+	overflow: 'scroll',
+}));
 
 export interface ActionSidebarProps {
 	resourceName: string;
@@ -109,13 +109,13 @@ export const ActionSidebar = ({
 
 	return (
 		<ActionSidebarWrapper p={3} flexDirection="column">
-			<Flex justifyContent="end">
+			<Box display="flex" justifyContent="end">
 				<Button
 					variant="text"
 					onClick={onClose}
 					startIcon={<FontAwesomeIcon icon={faTimes} />}
 				/>
-			</Flex>
+			</Box>
 			<Form my={2} schema={memoizedReferenceSchema} onFormSubmit={submit} />
 		</ActionSidebarWrapper>
 	);
