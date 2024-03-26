@@ -5,13 +5,14 @@ import { Checkbox, Txt, SchemaSieve as sieve } from 'rendition';
 import { AutoUIContext } from '../schemaOps';
 import { useHistory } from '../../hooks/useHistory';
 import { stopEvent } from '../utils';
-import { Material } from '@balena/ui-shared-components';
+import { Material, designTokens } from '@balena/ui-shared-components';
+
 const { Box, styled } = Material;
 
-const Focus = styled(Box)(({ theme }) => ({
+const Focus = styled(Box)(() => ({
 	flexBasis: '100%',
 	backgroundColor: 'white',
-	border: `solid 1px ${theme.palette.divider}`, // TODO: ask Jon what color we should use here
+	border: `solid 1px ${designTokens.color.border.subtle.value}`,
 	maxHeight: '200px',
 	position: 'absolute',
 	width: '100%',
@@ -30,7 +31,7 @@ const FocusItem = styled(Box)<{ hasGetBaseUrl: boolean }>(
 	({ hasGetBaseUrl }) => ({
 		cursor: hasGetBaseUrl ? 'pointer' : 'default',
 		'&:hover': {
-			background: 'rgba(0, 0, 0, 0.04)', // This is the background color MUI Select uses for entities on hover. TODO: Find a better way to yse it
+			background: designTokens.color.bg.value, // This is the background color MUI Select uses for entities on hover.
 		},
 	}),
 );

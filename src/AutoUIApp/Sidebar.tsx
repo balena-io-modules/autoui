@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { useLocation } from 'react-router';
 import { OpenApiJson } from './openApiJson';
 import { Txt } from 'rendition';
-import { Material } from '@balena/ui-shared-components';
+import { designTokens, Material } from '@balena/ui-shared-components';
 const { Box, styled } = Material;
 
 const SidebarWrapper = styled(Box)(({ theme }) => ({
@@ -20,9 +20,17 @@ const MenuItem = styled(Box)<{ isCurrent: boolean }>(
 		height: '48px',
 		cursor: 'pointer',
 		borderBottom: `1px solid
-		${isCurrent ? theme.palette.divider : theme.palette.grey[900]}`, // TODO ask Jon what colors we should use here
-		borderLeft: isCurrent ? `2px solid ${theme.palette.primary.main}` : 'none',
-		background: isCurrent ? theme.palette.divider : theme.palette.grey[900],
+		${
+			isCurrent
+				? designTokens.color.border.value
+				: designTokens.color.border.subtle.value
+		}`,
+		borderLeft: isCurrent
+			? `2px solid ${designTokens.color.border.accent.value}`
+			: 'none',
+		background: isCurrent
+			? designTokens.color.border.value
+			: designTokens.color.border.subtle.value,
 
 		'&:hover': {
 			background: isCurrent ? theme.palette.divider : theme.palette.grey[900],
