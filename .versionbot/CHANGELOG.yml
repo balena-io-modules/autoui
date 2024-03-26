@@ -1,4 +1,15 @@
 - commits:
+    - subject: Migrate from rendition Flex/Box to MUI Box
+      hash: 6311152777d09c15117515cfbf6c447645456b80
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 2.0.3
+  title: ""
+  date: 2024-03-26T15:43:07.586Z
+- commits:
     - subject: Avoid clientside sorting when in serverside mode
       hash: 51c1a8c60405222b3a6a91148d56a0c825ff0274
       body: ""
