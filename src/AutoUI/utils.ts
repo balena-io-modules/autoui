@@ -3,6 +3,7 @@ import {
 	Permissions,
 	Priorities,
 	AutoUITagsSdk,
+	getPropertyScheme,
 } from './schemaOps';
 import castArray from 'lodash/castArray';
 import get from 'lodash/get';
@@ -11,7 +12,6 @@ import {
 	JSONSchema,
 	JsonTypes,
 	TableSortFunction,
-	SchemaSieve,
 	CheckedState,
 } from 'rendition';
 
@@ -173,7 +173,7 @@ export const getSortingFunction = <T extends any>(
 	schemaValue: JSONSchema,
 ): TableSortFunction<T> => {
 	const types = castArray(schemaValue.type);
-	const refScheme = SchemaSieve.getPropertyScheme(schemaValue);
+	const refScheme = getPropertyScheme(schemaValue);
 	if (types.includes(JsonTypes.string)) {
 		return (a: T, b: T) => sortFn(a, b, schemaKey);
 	}
@@ -196,30 +196,4 @@ export const getSelected = <T, K extends keyof T>(
 	return (
 		priorities?.primary.includes(key) || priorities?.secondary.includes(key)
 	);
-};
-
-export const onClickOutOrEsc = (
-	wrapper: HTMLDivElement,
-	callback: () => void,
-) => {
-	const handleClickOutside = (event: MouseEvent) => {
-		if (!wrapper.contains(event.target as Node)) {
-			handler();
-		}
-	};
-	const handleEsc = (event: KeyboardEvent) => {
-		if (event.key === 'Escape') {
-			handler();
-		}
-	};
-	const handler = () => {
-		callback();
-		if (document.activeElement instanceof HTMLElement) {
-			document.activeElement.blur();
-		}
-		document.removeEventListener('mousedown', handleClickOutside);
-		document.removeEventListener('keydown', handleEsc);
-	};
-	document.addEventListener('mousedown', handleClickOutside);
-	document.addEventListener('keydown', handleEsc);
 };

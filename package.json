@@ -10,8 +10,14 @@
     "README.md"
   ],
   "dependencies": {
-    "@balena/ui-shared-components": "^5.2.0",
+    "@balena/ui-shared-components": "^5.5.0",
+    "ajv": "^8.12.0",
+    "ajv-formats": "^3.0.1",
+    "ajv-keywords": "^5.1.0",
+    "crypto": "^1.0.1",
+    "date-fns": "^3.6.0",
     "json-e": "^4.4.3",
+    "json-schema": "^0.4.0",
     "lodash": "^4.17.21",
     "qs": "^6.10.3",
     "react-router": "^5.3.3",

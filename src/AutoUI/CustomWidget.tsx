@@ -1,6 +1,6 @@
 import React from 'react';
 import castArray from 'lodash/castArray';
-import { getSchemaFormat, getSubSchemaFromRefScheme } from './models/helpers';
+import { getSchemaFormat, getSubSchemaFromRefScheme } from './schemaOps';
 import {
 	JsonTypes,
 	WidgetProps,
