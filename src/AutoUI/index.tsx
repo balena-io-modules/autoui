@@ -41,7 +41,6 @@ import {
 	Dictionary,
 	FiltersView,
 	Format,
-	Spinner,
 	TableColumn,
 	SchemaSieve as sieve,
 	Link,
@@ -62,7 +61,7 @@ import {
 import { CollectionLensRendererProps } from './Lenses/types';
 import pickBy from 'lodash/pickBy';
 import { NoRecordsFoundView } from './NoRecordsFoundView';
-import { Material } from '@balena/ui-shared-components';
+import { Material, Spinner } from '@balena/ui-shared-components';
 const { Box, styled } = Material;
 
 const DEFAULT_ITEMS_PER_PAGE = 50;
@@ -411,15 +410,20 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	return (
 		<Box display="flex" flex={1} flexDirection="column" {...boxProps}>
 			<Spinner
-				flex={1}
 				label={
 					isBusyMessage ??
 					t('loading.resource', {
 						resource: t(`resource.${model.resource}_other`).toLowerCase(),
 					})
 				}
-				show={data == null || loading || !!isBusyMessage}
-				{...(data == null ? { width: '100%', height: '100%' } : undefined)}
+				show={
+					(Array.isArray(data)
+						? data?.length
+							? false
+							: loading
+						: data == null || loading) || !!isBusyMessage
+				}
+				sx={{ height: '100%' }}
 			>
 				<Box display="flex" height="100%" flexDirection="column">
 					{

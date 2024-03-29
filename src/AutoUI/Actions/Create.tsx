@@ -8,9 +8,8 @@ import {
 import { ActionData } from '../schemaOps';
 import { getCreateDisabledReason } from '../utils';
 import { useTranslation } from '../../hooks/useTranslation';
-import { Spinner } from 'rendition';
 import { ActionContent, LOADING_DISABLED_REASON } from './ActionContent';
-import { Material, Tooltip } from '@balena/ui-shared-components';
+import { Material, Tooltip, Spinner } from '@balena/ui-shared-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagic } from '@fortawesome/free-solid-svg-icons/faMagic';
 
@@ -91,7 +90,7 @@ export const Create = <T extends AutoUIBaseResource<T>>({
 						<Box display="flex" justifyContent="space-between">
 							{action.title}
 							<Spinner
-								ml={2}
+								sx={{ ml: 2 }}
 								show={disabledReason === LOADING_DISABLED_REASON}
 							/>
 						</Box>
