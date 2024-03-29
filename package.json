@@ -12,6 +12,7 @@
   "dependencies": {
     "@balena/ui-shared-components": "^5.0.0",
     "json-e": "^4.4.3",
+    "json-schema": "^0.4.0",
     "lodash": "^4.17.21",
     "qs": "^6.10.3",
     "react-router": "^5.3.3",
