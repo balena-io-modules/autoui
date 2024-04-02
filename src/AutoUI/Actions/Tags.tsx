@@ -3,10 +3,10 @@ import {
 	ResourceTagSubmitInfo,
 	SubmitInfo,
 	TagManagementModal,
-	notifications,
 } from 'rendition';
 import { useTranslation } from '../../hooks/useTranslation';
 import { AutoUIContext, AutoUIBaseResource } from '../schemaOps';
+import { enqueueSnackbar, closeSnackbar } from '@balena/ui-shared-components';
 
 interface TagsProps<T> {
 	selected: T[];
@@ -34,27 +34,30 @@ export const Tags = <T extends AutoUIBaseResource<T>>({
 			}
 
 			setIsBusyMessage(t(`loading.updating_tags`));
-			notifications.addNotification({
-				id: 'change-tags-loading',
-				content: t(`loading.updating_tags`),
+			enqueueSnackbar({
+				key: 'change-tags-loading',
+				message: t(`loading.updating_tags`),
+				preventDuplicate: true,
 			});
 
 			try {
 				await sdk.tags.submit(tags);
-				notifications.addNotification({
-					id: 'change-tags',
-					content: 'Tags updated successfully',
-					type: 'success',
+				enqueueSnackbar({
+					key: 'change-tags',
+					message: t('success.tags_updated_successfully'),
+					variant: 'success',
+					preventDuplicate: true,
 				});
 				refresh?.();
 			} catch (err) {
-				notifications.addNotification({
-					id: 'change-tags',
-					content: err.message,
-					type: 'danger',
+				enqueueSnackbar({
+					key: 'change-tags',
+					message: err.message,
+					variant: 'error',
+					preventDuplicate: true,
 				});
 			} finally {
-				notifications.removeNotification('change-tags-loading');
+				closeSnackbar('change-tags-loading');
 				setIsBusyMessage(undefined);
 			}
 		},
