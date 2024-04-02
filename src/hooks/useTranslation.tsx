@@ -26,6 +26,7 @@ const translationMap = {
 	'questions.how_about_adding_one': 'How about adding one?',
 	'resource.item_other': 'Items',
 	'success.resource_added_successfully': '{{name}} added successfully',
+	'success.tags_updated_successfully': 'Tags updated successfully',
 };
 
 const getTranslation = (
