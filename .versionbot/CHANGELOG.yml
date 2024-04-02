@@ -1,4 +1,15 @@
 - commits:
+    - subject: Migrate from rendition `notifications` to ui-shared-components Snackbar
+      hash: 791cf84d8e53e08ab07e240fc3fe77659d6283e3
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: myarmolinsky
+  version: 3.0.0
+  title: ""
+  date: 2024-04-02T11:57:51.480Z
+- commits:
     - subject: Migrate from rendition Flex/Box to MUI Box
       hash: 6311152777d09c15117515cfbf6c447645456b80
       body: ""
