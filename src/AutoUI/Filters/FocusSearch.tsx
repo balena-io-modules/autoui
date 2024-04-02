@@ -1,13 +1,12 @@
 import React from 'react';
 import reject from 'lodash/reject';
 import { AutoUIModel } from '..';
-import { Checkbox, Txt, SchemaSieve as sieve } from 'rendition';
+import { Txt, SchemaSieve as sieve } from 'rendition';
 import { AutoUIContext } from '../schemaOps';
 import { useHistory } from '../../hooks/useHistory';
-import { stopEvent } from '../utils';
 import { Material, designTokens } from '@balena/ui-shared-components';
 
-const { Box, styled } = Material;
+const { Box, styled, Checkbox } = Material;
 
 const Focus = styled(Box)(() => ({
 	flexBasis: '100%',
@@ -96,8 +95,7 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 			<FocusContent>
 				{filteredFittingSearchTerms.map((entity) => (
 					<FocusItem
-						px={1}
-						py={2}
+						p={1}
 						key={entity[rowKey]}
 						onClick={(e) => {
 							e.preventDefault();
@@ -112,40 +110,27 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 						}}
 						hasGetBaseUrl={!!autouiContext.getBaseUrl}
 					>
-						<Box display="flex" flexDirection="row">
+						<Box display="flex" flexDirection="row" alignItems="center">
 							{hasUpdateActions && (
-								<Box
-									display="flex"
-									flexDirection="column"
-									ml={1}
-									mr={3}
-									alignItems="center"
-								>
-									<Checkbox
-										onChange={() => {
-											const isChecked = !!selected.find(
-												(s) => s[rowKey] === entity[rowKey],
-											);
-											const checkedItems = !isChecked
-												? selected.concat(entity)
-												: (reject(selected, {
-														[rowKey]: entity[rowKey],
-												  }) as unknown as Array<typeof entity>);
-											setSelected(checkedItems);
-										}}
-										checked={
-											!!selected.find((s) => s[rowKey] === entity[rowKey])
-										}
-										onClick={stopEvent}
-									/>
-								</Box>
+								<Checkbox
+									onChange={() => {
+										const isChecked = !!selected.find(
+											(s) => s[rowKey] === entity[rowKey],
+										);
+										const checkedItems = !isChecked
+											? selected.concat(entity)
+											: (reject(selected, {
+													[rowKey]: entity[rowKey],
+											  }) as unknown as Array<typeof entity>);
+										setSelected(checkedItems);
+									}}
+									checked={!!selected.find((s) => s[rowKey] === entity[rowKey])}
+									onClick={(e) => {
+										e.stopPropagation();
+									}}
+								/>
 							)}
-							<Box
-								display="flex"
-								flexDirection="column"
-								alignItems="center"
-								ml={!hasUpdateActions ? 1 : undefined}
-							>
+							<Box display="flex" flexDirection="column" alignItems="center">
 								<Txt>{getEntityValue(entity)}</Txt>
 							</Box>
 						</Box>
