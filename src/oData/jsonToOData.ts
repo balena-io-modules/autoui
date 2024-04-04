@@ -1,7 +1,7 @@
 import { JSONSchema, TableSortOptions } from 'rendition';
 import { AutoUIContext } from '~/AutoUI/schemaOps';
 
-type PineFilterObject = Record<string, any>;
+export type PineFilterObject = Record<string, any>;
 
 interface FilterMutation extends JSONSchema {
 	$and?: any[];

@@ -1,4 +1,9 @@
-import { AutoUIBaseResource, Permissions, Priorities } from './schemaOps';
+import {
+	AutoUIBaseResource,
+	Permissions,
+	Priorities,
+	AutoUITagsSdk,
+} from './schemaOps';
 import castArray from 'lodash/castArray';
 import get from 'lodash/get';
 import { TFunction } from '../hooks/useTranslation';
@@ -72,22 +77,27 @@ export const ObjectFromEntries = (entries: any[]) => {
 	return obj;
 };
 
-export const getTagsDisabledReason = <T extends AutoUIBaseResource<T>>(
+export const getTagsDisabledReason = async <T extends AutoUIBaseResource<T>>(
 	selected: T[] | undefined,
 	tagField: keyof T,
+	checkedState: CheckedState | undefined,
+	tagsSdk: AutoUITagsSdk<T>,
 	t: TFunction,
 ) => {
-	if (!selected || selected.length === 0) {
+	if (checkedState !== 'all' && (!selected || selected.length === 0)) {
 		return t('info.no_selected');
 	}
 
-	const lacksPermissionsOnSelected = selected.some((entry) => {
-		return (
-			!entry.__permissions.delete &&
-			!entry.__permissions.create.includes(tagField) &&
-			!entry.__permissions.update.includes(tagField as keyof T)
-		);
-	});
+	const lacksPermissionsOnSelected =
+		tagsSdk && 'canAccess' in tagsSdk
+			? !(await tagsSdk.canAccess({ checkedState, selected }))
+			: selected?.some((entry) => {
+					return (
+						!entry.__permissions.delete &&
+						!entry.__permissions.create.includes(tagField) &&
+						!entry.__permissions.update.includes(tagField as keyof T)
+					);
+			  });
 
 	if (lacksPermissionsOnSelected) {
 		// TODO: Pass the resource name instead.
