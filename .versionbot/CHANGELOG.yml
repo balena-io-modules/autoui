@@ -1,4 +1,15 @@
 - commits:
+    - subject: Adapt isDisabled typing
+      hash: 8cf3e5695f5c1aba7e39402fe613c69cfb3e2884
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 3.0.2
+  title: ""
+  date: 2024-04-08T15:24:50.301Z
+- commits:
     - subject: Fix manage tags when selecting all on serverside pagination
       hash: b173137e042f8cde23d5ca04504438e0758227c3
       body: ""
