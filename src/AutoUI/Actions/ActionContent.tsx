@@ -8,7 +8,7 @@ interface ActionContentProps<T> {
 	affectedEntries: T[] | undefined;
 	checkedState: CheckedState | undefined;
 	getDisabledReason: AutoUIAction<T>['isDisabled'];
-	onDisabledReady: (arg: string | undefined) => void;
+	onDisabledReady: (arg: string | null) => void;
 }
 
 // This component sole purpose is to have the useRequest being called exactly once per item,
@@ -23,10 +23,11 @@ export const ActionContent = <T extends {}>({
 }: ActionContentProps<T>) => {
 	useRequest(
 		async () => {
-			const disabled = await getDisabledReason?.({
-				affectedEntries,
-				checkedState,
-			});
+			const disabled =
+				(await getDisabledReason?.({
+					affectedEntries,
+					checkedState,
+				})) ?? null;
 			onDisabledReady(disabled);
 			return disabled;
 		},

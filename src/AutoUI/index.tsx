@@ -314,7 +314,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 						);
 					},
 					isDisabled: async ({ affectedEntries, checkedState }) =>
-						getTagsDisabledReason(
+						await getTagsDisabledReason(
 							affectedEntries,
 							tagField as keyof T,
 							checkedState,
