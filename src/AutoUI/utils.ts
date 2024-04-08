@@ -103,6 +103,7 @@ export const getTagsDisabledReason = async <T extends AutoUIBaseResource<T>>(
 		// TODO: Pass the resource name instead.
 		return t('info.edit_tag_no_permissions', { resource: 'item' });
 	}
+	return null;
 };
 
 export const getCreateDisabledReason = <T extends AutoUIBaseResource<T>>(

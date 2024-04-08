@@ -79,7 +79,7 @@ export interface AutoUIAction<T> {
 		affectedEntries: T[] | undefined;
 		/** checkState can be undefined only for entity case, since card does not have a selection event  */
 		checkedState: CheckedState | undefined;
-	}) => MaybePromise<string | undefined>;
+	}) => MaybePromise<string | null>;
 	isDangerous?: boolean;
 }
 
