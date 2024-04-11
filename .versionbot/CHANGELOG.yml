@@ -1,4 +1,22 @@
 - commits:
+    - subject: Migrate Checkboxes from rendition to MUI
+      hash: cddc4158fe8214024df027494e15f5c7da91c7fd
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+    - subject: Update @balena/ui-shared-components
+      hash: c038a1fe45e7618daee598eca8635d0fadc89445
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 3.0.3
+  title: ""
+  date: 2024-04-11T13:24:22.965Z
+- commits:
     - subject: Adapt isDisabled typing
       hash: 8cf3e5695f5c1aba7e39402fe613c69cfb3e2884
       body: ""
