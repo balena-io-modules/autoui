@@ -8,13 +8,14 @@ import {
 import { ActionData } from '../schemaOps';
 import { autoUIGetDisabledReason } from '../utils';
 import { useTranslation } from '../../hooks/useTranslation';
-import { CheckedState, Spinner } from 'rendition';
+import { CheckedState } from 'rendition';
 import { ActionContent, LOADING_DISABLED_REASON } from './ActionContent';
 import {
 	DropDownButton,
 	DropDownButtonProps,
 	Material,
 	Tooltip,
+	Spinner,
 } from '@balena/ui-shared-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons/faPenToSquare';
@@ -187,7 +188,7 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 							<Box display="flex" justifyContent="space-between">
 								{action.title}
 								<Spinner
-									ml={2}
+									sx={{ ml: 2 }}
 									show={disabledReason === LOADING_DISABLED_REASON}
 								/>
 							</Box>
