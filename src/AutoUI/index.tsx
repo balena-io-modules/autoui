@@ -407,24 +407,19 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		});
 	};
 
+	if (loading && data == null) {
+		return (
+			<Spinner
+				label={t('loading.resource', {
+					resource: t(`resource.${model.resource}_other`).toLowerCase(),
+				})}
+			/>
+		);
+	}
+
 	return (
 		<Box display="flex" flex={1} flexDirection="column" {...boxProps}>
-			<Spinner
-				label={
-					isBusyMessage ??
-					t('loading.resource', {
-						resource: t(`resource.${model.resource}_other`).toLowerCase(),
-					})
-				}
-				show={
-					(Array.isArray(data)
-						? data?.length
-							? false
-							: loading
-						: data == null || loading) || !!isBusyMessage
-				}
-				sx={{ height: '100%' }}
-			>
+			<Spinner label={isBusyMessage} show={!!isBusyMessage}>
 				<Box display="flex" height="100%" flexDirection="column">
 					{
 						// We need to mount the Filters component so that it can load the filters
