@@ -1,4 +1,15 @@
 - commits:
+    - subject: Render Spinner alone while loading data instead of wrapping content
+      hash: 65f74a4a61ab5b1c5d1286929978333a2d77bece
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 3.0.5
+  title: ""
+  date: 2024-04-16T14:56:27.236Z
+- commits:
     - subject: Migrate Spinner from rendition to MUI
       hash: 8d3704c0ef8e6da1900fa0830f33492e33de881e
       body: ""
