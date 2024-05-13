@@ -4,12 +4,12 @@ import { Sidebar } from './Sidebar';
 import { Router, Switch, Route } from 'react-router-dom';
 import { Content } from './Content';
 import { createGlobalStyle } from 'styled-components';
-import { onClickOutOrEsc } from '../AutoUI/utils';
 import { OpenApiJson } from './openApiJson';
 import { ActionSidebar, ActionSidebarProps } from './ActionSidebar';
 import { Provider } from 'rendition';
 import { useHistory } from '../hooks/useHistory';
 import { Material } from '@balena/ui-shared-components';
+import { useClickOutsideOrEsc } from '../hooks/useClickOutsideOrEsc';
 const { Box } = Material;
 
 const SIDEBAR_WIDTH = 166;
@@ -46,21 +46,14 @@ export interface AutoUIAppProps {
 }
 
 export const AutoUIApp = ({ openApiJson, title, logo }: AutoUIAppProps) => {
-	const actionSidebarWrapper = React.useRef<HTMLDivElement>(null);
+	const actionSidebarWrapper = useClickOutsideOrEsc<HTMLDivElement>(() =>
+		setActionSidebar(null),
+	);
 	const history = useHistory();
 	const [actionSidebar, setActionSidebar] = React.useState<Omit<
 		ActionSidebarProps,
 		'openApiJson'
 	> | null>();
-
-	React.useEffect(() => {
-		if (!actionSidebarWrapper.current) {
-			return;
-		}
-		onClickOutOrEsc(actionSidebarWrapper.current, () => {
-			setActionSidebar(null);
-		});
-	}, [actionSidebarWrapper.current]);
 
 	return (
 		<Provider>

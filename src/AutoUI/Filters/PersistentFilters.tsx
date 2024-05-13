@@ -1,21 +1,22 @@
 import * as React from 'react';
 import filter from 'lodash/filter';
 import qs from 'qs';
-import {
-	Filters,
-	FilterSignature,
-	FiltersProps,
-	JSONSchema,
-	SchemaSieve,
-} from 'rendition';
+import { JSONSchema } from 'rendition';
 import { History } from 'history';
+import { Filters, FiltersProps } from '../../components/Filters';
+import {
+	FULL_TEXT_SLUG,
+	FilterDescription,
+	createFilter,
+	createFullTextSearchFilter,
+	parseFilterDescription,
+} from '../../components/Filters/SchemaSieve';
+import { isJSONSchema } from '../../AutoUI/schemaOps';
 
 export interface ListQueryStringFilterObject {
-	t: FilterSignature['title'];
-	n: FilterSignature['field'];
-	o: FilterSignature['operator'];
-	v: FilterSignature['value'];
-	r: FilterSignature['refScheme'];
+	n: string;
+	o: string;
+	v: string;
 }
 
 const isListQueryStringFilterRule = (
@@ -40,13 +41,31 @@ const isQueryStringFilterRuleset = (
 
 export const listFilterQuery = (filters: JSONSchema[]) => {
 	const queryStringFilters = filters.map((filter) => {
-		const signatures = SchemaSieve.getSignatures(filter);
-		return signatures.map<ListQueryStringFilterObject>(
-			({ title, field, operator, value, refScheme }) => ({
-				t: title,
+		const signatures =
+			filter.title === FULL_TEXT_SLUG
+				? [parseFilterDescription(filter)].filter(
+						(f): f is FilterDescription => !!f,
+				  )
+				: filter.anyOf
+						?.filter((f): f is JSONSchema => isJSONSchema(f))
+						.map(
+							(f) =>
+								({
+									...parseFilterDescription(f),
+									operatorSlug: f.title,
+								} as FilterDescription & { operatorSlug?: string }),
+						)
+						.filter((f) => !!f);
+
+		return signatures?.map<ListQueryStringFilterObject>(
+			({
+				field,
+				operator,
+				operatorSlug,
+				value,
+			}: FilterDescription & { operatorSlug?: string }) => ({
 				n: field,
-				r: refScheme,
-				o: operator,
+				o: operatorSlug ?? operator,
 				v: value,
 			}),
 		);
@@ -57,40 +76,57 @@ export const listFilterQuery = (filters: JSONSchema[]) => {
 export const loadRulesFromUrl = (
 	searchLocation: string,
 	schema: JSONSchema,
+	history: History,
 ): JSONSchema[] => {
-	if (!searchLocation) {
+	const { properties } = schema;
+	if (!searchLocation || !properties) {
 		return [];
 	}
 	const parsed = qs.parse(searchLocation, { ignoreQueryPrefix: true }) || {};
-	const rules = filter(parsed, isQueryStringFilterRuleset).map(
-		// @ts-expect-error
-		(rules: ListQueryStringFilterObject[]) => {
-			if (!Array.isArray(rules)) {
-				rules = [rules];
-			}
+	const rules = filter(parsed, isQueryStringFilterRuleset)
+		.map(
+			// @ts-expect-error
+			(rules: ListQueryStringFilterObject[]) => {
+				if (!Array.isArray(rules)) {
+					rules = [rules];
+				}
 
-			const signatures = rules.map(
-				({ t, n, o, v, r }: ListQueryStringFilterObject) => ({
-					title: t,
-					field: n,
-					refScheme: r,
-					operator: o,
-					value: v,
-				}),
-			);
-			// TODO: createFilter should handle this case as well.
-			if (signatures[0].operator.slug === SchemaSieve.FULL_TEXT_SLUG) {
-				// TODO: listFilterQuery serializes the already escaped value and this
-				// then re-escapes while de-serializing. Fix that loop, which can keep
-				// escaping regex characters (eg \) indefinitely on each call/reload from the url.
-				return SchemaSieve.createFullTextSearchFilter(
-					schema,
-					signatures[0].value,
+				const signatures = rules.map(
+					({ n, o, v }: ListQueryStringFilterObject) => ({
+						field: n,
+						operator: o,
+						value: v,
+					}),
 				);
-			}
-			return SchemaSieve.createFilter(schema, signatures);
-		},
-	);
+
+				const isSignaturesInvalid = signatures.some((s) => {
+					const fieldExist =
+						Object.keys(properties).includes(s.field) ||
+						s.operator === FULL_TEXT_SLUG;
+					const operatorIsValid =
+						s.operator != null &&
+						typeof s.operator === 'string' &&
+						s.operator?.split(' ').length === 1;
+					return !fieldExist || !operatorIsValid;
+				});
+
+				// In case of invalid signatures, remove search params to avoid Errors.
+				if (isSignaturesInvalid) {
+					history.replace({ search: '' });
+					return;
+				}
+
+				if (signatures[0].operator === FULL_TEXT_SLUG) {
+					// TODO: listFilterQuery serializes the already escaped value and this
+					// then re-escapes while de-serializing. Fix that loop, which can keep
+					// escaping regex characters (eg \) indefinitely on each call/reload from the url.
+					return createFullTextSearchFilter(schema, signatures[0].value);
+				}
+				return createFilter(schema, signatures);
+			},
+			// TODO: createFilter should handle this case as well.
+		)
+		.filter((f): f is JSONSchema => !!f);
 
 	return rules;
 };
@@ -104,8 +140,8 @@ export const PersistentFilters = ({
 	schema,
 	views,
 	filters,
-	onViewsUpdate,
-	onFiltersUpdate: $onFiltersUpdate,
+	onViewsChange,
+	onFiltersChange,
 	viewsRestorationKey,
 	history,
 	onSearch,
@@ -114,7 +150,7 @@ export const PersistentFilters = ({
 	Required<Pick<PersistentFiltersProps, 'renderMode'>>) => {
 	const locationSearch = history?.location?.search ?? '';
 	const storedFilters = React.useMemo(() => {
-		return loadRulesFromUrl(locationSearch, schema);
+		return loadRulesFromUrl(locationSearch, schema, history);
 	}, [locationSearch, schema]);
 
 	const onFiltersUpdate = React.useCallback(
@@ -125,9 +161,9 @@ export const PersistentFilters = ({
 				search: listFilterQuery(filters),
 			});
 
-			$onFiltersUpdate?.(filters);
+			onFiltersChange?.(filters);
 		},
-		[window.location.pathname, $onFiltersUpdate],
+		[window.location.pathname, onFiltersChange],
 	);
 
 	// When the component mounts, filters from the page URL,
@@ -150,8 +186,8 @@ export const PersistentFilters = ({
 			schema={schema}
 			filters={filters ?? storedFilters}
 			views={views}
-			onFiltersUpdate={onFiltersUpdate}
-			onViewsUpdate={onViewsUpdate}
+			onFiltersChange={onFiltersUpdate}
+			onViewsChange={onViewsChange}
 			{...otherProps}
 			onSearch={onSearch}
 		/>

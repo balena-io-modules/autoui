@@ -27,6 +27,28 @@ const translationMap = {
 	'resource.item_other': 'Items',
 	'success.resource_added_successfully': '{{name}} added successfully',
 	'success.tags_updated_successfully': 'Tags updated successfully',
+
+	'actions.add_filter': 'Add filter',
+	'labels.filter_by': 'Filter by',
+	'labels.info_no_views': "You haven't created any views yet",
+	'labels.views': 'Views',
+	'labels.filter_one': 'Filter',
+	'labels.filter_other': 'Filters',
+
+	'labels.save_current_view': 'Save current view',
+
+	'aria_labels.remove_view': 'Delete the selected view',
+	'aria_labels.create_view': 'Create named view',
+	'aria_labels.add_filter_in_or': 'Add filter with OR condition',
+	'aria_labels.remove_filter': 'Remove selected filter',
+
+	'actions.clear_all': 'Clear filters',
+	'actions.save_view': 'Save view',
+	'actions.cancel': 'Cancel',
+	'actions.add_alternative': 'Add alternative',
+	'actions.remove_filter': 'Remove filter',
+
+	'commons.or': 'or',
 };
 
 const getTranslation = (

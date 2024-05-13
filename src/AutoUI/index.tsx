@@ -10,6 +10,14 @@ import {
 	ActionData,
 	Priorities,
 	AutoUITagsSdk,
+	autoUIAdaptRefScheme,
+	autoUIAddToSchema,
+	generateSchemaFromRefScheme,
+	getHeaderLink,
+	getPropertyScheme,
+	getSubSchemaFromRefScheme,
+	parseDescription,
+	parseDescriptionProperty,
 } from './schemaOps';
 import { LensSelection } from './Lenses/LensSelection';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
@@ -19,12 +27,9 @@ import { Tags } from './Actions/Tags';
 import { Update } from './Actions/Update';
 import { Create } from './Actions/Create';
 import {
-	autoUIAdaptRefScheme,
-	autoUIAddToSchema,
 	autoUIDefaultPermissions,
 	autoUIGetModelForCollection,
 	autoUIRunTransformers,
-	getHeaderLink,
 } from './models/helpers';
 import {
 	autoUIGetDisabledReason,
@@ -34,15 +39,13 @@ import {
 	getSelected,
 	getSortingFunction,
 } from './utils';
-import { FocusSearch } from './Filters/FocusSearch';
+import { FocusSearch } from '../components/Filters/FocusSearch';
 import { CustomWidget } from './CustomWidget';
 import {
 	defaultFormats,
 	Dictionary,
-	FiltersView,
 	Format,
 	TableColumn,
-	SchemaSieve as sieve,
 	Link,
 	Pagination,
 	TableSortOptions,
@@ -61,7 +64,13 @@ import {
 import { CollectionLensRendererProps } from './Lenses/types';
 import pickBy from 'lodash/pickBy';
 import { NoRecordsFoundView } from './NoRecordsFoundView';
-import { Material, Spinner } from '@balena/ui-shared-components';
+import {
+	AnalyticsContextProvider,
+	Material,
+	Spinner,
+} from '@balena/ui-shared-components';
+import { FiltersView } from '../components/Filters';
+import { ajvFilter } from '../components/Filters/SchemaSieve';
 const { Box, styled } = Material;
 
 const DEFAULT_ITEMS_PER_PAGE = 50;
@@ -69,6 +78,7 @@ const DEFAULT_ITEMS_PER_PAGE = 50;
 const HeaderGrid = styled(Box)(({ theme }) => ({
 	display: 'flex',
 	rowGap: theme.spacing(2),
+	columnGap: theme.spacing(2),
 	'> *': {
 		'&:first-child': {
 			marginRight: 1,
@@ -233,7 +243,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		if (pagination?.serverSide) {
 			return (data ?? []) as T[];
 		}
-		return (Array.isArray(data) ? sieve.filter(filters, data) : []) as T[];
+		return (Array.isArray(data) ? ajvFilter(filters, data) : []) as T[];
 	}, [pagination?.serverSide, data, filters]);
 
 	React.useEffect(() => {
@@ -418,183 +428,188 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	}
 
 	return (
-		<Box display="flex" flex={1} flexDirection="column" {...boxProps}>
-			<Spinner label={isBusyMessage} show={!!isBusyMessage}>
-				<Box display="flex" height="100%" flexDirection="column">
-					{
-						// We need to mount the Filters component so that it can load the filters
-						// & pagination state from the url (or use defaults) and provide them to
-						// the parent component (via $setFilters -> onChange) to use them for the
-						// initial data fetching request.
-						(data == null || Array.isArray(data)) && (
-							<>
-								{!hideUtils ? (
-									<Box
-										mb={3}
-										display={
-											// This hides the Filters component during the initial load but keeps them mounted so that
-											// it can trigger onChange on mount to communicate to the parent component the pineOptions
-											// that need to be used.
-											data == null ? 'none' : undefined
-										}
-									>
-										<HeaderGrid
-											flexWrap="wrap"
-											justifyContent="space-between"
-											alignItems="center"
+		<AnalyticsContextProvider>
+			<Box display="flex" flex={1} flexDirection="column" {...boxProps}>
+				<Spinner label={isBusyMessage} show={!!isBusyMessage}>
+					<Box display="flex" height="100%" flexDirection="column">
+						{
+							// We need to mount the Filters component so that it can load the filters
+							// & pagination state from the url (or use defaults) and provide them to
+							// the parent component (via $setFilters -> onChange) to use them for the
+							// initial data fetching request.
+							(data == null || Array.isArray(data)) && (
+								<>
+									{!hideUtils ? (
+										<Box
+											mb={3}
+											display={
+												// This hides the Filters component during the initial load but keeps them mounted so that
+												// it can trigger onChange on mount to communicate to the parent component the pineOptions
+												// that need to be used.
+												data == null ? 'none' : undefined
+											}
 										>
-											<Create
-												model={model}
-												autouiContext={autouiContext}
-												hasOngoingAction={false}
-												onActionTriggered={onActionTriggered}
-											/>
-
-											<Update
-												model={model}
-												selected={selected}
-												autouiContext={autouiContext}
-												hasOngoingAction={false}
-												onActionTriggered={onActionTriggered}
-												checkedState={checkedState}
-											/>
-											<Box
-												order={[-1, -1, -1, 0]}
-												flex={['1 0 100%', '1 0 100%', '1 0 100%', 'auto']}
+											<HeaderGrid
+												flexWrap="wrap"
+												justifyContent="space-between"
+												alignItems="center"
 											>
-												<Filters
-													renderMode={['add', 'search', 'views']}
-													schema={model.schema}
-													filters={filters}
-													views={views}
+												<Create
+													model={model}
 													autouiContext={autouiContext}
-													persistFilters={persistFilters}
-													changeFilters={$setFilters}
-													changeViews={setViews}
-													// TODO: add a way to handle the focus search on server side pagination as well
-													{...(!pagination?.serverSide && {
-														onSearch: (term) => (
-															<FocusSearch
-																searchTerm={term}
-																filtered={filtered}
-																selected={selected ?? []}
-																setSelected={$setSelected}
-																autouiContext={autouiContext}
-																model={model}
-																hasUpdateActions={hasUpdateActions}
-																rowKey={rowKey}
-															/>
-														),
-													})}
+													hasOngoingAction={false}
+													onActionTriggered={onActionTriggered}
 												/>
-											</Box>
-											<LensSelection
-												lenses={lenses}
-												lens={lens}
-												setLens={(lens) => {
-													setLens(lens);
-													setToLocalStorage(
-														`${model.resource}__view_lens`,
-														lens.slug,
-													);
-												}}
-											/>
-										</HeaderGrid>
-										<Filters
-											renderMode={'summary'}
-											schema={model.schema}
-											filters={filters}
-											views={views}
-											autouiContext={autouiContext}
-											changeFilters={$setFilters}
-											changeViews={setViews}
-											persistFilters={persistFilters}
-											showSaveView
-										/>
-									</Box>
-								) : (
-									!filters.length &&
-									(!!autouiContext.actions?.filter(
-										(action) => action.type === 'create',
-									).length ? (
-										<NoRecordsFoundView
-											model={model}
-											autouiContext={autouiContext}
-											onActionTriggered={onActionTriggered}
-											noDataInfo={noDataInfo}
-										/>
-									) : (
-										t('no_data.no_resource_data', {
-											resource: t(
-												`resource.${model.resource}_other`,
-											).toLowerCase(),
-										})
-									))
-								)}
-							</>
-						)
-					}
-					{!Array.isArray(data) && (
-						<HeaderGrid>
-							<LensSelection
-								lenses={lenses}
-								lens={lens}
-								setLens={(lens) => {
-									setLens(lens);
-									setToLocalStorage(`${model.resource}__view_lens`, lens.slug);
-								}}
-							/>
-						</HeaderGrid>
-					)}
 
-					{lens &&
-						data &&
-						(!Array.isArray(data) ||
-							filters.length > 0 ||
-							(Array.isArray(data) && data.length > 0)) && (
-							<lens.data.renderer
-								flex={1}
-								filtered={filtered}
-								selected={selected}
-								properties={properties}
-								hasUpdateActions={hasUpdateActions}
-								changeSelected={$setSelected}
-								onSort={(sortInfo) => {
-									setSort(sortInfo);
-									internalOnChange(
-										filters,
-										sortInfo,
-										internalPagination.page,
-										internalPagination.itemsPerPage,
-									);
-								}}
-								data={data}
-								autouiContext={autouiContext}
-								onEntityClick={
-									!!onEntityClick || !!getBaseUrl
-										? lensRendererOnEntityClick
-										: undefined
-								}
-								model={model}
-								onPageChange={(page, itemsPerPage) => {
-									setInternalPagination({ page, itemsPerPage });
-									internalOnChange(filters, sort, page, itemsPerPage);
-								}}
-								pagination={pagination}
-								rowKey={rowKey}
-							/>
+												<Update
+													model={model}
+													selected={selected}
+													autouiContext={autouiContext}
+													hasOngoingAction={false}
+													onActionTriggered={onActionTriggered}
+													checkedState={checkedState}
+												/>
+												<Box
+													order={[-1, -1, -1, 0]}
+													flex={['1 0 100%', '1 0 100%', '1 0 100%', 'auto']}
+												>
+													<Filters
+														renderMode={['add', 'search', 'views']}
+														schema={model.schema}
+														filters={filters}
+														views={views}
+														autouiContext={autouiContext}
+														persistFilters={persistFilters}
+														changeFilters={$setFilters}
+														changeViews={setViews}
+														// TODO: add a way to handle the focus search on server side pagination as well
+														{...(!pagination?.serverSide && {
+															onSearch: (term: string) => (
+																<FocusSearch
+																	searchTerm={term}
+																	filtered={filtered}
+																	selected={selected ?? []}
+																	setSelected={$setSelected}
+																	autouiContext={autouiContext}
+																	model={model}
+																	hasUpdateActions={hasUpdateActions}
+																	rowKey={rowKey}
+																/>
+															),
+														})}
+													/>
+												</Box>
+												<LensSelection
+													lenses={lenses}
+													lens={lens}
+													setLens={(lens) => {
+														setLens(lens);
+														setToLocalStorage(
+															`${model.resource}__view_lens`,
+															lens.slug,
+														);
+													}}
+												/>
+											</HeaderGrid>
+											<Filters
+												renderMode={'summary'}
+												schema={model.schema}
+												filters={filters}
+												views={views}
+												autouiContext={autouiContext}
+												changeFilters={$setFilters}
+												changeViews={setViews}
+												persistFilters={persistFilters}
+												showSaveView
+											/>
+										</Box>
+									) : (
+										!filters.length &&
+										(!!autouiContext.actions?.filter(
+											(action) => action.type === 'create',
+										).length ? (
+											<NoRecordsFoundView
+												model={model}
+												autouiContext={autouiContext}
+												onActionTriggered={onActionTriggered}
+												noDataInfo={noDataInfo}
+											/>
+										) : (
+											t('no_data.no_resource_data', {
+												resource: t(
+													`resource.${model.resource}_other`,
+												).toLowerCase(),
+											})
+										))
+									)}
+								</>
+							)
+						}
+						{!Array.isArray(data) && (
+							<HeaderGrid>
+								<LensSelection
+									lenses={lenses}
+									lens={lens}
+									setLens={(lens) => {
+										setLens(lens);
+										setToLocalStorage(
+											`${model.resource}__view_lens`,
+											lens.slug,
+										);
+									}}
+								/>
+							</HeaderGrid>
 						)}
 
-					{actionData?.action?.renderer &&
-						actionData.action.renderer({
-							schema: actionData.schema,
-							affectedEntries: actionData.affectedEntries,
-							onDone: () => setActionData(undefined),
-							setSelected: $setSelected,
-						})}
-				</Box>
-			</Spinner>
-		</Box>
+						{lens &&
+							data &&
+							(!Array.isArray(data) ||
+								filters.length > 0 ||
+								(Array.isArray(data) && data.length > 0)) && (
+								<lens.data.renderer
+									flex={1}
+									filtered={filtered}
+									selected={selected}
+									properties={properties}
+									hasUpdateActions={hasUpdateActions}
+									changeSelected={$setSelected}
+									onSort={(sortInfo) => {
+										setSort(sortInfo);
+										internalOnChange(
+											filters,
+											sortInfo,
+											internalPagination.page,
+											internalPagination.itemsPerPage,
+										);
+									}}
+									data={data}
+									autouiContext={autouiContext}
+									onEntityClick={
+										!!onEntityClick || !!getBaseUrl
+											? lensRendererOnEntityClick
+											: undefined
+									}
+									model={model}
+									onPageChange={(page, itemsPerPage) => {
+										setInternalPagination({ page, itemsPerPage });
+										internalOnChange(filters, sort, page, itemsPerPage);
+									}}
+									pagination={pagination}
+									rowKey={rowKey}
+								/>
+							)}
+
+						{actionData?.action?.renderer &&
+							actionData.action.renderer({
+								schema: actionData.schema,
+								affectedEntries: actionData.affectedEntries,
+								onDone: () => setActionData(undefined),
+								setSelected: $setSelected,
+							})}
+					</Box>
+				</Spinner>
+			</Box>
+		</AnalyticsContextProvider>
 	);
 };
 
@@ -609,6 +624,11 @@ export {
 	AutoUIModel,
 	autoUIJsonSchemaPick,
 	autoUIGetDisabledReason,
+	getPropertyScheme,
+	getSubSchemaFromRefScheme,
+	parseDescription,
+	parseDescriptionProperty,
+	generateSchemaFromRefScheme,
 };
 
 export type AutoUIEntityPropertyDefinition<T> = Required<
@@ -624,7 +644,7 @@ const getTitleAndLabel = (
 	propertyKey: string,
 	refScheme: string | undefined,
 ) => {
-	const subSchema = sieve.getSubSchemaFromRefScheme(jsonSchema, refScheme);
+	const subSchema = getSubSchemaFromRefScheme(jsonSchema, refScheme);
 	const title = subSchema?.title || jsonSchema.title || propertyKey;
 	const headerLink = getHeaderLink(subSchema);
 	let label: TableColumn<unknown>['label'] = title;
@@ -652,7 +672,7 @@ const getTitleAndLabel = (
 };
 
 const hasPropertyEnabled = (
-	value: string[] | true | null,
+	value: string[] | boolean | undefined | null,
 	propertyKey: string,
 ) => {
 	if (!value) {
@@ -686,36 +706,27 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 }): Array<AutoUIEntityPropertyDefinition<T>> =>
 	Object.entries(schema.properties ?? {})
 		.flatMap(([key, val]: [Extract<keyof T, string>, JSONSchema]) => {
-			const refScheme = sieve.getPropertyScheme(val);
+			const refScheme = getPropertyScheme(val);
 			if (!refScheme || refScheme.length <= 1 || typeof val !== 'object') {
 				return [[key, val]];
 			}
-			const entityFilterOnly = sieve.parseDescriptionProperty<string[] | true>(
-				val,
-				'x-filter-only',
-			);
+			const entityFilterOnly = parseDescriptionProperty(val, 'x-filter-only');
 			return refScheme.map((propKey: string) => {
-				const referenceSchema = sieve.generateSchemaFromRefScheme(
-					val,
-					key,
-					propKey,
+				const referenceSchema = generateSchemaFromRefScheme(val, key, propKey);
+				const referenceSchemaFilterOnly = parseDescriptionProperty(
+					referenceSchema,
+					'x-filter-only',
 				);
-				const referenceSchemaFilterOnly = sieve.parseDescriptionProperty<
-					string[] | true
-				>(referenceSchema, 'x-filter-only');
 				const xFilterOnly =
 					hasPropertyEnabled(referenceSchemaFilterOnly, propKey) ||
 					hasPropertyEnabled(entityFilterOnly, propKey);
 				const xNoSort =
 					hasPropertyEnabled(
-						sieve.parseDescriptionProperty<string[] | true>(val, 'x-no-sort'),
+						parseDescriptionProperty(val, 'x-no-sort'),
 						propKey,
 					) ||
 					hasPropertyEnabled(
-						sieve.parseDescriptionProperty<string[] | true>(
-							referenceSchema,
-							'x-no-sort',
-						),
+						parseDescriptionProperty(referenceSchema, 'x-no-sort'),
 						propKey,
 					);
 				const description = JSON.stringify({
@@ -727,7 +738,7 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 			});
 		})
 		.filter(([key, val]: [Extract<keyof T, string>, JSONSchema]) => {
-			const entryDescription = sieve.parseDescription(val);
+			const entryDescription = parseDescription(val);
 			return (
 				key !== tagField &&
 				key !== idField &&
@@ -738,9 +749,9 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 			if (typeof val !== 'object') {
 				return;
 			}
-			const xNoSort = sieve.parseDescriptionProperty(val, 'x-no-sort');
+			const xNoSort = parseDescriptionProperty(val, 'x-no-sort');
 			const definedPriorities = priorities ?? ({} as Priorities<T>);
-			const refScheme = sieve.getPropertyScheme(val);
+			const refScheme = getPropertyScheme(val);
 			const priority = definedPriorities.primary.find(
 				(prioritizedKey) => prioritizedKey === key,
 			)
