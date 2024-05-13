@@ -1,4 +1,15 @@
 - commits:
+    - subject: Move Filters componet from renditon, refactor and use MUI
+      hash: cce93467c3ce63e4e04f188a495ea60ac393edc3
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Andrea Rosci
+  version: 4.0.0
+  title: ""
+  date: 2024-05-13T10:03:36.896Z
+- commits:
     - subject: Render Spinner alone while loading data instead of wrapping content
       hash: 65f74a4a61ab5b1c5d1286929978333a2d77bece
       body: ""
