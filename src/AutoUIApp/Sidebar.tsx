@@ -2,9 +2,8 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useLocation } from 'react-router';
 import { OpenApiJson } from './openApiJson';
-import { Txt } from 'rendition';
 import { designTokens, Material } from '@balena/ui-shared-components';
-const { Box, styled } = Material;
+const { Box, styled, Typography, Tooltip } = Material;
 
 const SidebarWrapper = styled(Box)(({ theme }) => ({
 	display: 'flex',
@@ -81,17 +80,21 @@ export const Sidebar = ({
 							flexDirection="row"
 							alignItems="center"
 						>
-							<Txt.span
-								bold
-								fontSize={2}
-								style={{ lineHeight: 1.33 }}
-								color={isCurrent ? 'text.main' : 'quartenary.main'}
-								display={isCollapsed ? 'none' : undefined}
-								truncate
-								tooltip={item.title}
-							>
-								{item.title}
-							</Txt.span>
+							<Tooltip title={item.title}>
+								<Typography
+									fontWeight="bold"
+									lineHeight={1.33}
+									color={(theme) =>
+										isCurrent
+											? theme.palette.text.primary
+											: theme.palette.text.secondary
+									}
+									display={isCollapsed ? 'none' : undefined}
+									noWrap
+								>
+									{item.title}
+								</Typography>
+							</Tooltip>
 						</MenuItem>
 					</NavLink>
 				);
