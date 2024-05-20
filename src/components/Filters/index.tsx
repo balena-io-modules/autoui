@@ -17,6 +17,7 @@ import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter';
 import { useClickOutsideOrEsc } from '../../hooks/useClickOutsideOrEsc';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import { isJSONSchema } from '../../AutoUI/schemaOps';
+import { getPropertySchemaAndModel } from '../../DataTypes';
 
 const { Box, Button, useTheme, useMediaQuery } = Material;
 
@@ -87,9 +88,19 @@ export const Filters = ({
 				if (!description) {
 					return;
 				}
+				const { model } = getPropertySchemaAndModel(description?.field, schema);
+
+				// We need to recalculate the operator, as it is provided as a value in the description instead of as a key.
+				// TODO: The operator should be passed as an object in the description, not as a value.
+				const operator = model
+					? Object.entries(model.operators).find(
+							([key, value]) =>
+								value === description.operator || key === description.operator,
+					  )?.[0] ?? description.operator
+					: description.operator;
 				return {
 					field: description.field,
-					operator: description.operator,
+					operator,
 					value: description.value,
 				};
 			})
