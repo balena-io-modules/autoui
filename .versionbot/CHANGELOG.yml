@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix filters operator when editing
+      hash: ba8139e2aec829946639f0e8219dc69639009175
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.0.1
+  title: ""
+  date: 2024-05-20T14:10:54.580Z
+- commits:
     - subject: Move Filters componet from renditon, refactor and use MUI
       hash: cce93467c3ce63e4e04f188a495ea60ac393edc3
       body: ""
