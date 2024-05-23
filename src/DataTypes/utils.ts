@@ -3,8 +3,8 @@ import memoize from 'lodash/memoize';
 
 const matchOperatorsRe = /[|\\{}()[\]^$+*?]/g;
 
-export const regexEscape = (str: string) =>
-	str.replace(matchOperatorsRe, '\\$&');
+export const regexEscape = (str?: string) =>
+	str ? str.replace(matchOperatorsRe, '\\$&') : str;
 
 export type KeysOfUnion<T> = T extends T ? keyof T : never;
 
@@ -54,6 +54,6 @@ export const getDataTypeSchema = (
 			},
 			value: valueSchema,
 		},
-		required: ['field', 'operator', 'value'],
+		required: ['field', 'operator'],
 	};
 };

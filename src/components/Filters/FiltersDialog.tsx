@@ -109,7 +109,7 @@ const initialFormData = [
 	{
 		field: undefined,
 		operator: undefined,
-		value: undefined,
+		value: null,
 	},
 ];
 
@@ -139,7 +139,7 @@ const normalizeFormData = (
 		return {
 			field: d?.field ?? field,
 			operator,
-			value: d?.value,
+			value: d?.value ?? null,
 		};
 	});
 };
@@ -173,7 +173,7 @@ export const FiltersDialog = ({
 							(d.field !== formData[i].field ||
 								d.operator !== formData[i].operator)
 						) {
-							return { ...d, value: undefined };
+							return { ...d, value: null };
 						}
 						return d;
 				  })

@@ -46,7 +46,7 @@ const handlePrimitiveFilter = (
 		formatExclusiveMinimum?: string;
 	},
 ): PineFilterObject => {
-	if (value.const != null) {
+	if (value.const !== undefined) {
 		return wrapValue(parentKeys, value.const);
 	}
 	if (value.enum != null) {

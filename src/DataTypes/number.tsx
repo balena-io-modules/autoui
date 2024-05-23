@@ -23,13 +23,25 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 			? value
 			: value !== '' && value != null
 			? Number(value)
-			: undefined;
+			: null;
 
-	if (val == null || isNaN(val)) {
-		return {};
+	if (operator === FULL_TEXT_SLUG) {
+		if (Number.isNaN(Number(val))) {
+			return {};
+		}
+		return {
+			type: 'object',
+			properties: {
+				[field]: {
+					type: 'number',
+					const: val,
+				},
+			},
+			required: [field],
+		};
 	}
 
-	if (operator === 'is' || operator === FULL_TEXT_SLUG) {
+	if (operator === 'is') {
 		return {
 			type: 'object',
 			properties: {
@@ -57,7 +69,7 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 		};
 	}
 
-	if (operator === 'is_more_than') {
+	if (operator === 'is_more_than' && val && !isNaN(val)) {
 		return {
 			type: 'object',
 			properties: {
@@ -70,7 +82,7 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 		};
 	}
 
-	if (operator === 'is_less_than') {
+	if (operator === 'is_less_than' && val && !isNaN(val)) {
 		return {
 			type: 'object',
 			properties: {

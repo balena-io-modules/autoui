@@ -66,11 +66,13 @@ export const listFilterQuery = (filters: JSONSchema[]) => {
 			}: FilterDescription & { operatorSlug?: string }) => ({
 				n: field,
 				o: operatorSlug ?? operator,
-				v: value,
+				v: typeof value === 'object' ? JSON.stringify(value) : value,
 			}),
 		);
 	});
-	return qs.stringify(queryStringFilters);
+	return qs.stringify(queryStringFilters, {
+		skipNulls: false,
+	});
 };
 
 export const loadRulesFromUrl = (
@@ -82,10 +84,18 @@ export const loadRulesFromUrl = (
 	if (!searchLocation || !properties) {
 		return [];
 	}
-	const parsed = qs.parse(searchLocation, { ignoreQueryPrefix: true }) || {};
+	const parsed =
+		qs.parse(searchLocation, {
+			ignoreQueryPrefix: true,
+			decoder: (str, defaultDecoder, charset) => {
+				if (str === 'null') {
+					return null;
+				}
+				return defaultDecoder(str, defaultDecoder, charset);
+			},
+		}) || {};
 	const rules = filter(parsed, isQueryStringFilterRuleset)
 		.map(
-			// @ts-expect-error
 			(rules: ListQueryStringFilterObject[]) => {
 				if (!Array.isArray(rules)) {
 					rules = [rules];
@@ -120,7 +130,7 @@ export const loadRulesFromUrl = (
 					// TODO: listFilterQuery serializes the already escaped value and this
 					// then re-escapes while de-serializing. Fix that loop, which can keep
 					// escaping regex characters (eg \) indefinitely on each call/reload from the url.
-					return createFullTextSearchFilter(schema, signatures[0].value);
+					return createFullTextSearchFilter(schema, signatures[0].value ?? '');
 				}
 				return createFilter(schema, signatures);
 			},

@@ -170,6 +170,36 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 		pattern: v,
 	});
 
+	if (value === null && ['is', 'contains'].includes(operator)) {
+		return {
+			type: 'object',
+			properties: {
+				[field]: value,
+			},
+			required: [field],
+		};
+	}
+
+	if (value === null && ['is_not', 'not_contains'].includes(operator)) {
+		return {
+			type: 'object',
+			properties: {
+				[field]: { not: value },
+			},
+			required: [field],
+		};
+	}
+
+	if (value === null && operator === 'is_not') {
+		return {
+			type: 'object',
+			properties: {
+				[field]: value,
+			},
+			required: [field],
+		};
+	}
+
 	if (!isKeyValue) {
 		return {
 			type: 'object',
