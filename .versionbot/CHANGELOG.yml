@@ -1,4 +1,22 @@
 - commits:
+    - subject: Update ui-shared-components
+      hash: f3c0af99788765a6b002754ec1f02e1b7fdf48d1
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+    - subject: Migrate from rendition Txt/Heading to MUI Typography
+      hash: 269e962c3d931903f2b5d21bb0339be8307fbc46
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 4.0.2
+  title: ""
+  date: 2024-05-30T13:48:05.582Z
+- commits:
     - subject: Fix filters operator when editing
       hash: ba8139e2aec829946639f0e8219dc69639009175
       body: ""
