@@ -93,6 +93,7 @@ export const rendererSchema = (schemaField: JSONSchema) => {
 		type: 'string',
 		format: 'date-time',
 		title: 'Value',
+		description: '',
 	};
 	return getDataTypeSchema(schemaField, operators(), valueSchema);
 };

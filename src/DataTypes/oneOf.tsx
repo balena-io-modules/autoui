@@ -89,6 +89,7 @@ export const rendererSchema = (
 	const valueSchema: JSONSchema = {
 		...propertySchema,
 		title: 'Value',
+		description: '',
 	};
 	return getDataTypeSchema(schemaField, operators(), valueSchema);
 };

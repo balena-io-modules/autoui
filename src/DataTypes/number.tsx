@@ -102,6 +102,7 @@ export const rendererSchema = (schemaField: JSONSchema) => {
 	const valueSchema: JSONSchema = {
 		type: 'number',
 		title: 'Value',
+		description: '',
 	};
 	return getDataTypeSchema(schemaField, operators(), valueSchema);
 };
