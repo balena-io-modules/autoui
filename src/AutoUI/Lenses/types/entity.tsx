@@ -1,20 +1,12 @@
 import React from 'react';
-import styled from 'styled-components';
 import { faCube } from '@fortawesome/free-solid-svg-icons/faCube';
 import { Update } from '../../Actions/Update';
 import { ActionData } from '../../schemaOps';
 import { LensTemplate } from '..';
 import { EntityLensRendererProps } from '.';
-import { Heading, TagLabelList, Txt } from 'rendition';
+import { TagLabelList } from 'rendition';
 import { Material } from '@balena/ui-shared-components';
-const { Box, Card, Divider } = Material;
-
-const Label = styled(Txt)`
-	color: #252629;
-	font-size: 11px;
-	text-transform: uppercase;
-	margin-bottom: 6px;
-`;
+const { Box, Card, Divider, Typography } = Material;
 
 export const entity: LensTemplate = {
 	slug: 'entity',
@@ -59,10 +51,10 @@ export const entity: LensTemplate = {
 								justifyContent="space-between"
 							>
 								<Box display="flex" flexDirection="column">
-									<Heading.h2>
+									<Typography variant="titleLg">
 										{properties.length > 0 &&
 											properties[0].render(data[properties[0].field], data)}
-									</Heading.h2>
+									</Typography>
 								</Box>
 								<Box
 									display="flex"
@@ -99,8 +91,10 @@ export const entity: LensTemplate = {
 												key={property.key}
 												flex={['100%', '0 0 30%']}
 											>
-												<Label>{property.label}</Label>
-												<Txt>{property.render(data[property.field], data)}</Txt>
+												<Typography variant="overline">
+													{property.label}
+												</Typography>
+												{property.render(data[property.field], data)}
 											</Box>
 										),
 								)}
@@ -112,10 +106,8 @@ export const entity: LensTemplate = {
 										key={'device_tag'}
 										flex={['100%', '0 0 30%']}
 									>
-										<Label>Tags</Label>
-										<Txt>
-											<TagLabelList tags={data[`${model.resource}_tag`]} />
-										</Txt>
+										<Typography variant="overline">Tags</Typography>
+										<TagLabelList tags={data[`${model.resource}_tag`]} />
 									</Box>
 								)}
 							</Box>
