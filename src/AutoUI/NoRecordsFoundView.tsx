@@ -13,21 +13,21 @@ const { Container, Alert, Typography } = Material;
 
 export interface NoRecordsFoundViewProps<T> {
 	model: AutoUIModel<T>;
-	autouiContext: AutoUIContext<T>;
+	actions: AutoUIContext<T>['actions'];
 	onActionTriggered: (data: ActionData<T>) => void;
 	noDataInfo?: NoDataInfo;
 }
 
 export const NoRecordsFoundView = <T extends AutoUIBaseResource<T>>({
 	model,
-	autouiContext,
+	actions,
 	onActionTriggered,
 	noDataInfo,
 }: NoRecordsFoundViewProps<T>) => {
 	const { t } = useTranslation();
 	return (
 		<Container
-			maxWidth='sm'
+			maxWidth="sm"
 			sx={{
 				textAlign: 'center',
 				display: 'flex',
@@ -37,26 +37,26 @@ export const NoRecordsFoundView = <T extends AutoUIBaseResource<T>>({
 				gap: 3,
 			}}
 		>
-			<Typography variant='titleLg' fontWeight='bold'>
+			<Typography variant="titleLg" fontWeight="bold">
 				{noDataInfo?.title ??
 					t('no_data.no_resource_data_title', {
 						resource: t(`resource.${model.resource}_other`).toLowerCase(),
 					})}
 			</Typography>
 			{noDataInfo?.subtitle && (
-				<Typography variant='title'>{noDataInfo?.subtitle}</Typography>
+				<Typography variant="title">{noDataInfo?.subtitle}</Typography>
 			)}
 			{noDataInfo?.info && (
-				<Alert severity='info' sx={{ my: 3 }}>
+				<Alert severity="info" sx={{ my: 3 }}>
 					{noDataInfo.info}
 				</Alert>
 			)}
-			<Typography variant='title'>
+			<Typography variant="title">
 				{noDataInfo?.description ?? t('no_data.no_resource_data_description')}
 			</Typography>
 			<Create
 				model={model}
-				autouiContext={autouiContext}
+				actions={actions}
 				hasOngoingAction={false}
 				onActionTriggered={onActionTriggered}
 			/>

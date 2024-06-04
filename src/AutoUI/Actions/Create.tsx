@@ -17,19 +17,18 @@ const { Button, Box } = Material;
 
 interface CreateProps<T extends AutoUIBaseResource<T>> {
 	model: AutoUIModel<T>;
-	autouiContext: AutoUIContext<T>;
+	actions: AutoUIContext<T>['actions'];
 	hasOngoingAction: boolean;
 	onActionTriggered: (data: ActionData<T>) => void;
 }
 
 export const Create = <T extends AutoUIBaseResource<T>>({
 	model,
-	autouiContext,
+	actions,
 	hasOngoingAction,
 	onActionTriggered,
 }: CreateProps<T>) => {
 	const { t } = useTranslation();
-	const { actions } = autouiContext;
 	const createActions = actions?.filter((action) => action.type === 'create');
 	const [disabledReasonsByAction, setDisabledReasonsByAction] = React.useState<
 		Record<string, string | undefined | null>

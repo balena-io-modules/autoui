@@ -54,6 +54,8 @@ export {
 	PersistentFilters,
 } from './AutoUI/Filters/PersistentFilters';
 
+export { NoRecordsFoundView } from './AutoUI/NoRecordsFoundView';
+
 export * from './AutoUI/Lenses/types';
 
 export { AutoUIApp, AutoUIAppProps } from './AutoUIApp';

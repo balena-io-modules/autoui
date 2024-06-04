@@ -457,7 +457,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 											>
 												<Create
 													model={model}
-													autouiContext={autouiContext}
+													actions={autouiContext.actions}
 													hasOngoingAction={false}
 													onActionTriggered={onActionTriggered}
 												/>
@@ -530,7 +530,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 										).length ? (
 											<NoRecordsFoundView
 												model={model}
-												autouiContext={autouiContext}
+												actions={autouiContext.actions}
 												onActionTriggered={onActionTriggered}
 												noDataInfo={noDataInfo}
 											/>
