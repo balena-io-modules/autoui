@@ -1,5 +1,6 @@
 import { JSONSchema, TableSortOptions } from 'rendition';
 import { AutoUIContext } from '../AutoUI/schemaOps';
+import { regexEscape } from '../DataTypes/utils';
 
 export type PineFilterObject = Record<string, any>;
 
@@ -39,7 +40,7 @@ const handlePrimitiveFilter = (
 	parentKeys: string[],
 	value: JSONSchema & {
 		// ajv extensions
-		regexp?: { pattern?: string; flags?: string };
+		regexp?: { pattern?: string; flags?: string; description?: string };
 		formatMinimum?: string;
 		formatMaximum?: string;
 		formatExclusiveMaximum?: string;
@@ -63,6 +64,38 @@ const handlePrimitiveFilter = (
 		}
 		if (regexp.flags != null && regexp.flags !== 'i') {
 			throw new Error(`Regex flag ${regexp.flags} is not supported`);
+		}
+		if (
+			regexp.description === 'start_with' ||
+			regexp.description === 'not_start_with'
+		) {
+			return {
+				$startswith: [
+					{
+						$tolower: {
+							$: parentKeys.length === 1 ? parentKeys[0] : parentKeys,
+						},
+					},
+					regexp.pattern.toLowerCase().replace('^', ''),
+				],
+			};
+		}
+
+		if (
+			regexp.description === 'ends_with' ||
+			regexp.description === 'not_ends_with'
+		) {
+			console.log(regexEscape(regexp.pattern.toLowerCase()));
+			return {
+				$endswith: [
+					{
+						$tolower: {
+							$: parentKeys.length === 1 ? parentKeys[0] : parentKeys,
+						},
+					},
+					regexp.pattern.toLowerCase().replace(/\$(?=[^$]*$)/, ''),
+				],
+			};
 		}
 		if (regexp.flags === 'i') {
 			return {
@@ -165,6 +198,7 @@ export const convertToPineClientFilter = (
 	parentKeys: string[],
 	filter: FilterMutation | FilterMutation[],
 ): PineFilterObject | undefined => {
+	console.log(filter);
 	if (!filter) {
 		return;
 	}
