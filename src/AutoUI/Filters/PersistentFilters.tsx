@@ -132,7 +132,6 @@ export const loadRulesFromUrl = (
 };
 
 interface PersistentFiltersProps extends FiltersProps {
-	viewsRestorationKey: string;
 	history: History;
 }
 
@@ -142,7 +141,6 @@ export const PersistentFilters = ({
 	filters,
 	onViewsChange,
 	onFiltersChange,
-	viewsRestorationKey,
 	history,
 	onSearch,
 	...otherProps

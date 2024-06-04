@@ -478,7 +478,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 														schema={model.schema}
 														filters={filters}
 														views={views}
-														autouiContext={autouiContext}
+														viewsRestorationKey={`${autouiContext.resource}__views`}
 														persistFilters={persistFilters}
 														changeFilters={$setFilters}
 														changeViews={setViews}
@@ -512,15 +512,14 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 												/>
 											</HeaderGrid>
 											<Filters
-												renderMode={'summary'}
+												renderMode={['summaryWithSaveViews']}
 												schema={model.schema}
 												filters={filters}
 												views={views}
-												autouiContext={autouiContext}
+												viewsRestorationKey={`${autouiContext.resource}__views`}
 												changeFilters={$setFilters}
 												changeViews={setViews}
 												persistFilters={persistFilters}
-												showSaveView
 											/>
 										</Box>
 									) : (
