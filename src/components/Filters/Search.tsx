@@ -9,6 +9,7 @@ const { TextField, InputAdornment, IconButton } = Material;
 interface SearchProps extends Material.TextFieldProps<'standard'> {
 	placeholder?: string;
 	value: string;
+	dark?: boolean;
 	onEnter?: (event: React.KeyboardEvent) => void;
 	onChange?: (
 		event?: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
@@ -21,6 +22,7 @@ export const Search = ({
 	onEnter,
 	onChange,
 	InputProps,
+	dark,
 	...textFieldProps
 }: SearchProps) => {
 	const onKeyPress = React.useCallback(
@@ -43,17 +45,37 @@ export const Search = ({
 			InputProps={{
 				startAdornment: (
 					<InputAdornment position="start">
-						<FontAwesomeIcon icon={faSearch} />
+						<FontAwesomeIcon
+							icon={faSearch}
+							style={{ color: dark ? 'white' : 'inherit' }} // TODO remove when we have implemented a dark theme
+						/>
 					</InputAdornment>
 				),
 				...(value.length > 0 && {
 					endAdornment: (
 						<InputAdornment position="end">
 							<IconButton onClick={() => onChange?.(undefined)}>
-								<FontAwesomeIcon icon={faTimes} />
+								<FontAwesomeIcon
+									icon={faTimes}
+									style={{
+										color: dark ? 'white' : 'inherit', // TODO remove when we have implemented a dark theme
+									}}
+								/>
 							</IconButton>
 						</InputAdornment>
 					),
+				}),
+				// TODO remove when we have implemented a dark theme
+				...(dark && {
+					sx: {
+						color: 'white',
+						'&::before': {
+							borderBottom: 'solid rgba(255, 255, 255, 0.6) 1px',
+						},
+						'&:hover:not(.Mui-disabled, .Mui-error)::before': {
+							borderBottom: 'solid white 1px',
+						},
+					},
 				}),
 				...InputProps,
 			}}

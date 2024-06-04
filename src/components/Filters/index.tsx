@@ -1,5 +1,5 @@
 import React from 'react';
-import { Material } from '@balena/ui-shared-components';
+import { designTokens, Material } from '@balena/ui-shared-components';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Search } from './Search';
 import { Views } from './Views';
@@ -41,6 +41,16 @@ export interface FiltersProps {
 	onSearch?: (searchTerm: string) => React.ReactElement | null;
 	showSaveView?: boolean;
 }
+
+// TODO remove when we have implemented a dark theme
+const darkStyles: Material.SxProps = {
+	color: designTokens.color.text.value,
+	backgroundColor: 'white',
+	border: 'none',
+	'&:hover': {
+		backgroundColor: 'white',
+	},
+};
 
 export const Filters = ({
 	schema,
@@ -163,10 +173,7 @@ export const Filters = ({
 					>
 						<Search
 							id="balena__filters_search_bar"
-							focused={dark}
-							InputProps={{
-								style: { color: dark ? 'white' : 'primary' },
-							}}
+							dark={dark}
 							onChange={(e) => {
 								if (!e) {
 									setSearchString('');
@@ -194,10 +201,12 @@ export const Filters = ({
 				{(!renderMode || renderMode.includes('add')) && (
 					<Button
 						variant={dark ? 'light' : 'outlined'}
-						color="secondary"
 						onClick={() => setShowFilterDialog(true)}
 						startIcon={matches ? <FontAwesomeIcon icon={faFilter} /> : null}
-						sx={{ whiteSpace: 'nowrap' }}
+						sx={{
+							whiteSpace: 'nowrap',
+							...(dark && darkStyles),
+						}}
 					>
 						{matches ? (
 							t('actions.add_filter')

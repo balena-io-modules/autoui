@@ -4,15 +4,15 @@ import {
 	Tooltip,
 	Material,
 	DropDownButtonProps,
+	designTokens,
 } from '@balena/ui-shared-components';
 import { faChartPie } from '@fortawesome/free-solid-svg-icons/faChartPie';
 import { JSONSchema7 as JSONSchema } from 'json-schema';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
 import { useTranslation } from '../../hooks/useTranslation';
-import { Typography } from '@mui/material';
 
-const { Box, IconButton, useTheme, useMediaQuery } = Material;
+const { Box, IconButton, useTheme, useMediaQuery, Typography } = Material;
 
 interface FiltersView {
 	id: string;
@@ -27,6 +27,14 @@ export interface ViewsProps {
 	deleteView: (view: FiltersView) => any;
 	dark?: boolean;
 }
+
+// TODO remove when we have implemented a dark theme
+const darkStyles: Material.SxProps = {
+	// Using !important to override disabled styles on the primary variant
+	backgroundColor: 'white !important',
+	border: 'none !important',
+	color: `${designTokens.color.text.value} !important`,
+};
 
 export const Views = ({ views, setFilters, deleteView, dark }: ViewsProps) => {
 	const { t } = useTranslation();
@@ -85,6 +93,7 @@ export const Views = ({ views, setFilters, deleteView, dark }: ViewsProps) => {
 				variant={!memoizedViews?.length && dark ? 'contained' : 'outlined'}
 				color={!memoizedViews?.length && dark ? 'primary' : 'secondary'}
 				startIcon={matches ? <FontAwesomeIcon icon={faChartPie} /> : null}
+				sx={{ py: '6px', ...(dark && darkStyles) }}
 			/>
 		</Tooltip>
 	);
