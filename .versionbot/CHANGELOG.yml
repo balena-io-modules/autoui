@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix filter views storage
+      hash: 9c18e0ea8b0f362f706b38aca54f93a92b59e45b
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.0.4
+  title: ""
+  date: 2024-06-04T14:13:40.143Z
+- commits:
     - subject: Fix filters dark styling
       hash: 1096c6adc9749f264706b329eebbc50b2be88674
       body: ""
