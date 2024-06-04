@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix filters dark styling
+      hash: 1096c6adc9749f264706b329eebbc50b2be88674
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Jonathan Berger
+  version: 4.0.3
+  title: ""
+  date: 2024-06-04T12:56:04.178Z
+- commits:
     - subject: Update ui-shared-components
       hash: f3c0af99788765a6b002754ec1f02e1b7fdf48d1
       body: ""
