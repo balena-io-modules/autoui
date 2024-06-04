@@ -45,6 +45,7 @@ export const Summary = ({
 	const { t } = useTranslation();
 	const [showViewForm, setShowViewForm] = React.useState(false);
 	const [viewData, setViewData] = React.useState<ViewData | undefined>();
+
 	return (
 		<Box display="flex" flexDirection="column" my={2}>
 			<Box display="flex" justifyContent="space-between" alignItems="center">
@@ -86,15 +87,16 @@ export const Summary = ({
 				title={t('labels.save_current_view')}
 				onClose={() => {
 					setShowViewForm(false);
+					setViewData(undefined);
 				}}
 			>
 				<DialogContent>
 					<RJSForm
 						liveValidate
 						hideSubmitButton
-						onChange={({ formData }: { formData: { name: string } }) =>
-							setViewData(formData)
-						}
+						onChange={({ formData }: { formData: { name: string } }) => {
+							setViewData(formData);
+						}}
 						schema={schema}
 						formData={viewData}
 					/>
@@ -108,6 +110,7 @@ export const Summary = ({
 							}
 							onSaveView?.(viewData);
 							setShowViewForm(false);
+							setViewData(undefined);
 						}}
 						disabled={!viewData?.name?.length}
 						variant="contained"

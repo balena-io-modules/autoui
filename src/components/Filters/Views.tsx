@@ -11,6 +11,7 @@ import { JSONSchema7 as JSONSchema } from 'json-schema';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
 import { useTranslation } from '../../hooks/useTranslation';
+import { stopEvent } from '../../AutoUI/utils';
 
 const { Box, IconButton, useTheme, useMediaQuery, Typography } = Material;
 
@@ -24,7 +25,10 @@ interface FiltersView {
 export interface ViewsProps {
 	views: FiltersView[] | undefined;
 	setFilters: (filters: JSONSchema[]) => void;
-	deleteView: (view: FiltersView) => any;
+	deleteView: (
+		view: FiltersView,
+		event: React.MouseEvent<HTMLElement> | undefined,
+	) => void;
 	dark?: boolean;
 }
 
@@ -66,7 +70,12 @@ export const Views = ({ views, setFilters, deleteView, dark }: ViewsProps) => {
 						</Box>
 						<IconButton
 							aria-label={t('aria_labels.remove_view')}
-							onClick={() => deleteView(view)}
+							onClick={(event: React.MouseEvent<HTMLElement> | undefined) => {
+								if (event) {
+									stopEvent(event);
+								}
+								deleteView(view, event);
+							}}
 						>
 							<FontAwesomeIcon icon={faTrash} />
 						</IconButton>

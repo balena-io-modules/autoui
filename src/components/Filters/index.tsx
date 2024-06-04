@@ -18,8 +18,19 @@ import { useClickOutsideOrEsc } from '../../hooks/useClickOutsideOrEsc';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import { isJSONSchema } from '../../AutoUI/schemaOps';
 import { getPropertySchemaAndModel } from '../../DataTypes';
+import { getFromLocalStorage, setToLocalStorage } from '../../AutoUI/utils';
 
 const { Box, Button, useTheme, useMediaQuery } = Material;
+
+const getViews = (views?: FiltersView[], viewsRestorationKey?: string) => {
+	if (!!views?.length) {
+		return views;
+	}
+	if (viewsRestorationKey) {
+		return getFromLocalStorage<FiltersView[]>(viewsRestorationKey) ?? [];
+	}
+	return [];
+};
 
 export interface FiltersView {
 	id: string;
@@ -28,18 +39,24 @@ export interface FiltersView {
 	filters: JSONSchema[];
 }
 
-type FilterRenderMode = 'all' | 'add' | 'search' | 'views' | 'summary';
+export type FilterRenderMode =
+	| 'all'
+	| 'add'
+	| 'search'
+	| 'views'
+	| 'summary'
+	| 'summaryWithSaveViews';
 
 export interface FiltersProps {
 	schema: JSONSchema;
 	dark?: boolean;
 	filters?: JSONSchema[];
 	views?: FiltersView[];
+	viewsRestorationKey?: string;
 	onFiltersChange?: (filters: JSONSchema[]) => void;
 	onViewsChange?: (views: FiltersView[]) => void;
 	renderMode?: FilterRenderMode | FilterRenderMode[];
 	onSearch?: (searchTerm: string) => React.ReactElement | null;
-	showSaveView?: boolean;
 }
 
 // TODO remove when we have implemented a dark theme
@@ -57,11 +74,11 @@ export const Filters = ({
 	dark,
 	filters,
 	views,
+	viewsRestorationKey,
 	onFiltersChange,
 	onViewsChange,
 	renderMode,
 	onSearch,
-	showSaveView,
 }: FiltersProps) => {
 	const { t } = useTranslation();
 	const theme = useTheme();
@@ -72,6 +89,24 @@ export const Filters = ({
 	const [editFilter, setEditFilter] = React.useState<JSONSchema>();
 	const searchBarRef = useClickOutsideOrEsc<HTMLDivElement>(() =>
 		setShowSearchDropDown(false),
+	);
+	const [storedViews, setStoredViews] = React.useState(
+		getViews(views, viewsRestorationKey),
+	);
+
+	React.useEffect(() => {
+		setStoredViews(getViews(views, viewsRestorationKey));
+	}, [views, viewsRestorationKey]);
+
+	const viewsUpdate = React.useCallback(
+		(newViews: FiltersView[]) => {
+			if (viewsRestorationKey) {
+				setToLocalStorage(viewsRestorationKey, newViews);
+			}
+			setStoredViews(newViews);
+			onViewsChange?.(newViews);
+		},
+		[viewsRestorationKey, setToLocalStorage, setStoredViews, onViewsChange],
 	);
 
 	const formData = React.useMemo(() => {
@@ -145,16 +180,16 @@ export const Filters = ({
 				eventName: `Saving filters view ${name}`,
 				filters: filters ?? [],
 			};
-			const newViews = [...(views ?? []), view];
-			onViewsChange?.(newViews);
+			const newViews = [...(storedViews ?? []), view];
+			viewsUpdate?.(newViews);
 		},
-		[filters, views, onViewsChange],
+		[filters, storedViews, viewsUpdate],
 	);
 
 	const handleDeleteView = React.useCallback(
 		(view: FiltersView) =>
-			onViewsChange?.(views?.filter((v) => v.id !== view.id) ?? []),
-		[views, onViewsChange],
+			viewsUpdate?.(storedViews?.filter((v) => v.id !== view.id) ?? []),
+		[storedViews, viewsUpdate],
 	);
 
 	return (
@@ -217,28 +252,37 @@ export const Filters = ({
 				)}
 				{(!renderMode || renderMode.includes('views')) && (
 					<Views
-						views={views}
+						views={storedViews}
 						setFilters={(filters) => onFiltersChange?.(filters)}
 						deleteView={handleDeleteView}
 						dark={dark}
 					/>
 				)}
 			</Box>
-			{(!renderMode || renderMode.includes('summary')) && !!filters?.length && (
-				<Summary
-					onEdit={(filter) => {
-						setEditFilter(filter);
-					}}
-					onDelete={handleDeleteFilter}
-					onClearFilters={() => {
-						onFiltersChange?.([]);
-					}}
-					showSaveView={showSaveView}
-					onSaveView={({ name }) => handleSaveView(name)}
-					filters={filters}
-					dark={dark}
-				/>
-			)}
+			{(!renderMode ||
+				renderMode.includes('summary') ||
+				renderMode.includes('summaryWithSaveViews') ||
+				renderMode.includes('all')) &&
+				!!filters?.length && (
+					<Summary
+						onEdit={(filter) => {
+							setEditFilter(filter);
+						}}
+						onDelete={handleDeleteFilter}
+						onClearFilters={() => {
+							onFiltersChange?.([]);
+						}}
+						showSaveView={
+							!renderMode ||
+							renderMode?.includes('views') ||
+							renderMode?.includes('summaryWithSaveViews') ||
+							renderMode?.includes('all')
+						}
+						onSaveView={({ name }) => handleSaveView(name)}
+						filters={filters}
+						dark={dark}
+					/>
+				)}
 			{(showFilterDialog || formData) && (
 				<FiltersDialog
 					onClose={(filter) => {
