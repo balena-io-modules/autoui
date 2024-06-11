@@ -112,10 +112,11 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 	return {};
 };
 
-export const rendererSchema = (schemaField: JSONSchema) => {
+export const rendererSchema = (schemaField: JSONSchema, schema: JSONSchema) => {
 	const valueSchema: JSONSchema = {
 		type: 'string',
 		title: 'Value',
+		examples: schema.examples,
 	};
 	return getDataTypeSchema(schemaField, operators(), valueSchema);
 };
