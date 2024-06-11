@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix filters examples when filter is a string
+      hash: d2dbc39ce9f3a0d8a45074075640cbb79c78bec0
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.0.5
+  title: ""
+  date: 2024-06-11T09:00:31.624Z
+- commits:
     - subject: Fix filter views storage
       hash: 9c18e0ea8b0f362f706b38aca54f93a92b59e45b
       body: ""
