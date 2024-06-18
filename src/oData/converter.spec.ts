@@ -1,4 +1,4 @@
-import { JSONSchema } from 'rendition';
+import { JSONSchema7 as JSONSchema } from 'json-schema';
 import { convertToPineClientFilter } from './jsonToOData';
 
 type FilterTest = {
@@ -315,6 +315,94 @@ const filterTests: FilterTest[] = [
 						},
 					},
 				},
+			},
+		},
+	},
+	{
+		testCase: 'should convert enum "is" "null" filter to pine $filter', // is default
+		filters: [
+			{
+				$id: 'EEVF5Y2fWZd84xWq',
+				title: 'is',
+				description:
+					'{"title":"Release policy","field":"should_be_running__release","operator":{"slug":"is","label":"is"},"value":null}',
+				type: 'object',
+				properties: {
+					should_be_running__release: {
+						const: null,
+					},
+				},
+				required: ['should_be_running__release'],
+			},
+		],
+		expected: {
+			should_be_running__release: null,
+		},
+	},
+	{
+		testCase: 'should convert enum "is" "not null" filter to pine $filter', // is pinned
+		filters: [
+			{
+				$id: 'FEVF5Y2fWZd84xWq',
+				title: 'is',
+				description:
+					'{"title":"Release policy","field":"should_be_running__release","operator":{"slug":"is","label":"is"},"value":{"not":null}}',
+				type: 'object',
+				properties: {
+					should_be_running__release: {
+						not: { const: null },
+					},
+				},
+				required: ['should_be_running__release'],
+			},
+		],
+		expected: {
+			$not: {
+				should_be_running__release: null,
+			},
+		},
+	},
+	{
+		testCase: 'should convert enum "is_not" "null" filter to pine $filter', // is not pinned
+		filters: [
+			{
+				$id: 'GEVF5Y2fWZd84xWq',
+				title: 'is_not',
+				description:
+					'{"title":"Release policy","field":"should_be_running__release","operator":{"slug":"is_not","label":"is not"},"value":null}',
+				type: 'object',
+				properties: {
+					should_be_running__release: {
+						const: null,
+					},
+				},
+				required: ['should_be_running__release'],
+			},
+		],
+		expected: {
+			should_be_running__release: null,
+		},
+	},
+	{
+		testCase: 'should convert enum "is_not" "not null" filter to pine $filter', // is not default
+		filters: [
+			{
+				$id: 'HEVF5Y2fWZd84xWq',
+				title: 'is_not',
+				description:
+					'{"title":"Release policy","field":"should_be_running__release","operator":{"slug":"is_not","label":"is not"},"value":{"not":null}}',
+				type: 'object',
+				properties: {
+					should_be_running__release: {
+						not: { const: null },
+					},
+				},
+				required: ['should_be_running__release'],
+			},
+		],
+		expected: {
+			$not: {
+				should_be_running__release: null,
 			},
 		},
 	},
