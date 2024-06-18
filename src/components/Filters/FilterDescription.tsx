@@ -9,16 +9,27 @@ import {
 import { isDateTimeFormat } from '../../DataTypes';
 import { format as dateFormat } from 'date-fns';
 import { isJSONSchema } from '../../AutoUI/schemaOps';
+import { findInObject } from '../../AutoUI/utils';
 
 const transformToRidableValue = (
 	parsedFilterDescription: SieveFilterDescription,
 ): string => {
 	const { schema, value } = parsedFilterDescription;
-	if (schema && isDateTimeFormat(schema.format)) {
+	const oneOf = findInObject(schema, 'oneOf') as JSONSchema['oneOf'];
+	if (oneOf) {
+		const findObj = oneOf.find(
+			(o) => typeof o === 'object' && 'const' in o && o.const === value,
+		);
+		if (isJSONSchema(findObj) && findObj.title) {
+			return findObj.title;
+		}
+	}
+
+	if (schema && isDateTimeFormat(schema.format) && value != null) {
 		return dateFormat(value, 'PPPppp');
 	}
 
-	if (typeof value === 'object') {
+	if (value != null && typeof value === 'object') {
 		if (Object.keys(value).length > 1) {
 			return Object.entries(value)
 				.map(([key, value]) => {
@@ -29,7 +40,12 @@ const transformToRidableValue = (
 				})
 				.join(', ');
 		}
-		return Object.values(value)[0] as string;
+		const val = Object.values(value)[0];
+		return typeof val === 'string' ? val : JSON.stringify(val);
+	}
+
+	if (!value) {
+		return 'not defined';
 	}
 
 	return String(value);

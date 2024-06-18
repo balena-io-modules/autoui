@@ -1,3 +1,4 @@
+import { isJson } from '../AutoUI/schemaOps';
 import { FULL_TEXT_SLUG } from '../components/Filters/SchemaSieve';
 import { CreateFilter, getDataTypeSchema } from './utils';
 import { JSONSchema7 as JSONSchema } from 'json-schema';
@@ -14,14 +15,53 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 	field,
 	operator,
 	value,
+	propertySchema,
 ) => {
-	if (operator === 'is' || operator === FULL_TEXT_SLUG) {
+	const val =
+		typeof value === 'object'
+			? value
+			: isJson(value)
+			? JSON.parse(value)
+			: { const: value };
+
+	// Ensures that when creating a full_text_search filter,
+	// we check the title values within a oneOf array. If a match is found,
+	// a filter is created with the corresponding const value.
+	// For example:
+	// filter => 'tes'
+	// oneOf: [{title: 'Test', const: 'const_value'}, {title: 'Another', const: 'const_value_2'}]
+	// Resulting filter => 'const_value'
+	if (
+		operator === FULL_TEXT_SLUG &&
+		typeof value === 'string' &&
+		propertySchema?.oneOf?.every(
+			(o): o is Required<Pick<JSONSchema, 'title' | 'const'>> =>
+				typeof o === 'object' &&
+				typeof o.title === 'string' &&
+				typeof o.const === 'string',
+		)
+	) {
+		const transformedEnum = propertySchema.oneOf
+			.filter((o) => o.title.toLowerCase().includes(value.toLowerCase()))
+			.map((o) => o.const);
+
+		return transformedEnum.length
+			? {
+					properties: {
+						[field]: {
+							enum: transformedEnum,
+						},
+					},
+					required: [field],
+			  }
+			: {};
+	}
+
+	if (operator === 'is') {
 		return {
 			type: 'object',
 			properties: {
-				[field]: {
-					const: value,
-				},
+				[field]: val,
 			},
 			required: [field],
 		};
@@ -32,9 +72,8 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 			type: 'object',
 			properties: {
 				[field]: {
-					not: {
-						const: value,
-					},
+					type: 'object',
+					not: val,
 				},
 			},
 		};
@@ -50,6 +89,7 @@ export const rendererSchema = (
 	const valueSchema: JSONSchema = {
 		...propertySchema,
 		title: 'Value',
+		description: '',
 	};
 	return getDataTypeSchema(schemaField, operators(), valueSchema);
 };

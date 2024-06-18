@@ -35,7 +35,7 @@ export const FULL_TEXT_SLUG = 'full_text_search';
 export interface FormData {
 	field: string | undefined;
 	operator: string | undefined;
-	value: string | undefined;
+	value: string | null;
 }
 
 export function ajvFilter<T>(
@@ -120,6 +120,7 @@ export const createFilter = (
 			const operatorLabel = model?.operatorsOneOf.find(
 				(o) => o.const === operator,
 			)?.title;
+
 			const filter = createModelFilter(propertySchema, {
 				field,
 				operator,

@@ -14,13 +14,10 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 	operator,
 	value,
 ) => {
-	const normalizedValue = normalizeDateTime(value);
+	const normalizedValue = value === null ? null : normalizeDateTime(value);
 
 	// TODO: Double check that it works and if this can be improved
 	const dataType = typeof normalizedValue as 'string' | 'number';
-	if (value != null && normalizedValue == null) {
-		return {};
-	}
 
 	if (operator === 'is') {
 		return {
@@ -96,6 +93,7 @@ export const rendererSchema = (schemaField: JSONSchema) => {
 		type: 'string',
 		format: 'date-time',
 		title: 'Value',
+		description: '',
 	};
 	return getDataTypeSchema(schemaField, operators(), valueSchema);
 };

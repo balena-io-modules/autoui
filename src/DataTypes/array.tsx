@@ -120,6 +120,10 @@ const buildArrayOfObjectFilter = (
 		)
 		.filter(isJSONSchema);
 
+	if (!propertyFilters?.length) {
+		return {};
+	}
+
 	return {
 		minItems: 1,
 		type: 'array',

@@ -21,6 +21,44 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 	operator,
 	value,
 ) => {
+	if (!value && ['is', 'contains', 'matches_re'].includes(operator)) {
+		return {
+			type: 'object',
+			properties: {
+				[field]: {
+					type: 'string',
+					anyOf: [{ const: '' }, { const: null }],
+				},
+			},
+		};
+	}
+
+	if (
+		!value &&
+		['is_not', 'not_contains', 'not_matches_re'].includes(operator)
+	) {
+		return {
+			type: 'object',
+			properties: {
+				[field]: {
+					type: 'string',
+					anyOf: [
+						{
+							not: {
+								const: '',
+							},
+						},
+						{
+							not: {
+								const: null,
+							},
+						},
+					],
+				},
+			},
+		};
+	}
+
 	if (operator === 'is') {
 		return {
 			type: 'object',
@@ -117,6 +155,7 @@ export const rendererSchema = (schemaField: JSONSchema, schema: JSONSchema) => {
 		type: 'string',
 		title: 'Value',
 		examples: schema.examples,
+		description: '',
 	};
 	return getDataTypeSchema(schemaField, operators(), valueSchema);
 };
