@@ -1,3 +1,4 @@
+import isEqual from 'lodash/isEqual';
 import { FULL_TEXT_SLUG } from '../components/Filters/SchemaSieve';
 import { CreateFilter, getDataTypeSchema, regexEscape } from './utils';
 import { JSONSchema7 as JSONSchema } from 'json-schema';
@@ -10,6 +11,9 @@ export const operators = () => ({
 export type OperatorSlug =
 	| keyof ReturnType<typeof operators>
 	| typeof FULL_TEXT_SLUG;
+
+const notNullObj = { not: { const: null } };
+const isNotNullObj = (value: unknown) => isEqual(value, notNullObj);
 
 export const createFilter: CreateFilter<OperatorSlug> = (
 	field,
@@ -37,9 +41,11 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 		return {
 			type: 'object',
 			properties: {
-				[field]: {
-					const: value,
-				},
+				[field]: isNotNullObj(value)
+					? value
+					: {
+							const: value,
+					  },
 			},
 			required: [field],
 		};
@@ -49,11 +55,13 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 		return {
 			type: 'object',
 			properties: {
-				[field]: {
-					not: {
-						const: value,
-					},
-				},
+				[field]: isNotNullObj(value)
+					? { const: null }
+					: {
+							not: {
+								const: value,
+							},
+					  },
 			},
 		};
 	}

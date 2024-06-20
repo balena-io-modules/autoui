@@ -1,5 +1,4 @@
 import * as React from 'react';
-import filter from 'lodash/filter';
 import qs from 'qs';
 import { JSONSchema } from 'rendition';
 import { History } from 'history';
@@ -70,7 +69,9 @@ export const listFilterQuery = (filters: JSONSchema[]) => {
 			}),
 		);
 	});
-	return qs.stringify(queryStringFilters);
+	return qs.stringify(queryStringFilters, {
+		strictNullHandling: true,
+	});
 };
 
 export const loadRulesFromUrl = (
@@ -82,10 +83,15 @@ export const loadRulesFromUrl = (
 	if (!searchLocation || !properties) {
 		return [];
 	}
-	const parsed = qs.parse(searchLocation, { ignoreQueryPrefix: true }) || {};
-	const rules = filter(parsed, isQueryStringFilterRuleset)
+	const parsed =
+		qs.parse(searchLocation, {
+			ignoreQueryPrefix: true,
+			strictNullHandling: true,
+		}) || {};
+
+	const rules = (Array.isArray(parsed) ? parsed : Object.values(parsed))
+		.filter(isQueryStringFilterRuleset)
 		.map(
-			// @ts-expect-error
 			(rules: ListQueryStringFilterObject[]) => {
 				if (!Array.isArray(rules)) {
 					rules = [rules];

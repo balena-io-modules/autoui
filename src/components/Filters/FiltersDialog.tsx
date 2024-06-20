@@ -23,6 +23,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 import { getRefSchema } from '../../AutoUI/schemaOps';
+import { findInObject } from '../../AutoUI/utils';
 
 const { Box, Button, IconButton, Typography, DialogContent } = Material;
 
@@ -113,6 +114,16 @@ const initialFormData = [
 	},
 ];
 
+const getDefaultValue = (
+	data: FormData | undefined,
+	propertySchema: JSONSchema | undefined,
+) => {
+	const schemaEnum = findInObject(propertySchema, 'enum');
+	const schemaOneOf = findInObject(propertySchema, 'oneOf');
+
+	return data?.value ?? schemaEnum?.[0] ?? schemaOneOf?.[0]?.const ?? undefined;
+};
+
 const normalizeFormData = (
 	data: FormData[] | FormData | undefined,
 	schema: JSONSchema,
@@ -136,10 +147,11 @@ const normalizeFormData = (
 			? Object.keys(model.operators).find((o) => o === d?.operator) ??
 			  Object.keys(model.operators)[0]
 			: undefined;
+
 		return {
 			field: d?.field ?? field,
 			operator,
-			value: d?.value,
+			value: getDefaultValue(d, propertySchema),
 		};
 	});
 };

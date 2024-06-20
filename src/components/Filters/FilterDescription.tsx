@@ -9,13 +9,18 @@ import {
 import { isDateTimeFormat } from '../../DataTypes';
 import { format as dateFormat } from 'date-fns';
 import { isJSONSchema } from '../../AutoUI/schemaOps';
+import isEqual from 'lodash/isEqual';
 
-const transformToRidableValue = (
+const transformToReadableValue = (
 	parsedFilterDescription: SieveFilterDescription,
 ): string => {
 	const { schema, value } = parsedFilterDescription;
 	if (schema && isDateTimeFormat(schema.format)) {
 		return dateFormat(value, 'PPPppp');
+	}
+	if (schema?.enum && 'enumNames' in schema) {
+		const index = schema.enum.findIndex((a) => isEqual(a, value));
+		return (schema.enumNames as string[])[index];
 	}
 
 	if (typeof value === 'object') {
@@ -54,7 +59,7 @@ export const FilterDescription = ({
 						{
 							name: parsedFilterDescription.field,
 							operator: 'contains',
-							value: transformToRidableValue(parsedFilterDescription),
+							value: transformToReadableValue(parsedFilterDescription),
 						},
 				  ]
 				: undefined;
@@ -69,7 +74,7 @@ export const FilterDescription = ({
 				if (!parsedFilterDescription) {
 					return;
 				}
-				const value = transformToRidableValue(parsedFilterDescription);
+				const value = transformToReadableValue(parsedFilterDescription);
 				return {
 					name:
 						parsedFilterDescription?.schema?.title ??
