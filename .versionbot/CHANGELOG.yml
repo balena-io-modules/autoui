@@ -1,4 +1,29 @@
 - commits:
+    - subject: Fix enum and oneOf default value
+      hash: 77ebec00729e16a372a47bd33186f5518e8d48a6
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+    - subject: Add support for null & not null filter options to enum columns
+      hash: 4d47629294563c9feeeec443173eaa3558aff6b4
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Andrea Rosci
+    - subject: Update ui-shared-components
+      hash: 38d61f6f673b9888c2ca8007318cf4c3cd47c9aa
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.1.0
+  title: ""
+  date: 2024-06-20T13:28:02.463Z
+- commits:
     - subject: Fix filters examples when filter is a string
       hash: d2dbc39ce9f3a0d8a45074075640cbb79c78bec0
       body: ""
