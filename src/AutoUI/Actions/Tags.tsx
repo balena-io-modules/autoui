@@ -6,13 +6,20 @@ import {
 	TagManagementModal,
 	useRequest,
 } from 'rendition';
+import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import { useTranslation } from '../../hooks/useTranslation';
-import { AutoUIContext, AutoUIBaseResource } from '../schemaOps';
+import {
+	AutoUIContext,
+	AutoUIBaseResource,
+	parseDescriptionProperty,
+} from '../schemaOps';
 import { enqueueSnackbar, closeSnackbar } from '@balena/ui-shared-components';
+import get from 'lodash/get';
 
 interface TagsProps<T> {
 	selected: T[] | undefined;
 	autouiContext: AutoUIContext<T>;
+	schema: JSONSchema;
 	setIsBusyMessage: (message: string | undefined) => void;
 	onDone: () => void;
 	refresh?: () => void;
@@ -21,6 +28,7 @@ interface TagsProps<T> {
 export const Tags = <T extends AutoUIBaseResource<T>>({
 	selected,
 	autouiContext,
+	schema,
 	setIsBusyMessage,
 	refresh,
 	onDone,
@@ -30,6 +38,27 @@ export const Tags = <T extends AutoUIBaseResource<T>>({
 	const { sdk, internalPineFilter, checkedState } = autouiContext;
 
 	const getAllTags = sdk?.tags && 'getAll' in sdk.tags ? sdk.tags.getAll : null;
+
+	// This will get nested property names based on the x-ref-scheme property.
+	const getItemName = (item: T) => {
+		const property = schema.properties?.[
+			autouiContext.nameField as keyof typeof schema.properties
+		] as JSONSchema;
+		const refScheme = parseDescriptionProperty(property, 'x-ref-scheme');
+
+		if (refScheme != null && typeof refScheme === 'object') {
+			const field = refScheme[0];
+			const nameFieldItem = item[autouiContext.nameField as keyof T];
+			return get(
+				property.type === 'array'
+					? (nameFieldItem as Array<T[keyof T]> | undefined)?.[0]
+					: nameFieldItem,
+				field,
+			);
+		}
+
+		return item[autouiContext.nameField as keyof T];
+	};
 
 	const { data: items, isLoading } = useRequest(
 		async () => {
@@ -93,7 +122,7 @@ export const Tags = <T extends AutoUIBaseResource<T>>({
 			<TagManagementModal<T>
 				items={items}
 				itemType={autouiContext.resource}
-				titleField={autouiContext.nameField as keyof T}
+				titleField={getItemName ?? (autouiContext.nameField as keyof T)}
 				tagField={autouiContext.tagField as keyof T}
 				done={(tagSubmitInfo) => {
 					changeTags(tagSubmitInfo);
