@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix tags collection summary names
+      hash: 47216153ad03f80c3d2cc97e8b3ba571353f9511
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.1.1
+  title: ""
+  date: 2024-06-24T20:53:02.968Z
+- commits:
     - subject: Fix enum and oneOf default value
       hash: 77ebec00729e16a372a47bd33186f5518e8d48a6
       body: ""
