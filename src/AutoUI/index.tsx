@@ -318,6 +318,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 									onDone={onDone}
 									setIsBusyMessage={setIsBusyMessage}
 									refresh={refresh}
+									schema={model.schema}
 								/>
 							)
 						);
