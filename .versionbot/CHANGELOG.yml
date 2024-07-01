@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update @balena/ui-shared-components from 5.8.2 to 6.3.0
+      hash: adfcb01c8a2ff7a1edc06c2ed43ac9203f98a7ed
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.1.3
+  title: ""
+  date: 2024-07-01T13:30:05.855Z
+- commits:
     - subject: Fix useAnalyticsContext error when using persistent filters
       hash: 0da93c8c41696b0c8e082fabcf9bd1360472b1fb
       body: ""
