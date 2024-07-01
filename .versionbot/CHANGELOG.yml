@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix useAnalyticsContext error when using persistent filters
+      hash: 0da93c8c41696b0c8e082fabcf9bd1360472b1fb
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Jonathan Berger
+  version: 4.1.2
+  title: ""
+  date: 2024-07-01T10:32:40.153Z
+- commits:
     - subject: Fix tags collection summary names
       hash: 47216153ad03f80c3d2cc97e8b3ba571353f9511
       body: ""
