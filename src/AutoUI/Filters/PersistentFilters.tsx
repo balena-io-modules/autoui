@@ -11,6 +11,7 @@ import {
 	parseFilterDescription,
 } from '../../components/Filters/SchemaSieve';
 import { isJSONSchema } from '../../AutoUI/schemaOps';
+import { AnalyticsContextProvider } from '@balena/ui-shared-components';
 
 export interface ListQueryStringFilterObject {
 	n: string;
@@ -186,14 +187,16 @@ export const PersistentFilters = ({
 	}, []);
 
 	return (
-		<Filters
-			schema={schema}
-			filters={filters ?? storedFilters}
-			views={views}
-			onFiltersChange={onFiltersUpdate}
-			onViewsChange={onViewsChange}
-			{...otherProps}
-			onSearch={onSearch}
-		/>
+		<AnalyticsContextProvider>
+			<Filters
+				schema={schema}
+				filters={filters ?? storedFilters}
+				views={views}
+				onFiltersChange={onFiltersUpdate}
+				onViewsChange={onViewsChange}
+				{...otherProps}
+				onSearch={onSearch}
+			/>
+		</AnalyticsContextProvider>
 	);
 };
