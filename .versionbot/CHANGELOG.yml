@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix filters dialog to correctly handle null as a valid default value
+      hash: 042ee4e5e7cd34ea6c55fe6dc47cc173f76e51d9
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.1.4
+  title: ""
+  date: 2024-07-03T12:13:26.694Z
+- commits:
     - subject: Update @balena/ui-shared-components from 5.8.2 to 6.3.0
       hash: adfcb01c8a2ff7a1edc06c2ed43ac9203f98a7ed
       body: ""
