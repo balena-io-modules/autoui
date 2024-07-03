@@ -121,7 +121,14 @@ const getDefaultValue = (
 	const schemaEnum = findInObject(propertySchema, 'enum');
 	const schemaOneOf = findInObject(propertySchema, 'oneOf');
 
-	return data?.value ?? schemaEnum?.[0] ?? schemaOneOf?.[0]?.const ?? undefined;
+	if (data?.value !== undefined) {
+		return data.value;
+	} else if (schemaEnum?.[0] !== undefined) {
+		return schemaEnum?.[0];
+	} else if (schemaOneOf?.[0]?.const !== undefined) {
+		return schemaOneOf?.[0]?.const;
+	}
+	return undefined;
 };
 
 const normalizeFormData = (
