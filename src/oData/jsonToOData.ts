@@ -39,7 +39,7 @@ const handlePrimitiveFilter = (
 	parentKeys: string[],
 	value: JSONSchema & {
 		// ajv extensions
-		regexp?: { pattern?: string; flags?: string };
+		regexp?: { pattern?: string; flags?: string; description?: string };
 		formatMinimum?: string;
 		formatMaximum?: string;
 		formatExclusiveMaximum?: string;
@@ -63,6 +63,27 @@ const handlePrimitiveFilter = (
 		}
 		if (regexp.flags != null && regexp.flags !== 'i') {
 			throw new Error(`Regex flag ${regexp.flags} is not supported`);
+		}
+		if (
+			value.$comment === 'starts_with' ||
+			value.$comment === 'not_starts_with'
+		) {
+			return {
+				$startswith: [
+					{ $: parentKeys.length === 1 ? parentKeys[0] : parentKeys },
+					regexp.pattern.replace('^', ''),
+				],
+			};
+		}
+
+		if (value.$comment === 'ends_with' || value.$comment === 'not_ends_with') {
+			console.log('test', regexp.pattern.replace(/\$(?=[^$]*$)/, ''));
+			return {
+				$endswith: [
+					{ $: parentKeys.length === 1 ? parentKeys[0] : parentKeys },
+					regexp.pattern.replace(/\$(?=[^$]*$)/, ''),
+				],
+			};
 		}
 		if (regexp.flags === 'i') {
 			return {

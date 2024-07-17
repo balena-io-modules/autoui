@@ -1,3 +1,4 @@
+import { Schema } from 'ajv';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import memoize from 'lodash/memoize';
 
@@ -13,7 +14,7 @@ export type CreateFilter<TOperatorSlugs = string> = (
 	operator: TOperatorSlugs,
 	value: any,
 	propertySchema?: JSONSchema & { enumNames?: string[] },
-) => JSONSchema;
+) => Schema | JSONSchema;
 
 export const getDefaultDate = (): string => {
 	const date = new Date();
