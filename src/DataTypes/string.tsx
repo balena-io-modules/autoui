@@ -8,6 +8,10 @@ export const operators = () => ({
 	not_contains: 'does not contain',
 	is: 'is',
 	is_not: 'is not',
+	starts_with: 'starts with',
+	not_starts_with: 'does not start with',
+	ends_with: 'ends with',
+	not_ends_with: 'does not end with',
 });
 
 export type OperatorSlug =
@@ -82,6 +86,66 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 					},
 				},
 			},
+		};
+	}
+
+	if (operator === 'starts_with') {
+		return {
+			type: 'object',
+			properties: {
+				[field]: {
+					type: 'string',
+					pattern: `^${regexEscape(stringValue)}`,
+					$comment: 'starts_with',
+				},
+			},
+			required: [field],
+		};
+	}
+
+	if (operator === 'not_starts_with') {
+		return {
+			type: 'object',
+			properties: {
+				[field]: {
+					type: 'string',
+					not: {
+						$comment: 'not_starts_with',
+						pattern: `^${regexEscape(stringValue)}`,
+					},
+				},
+			},
+			required: [field],
+		};
+	}
+
+	if (operator === 'ends_with') {
+		return {
+			type: 'object',
+			properties: {
+				[field]: {
+					type: 'string',
+					$comment: 'ends_with',
+					pattern: `${regexEscape(stringValue)}$`,
+				},
+			},
+			required: [field],
+		};
+	}
+
+	if (operator === 'not_ends_with') {
+		return {
+			type: 'object',
+			properties: {
+				[field]: {
+					type: 'string',
+					not: {
+						$comment: 'not_ends_with',
+						pattern: `${regexEscape(stringValue)}$`,
+					},
+				},
+			},
+			required: [field],
 		};
 	}
 

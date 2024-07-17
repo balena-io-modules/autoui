@@ -92,7 +92,7 @@ const getFilter = (
 		operator: effectiveOperator,
 		value,
 	});
-	if (!filter || !Object.keys(filter).length) {
+	if (!filter || typeof filter !== 'object' || !Object.keys(filter).length) {
 		return {};
 	}
 

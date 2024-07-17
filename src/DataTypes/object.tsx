@@ -46,20 +46,40 @@ export const operators = (s: JSONSchema) => {
 						key_contains: `${keyLabel} contains`,
 						key_not_contains: `${keyLabel} does not contain`,
 						key_is: `${keyLabel} is`,
+						key_starts_with: `${keyLabel} starts with`,
+						key_ends_with: `${keyLabel} ends with`,
+						key_not_starts_with: `${keyLabel} does not starts with`,
+						key_not_ends_with: `${keyLabel} does not ends with`,
 						value_is: `${valueLabel} is`,
 						value_contains: `${valueLabel} contains`,
 						value_not_contains: `${valueLabel} does not contain`,
+						value_starts_with: `${valueLabel} starts with`,
+						value_ends_with: `${valueLabel} ends with`,
+						value_not_starts_with: `${valueLabel} does not starts with`,
+						value_not_ends_with: `${valueLabel} does not ends with`,
 					};
 				})()),
 	};
 };
 
-const keySpecificOperators = ['key_is', 'key_contains', 'key_not_contains'];
+const keySpecificOperators = [
+	'key_is',
+	'key_contains',
+	'key_not_contains',
+	'key_starts_with',
+	'key_ends_with',
+	'key_not_starts_with',
+	'key_not_ends_with',
+];
 
 const valueSpecificOperators = [
 	'value_is',
 	'value_contains',
 	'value_not_contains',
+	'value_starts_with',
+	'value_ends_with',
+	'value_not_starts_with',
+	'value_not_ends_with',
 ];
 
 const getValueForOperation = (
@@ -152,6 +172,15 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 			pattern: regexEscape(v),
 			flags: 'i',
 		},
+	});
+
+	const startsWithFilter = (v: any) => ({
+		pattern: `^${regexEscape(v)}`,
+		$comment: 'starts_with',
+	});
+	const endsWithFilter = (v: any) => ({
+		pattern: `${regexEscape(v)}$`,
+		$comment: 'ends_with',
 	});
 
 	if (!isKeyValue) {
@@ -286,6 +315,62 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 		};
 	}
 
+	if (
+		operator === 'key_starts_with' ||
+		operator === 'value_starts_with' ||
+		operator === 'key_ends_with' ||
+		operator === 'value_ends_with'
+	) {
+		const filterMethod = operator.includes('starts')
+			? startsWithFilter
+			: endsWithFilter;
+		return {
+			type: 'object',
+			properties: {
+				[field]: {
+					type: 'array',
+					contains: {
+						type: 'object',
+						title: propertyTitle,
+						properties:
+							typeof internalValue !== 'object'
+								? filterMethod(internalValue)
+								: mapValues(internalValue, filterMethod),
+					},
+				},
+			},
+			required: [field],
+		};
+	}
+
+	if (
+		operator === 'key_not_starts_with' ||
+		operator === 'value_not_starts_with' ||
+		operator === 'key_not_ends_with' ||
+		operator === 'value_not_ends_with'
+	) {
+		const filterMethod = operator.includes('starts')
+			? startsWithFilter
+			: endsWithFilter;
+		return {
+			type: 'object',
+			properties: {
+				[field]: {
+					not: {
+						contains: {
+							type: 'object',
+							title: propertyTitle,
+							properties:
+								typeof internalValue !== 'object'
+									? filterMethod(internalValue)
+									: mapValues(internalValue, filterMethod),
+						},
+					},
+				},
+			},
+		};
+	}
+
 	return {};
 };
 
@@ -312,7 +397,7 @@ export const getFilter = (
 	}
 	const fieldFilter = createModelFilter(schema, { field, operator, value });
 
-	if (!fieldFilter) {
+	if (!fieldFilter || typeof fieldFilter !== 'object') {
 		return {};
 	}
 
