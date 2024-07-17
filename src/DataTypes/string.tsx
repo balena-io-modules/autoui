@@ -8,8 +8,6 @@ export const operators = () => ({
 	not_contains: 'does not contain',
 	is: 'is',
 	is_not: 'is not',
-	matches_re: 'matches RegEx',
-	not_matches_re: 'does not match RegEx',
 });
 
 export type OperatorSlug =
@@ -81,33 +79,6 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 							pattern: regexEscape(stringValue),
 							flags: 'i',
 						},
-					},
-				},
-			},
-		};
-	}
-
-	if (operator === 'matches_re') {
-		return {
-			type: 'object',
-			properties: {
-				[field]: {
-					type: 'string',
-					pattern: stringValue,
-				},
-			},
-			required: [field],
-		};
-	}
-
-	if (operator === 'not_matches_re') {
-		return {
-			type: 'object',
-			properties: {
-				[field]: {
-					type: 'string',
-					not: {
-						pattern: stringValue,
 					},
 				},
 			},

@@ -38,7 +38,7 @@ export const operators = (s: JSONSchema) => {
 			? {
 					contains: 'contains',
 					not_contains: 'does not contain',
-			  }
+				}
 			: (() => {
 					const keyLabel = getKeyLabel(s);
 					const valueLabel = getValueLabel(s);
@@ -46,32 +46,20 @@ export const operators = (s: JSONSchema) => {
 						key_contains: `${keyLabel} contains`,
 						key_not_contains: `${keyLabel} does not contain`,
 						key_is: `${keyLabel} is`,
-						key_matches_re: `${keyLabel} matches RegEx`,
-						key_not_matches_re: `${keyLabel} does not match RegEx`,
 						value_is: `${valueLabel} is`,
 						value_contains: `${valueLabel} contains`,
 						value_not_contains: `${valueLabel} does not contain`,
-						value_matches_re: `${valueLabel} matches RegEx`,
-						value_not_matches_re: `${valueLabel} does not match RegEx`,
 					};
-			  })()),
+				})()),
 	};
 };
 
-const keySpecificOperators = [
-	'key_is',
-	'key_contains',
-	'key_not_contains',
-	'key_matches_re',
-	'key_not_matches_re',
-];
+const keySpecificOperators = ['key_is', 'key_contains', 'key_not_contains'];
 
 const valueSpecificOperators = [
 	'value_is',
 	'value_contains',
 	'value_not_contains',
-	'value_matches_re',
-	'value_not_matches_re',
 ];
 
 const getValueForOperation = (
@@ -87,8 +75,8 @@ const getValueForOperation = (
 	const schemaField = isKeyOperation
 		? 'key'
 		: isValueOperation
-		? 'value'
-		: null;
+			? 'value'
+			: null;
 	const schemaProperty = schemaField
 		? findKey(schema.properties!, { description: schemaField })
 		: null;
@@ -164,10 +152,6 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 			pattern: regexEscape(v),
 			flags: 'i',
 		},
-	});
-
-	const matchReGexFilter = (v: any) => ({
-		pattern: v,
 	});
 
 	if (!isKeyValue) {
@@ -302,49 +286,6 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 		};
 	}
 
-	if (operator === 'key_matches_re' || operator === 'value_matches_re') {
-		return {
-			type: 'object',
-			properties: {
-				[field]: {
-					type: 'array',
-					contains: {
-						type: 'object',
-						title: propertyTitle,
-						properties:
-							typeof internalValue !== 'object'
-								? matchReGexFilter(internalValue)
-								: mapValues(internalValue, matchReGexFilter),
-					},
-				},
-			},
-			required: [field],
-		};
-	}
-
-	if (
-		operator === 'key_not_matches_re' ||
-		operator === 'value_not_matches_re'
-	) {
-		return {
-			type: 'object',
-			properties: {
-				[field]: {
-					not: {
-						contains: {
-							type: 'object',
-							title: propertyTitle,
-							properties:
-								typeof internalValue !== 'object'
-									? matchReGexFilter(internalValue)
-									: mapValues(internalValue, matchReGexFilter),
-						},
-					},
-				},
-			},
-		};
-	}
-
 	return {};
 };
 
@@ -415,8 +356,8 @@ export const rendererSchema = (
 		data?.operator && data.operator.includes('key')
 			? 'key'
 			: data?.operator && data.operator.includes('value')
-			? 'value'
-			: null,
+				? 'value'
+				: null,
 	);
 
 	const valueSchema: JSONSchema = {

@@ -64,6 +64,26 @@ const handlePrimitiveFilter = (
 		if (regexp.flags != null && regexp.flags !== 'i') {
 			throw new Error(`Regex flag ${regexp.flags} is not supported`);
 		}
+		if (
+			value.$comment === 'starts_with' ||
+			value.$comment === 'not_starts_with'
+		) {
+			return {
+				$startswith: [
+					{ $: parentKeys.length === 1 ? parentKeys[0] : parentKeys },
+					regexp.pattern.replace('^', ''),
+				],
+			};
+		}
+
+		if (value.$comment === 'ends_with' || value.$comment === 'not_ends_with') {
+			return {
+				$endswith: [
+					{ $: parentKeys.length === 1 ? parentKeys[0] : parentKeys },
+					regexp.pattern.replace(/\$(?=[^$]*$)/, ''),
+				],
+			};
+		}
 		if (regexp.flags === 'i') {
 			return {
 				$contains: [
