@@ -1,5 +1,5 @@
-import { AutoUIBaseResource, AutoUIRawModel } from '../schemaOps';
 import { autoUIDefaultPermissions } from './helpers';
+import type { AutoUIBaseResource, AutoUIRawModel } from '../schemaOps';
 
 export interface AugmentedSshKey extends AutoUIBaseResource<AugmentedSshKey> {
 	title: string;

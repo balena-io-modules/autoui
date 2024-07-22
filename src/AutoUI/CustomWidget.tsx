@@ -1,16 +1,16 @@
 import React from 'react';
 import castArray from 'lodash/castArray';
 import { getSchemaFormat, getSubSchemaFromRefScheme } from './schemaOps';
+import type { WidgetProps } from 'rendition';
 import {
 	JsonTypes,
-	WidgetProps,
 	getRendererWidget,
 	getSchemaNormalizedValue,
 	transformUiSchema,
 } from 'rendition';
 
 interface CustomWidgetProps
-	extends Pick<WidgetProps<object>, 'value' | 'extraContext' | 'uiSchema'> {
+	extends Pick<WidgetProps, 'value' | 'extraContext' | 'uiSchema'> {
 	schema: NonNullable<WidgetProps['schema']>;
 	extraFormats: NonNullable<WidgetProps['extraFormats']>;
 }

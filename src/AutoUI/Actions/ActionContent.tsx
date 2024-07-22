@@ -1,5 +1,6 @@
-import { CheckedState, useRequest } from 'rendition';
-import { AutoUIAction } from '../schemaOps';
+import type { CheckedState } from 'rendition';
+import { useRequest } from 'rendition';
+import type { AutoUIAction } from '../schemaOps';
 
 export const LOADING_DISABLED_REASON = 'Loading';
 

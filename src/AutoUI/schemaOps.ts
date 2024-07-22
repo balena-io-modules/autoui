@@ -4,8 +4,12 @@ import type {
 } from 'json-schema';
 import get from 'lodash/get';
 import pick from 'lodash/pick';
-import { CheckedState, Dictionary, ResourceTagModelService } from 'rendition';
-import { PineFilterObject } from '../oData/jsonToOData';
+import type {
+	CheckedState,
+	Dictionary,
+	ResourceTagModelService,
+} from 'rendition';
+import type { PineFilterObject } from '../oData/jsonToOData';
 import { findInObject } from './utils';
 
 type MaybePromise<T> = T | Promise<T>;
@@ -52,7 +56,7 @@ export interface CustomSchemaDescription {
 
 export type AutoUITagsSdk<T> = ResourceTagModelService &
 	(
-		| {}
+		| object
 		| {
 				getAll: (itemsOrFilters: any) => T[] | Promise<T[]>;
 				canAccess: (param: {
@@ -101,7 +105,7 @@ export interface AutoUIContext<T> {
 	getBaseUrl?: (entry: T) => string;
 	onEntityClick?: (
 		entity: T,
-		event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+		event: React.MouseEvent<HTMLAnchorElement>,
 	) => void;
 	idField: string;
 	nameField?: string;
@@ -169,8 +173,8 @@ export const getRefSchemePrefix = (schema: JSONSchema) => {
 	return schema.items
 		? 'items.properties.'
 		: schema.properties
-		? 'properties.'
-		: '';
+			? 'properties.'
+			: '';
 };
 
 export const getRefSchemeTitle = (
@@ -245,7 +249,7 @@ export const getHeaderLink = (
 		return null;
 	}
 	try {
-		const json = JSON.parse(schemaValue.description!);
+		const json = JSON.parse(schemaValue.description);
 		return json['x-header-link'];
 	} catch (err) {
 		return null;
@@ -301,7 +305,7 @@ export const generateSchemaFromRefScheme = (
 export const getRefSchema = (schema: JSONSchema, refSchemePrefix: string) => {
 	const refScheme = parseDescriptionProperty(schema, 'x-ref-scheme');
 	return refScheme
-		? get(schema, `${refSchemePrefix}${refScheme}`) ?? schema
+		? (get(schema, `${refSchemePrefix}${refScheme}`) ?? schema)
 		: schema;
 };
 

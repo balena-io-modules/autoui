@@ -1,15 +1,12 @@
 import isEmpty from 'lodash/isEmpty';
-import {
-	AutoUIModel,
-	autoUIJsonSchemaPick,
-	AutoUIRawModel,
-} from '../schemaOps';
+import type { AutoUIModel, AutoUIRawModel } from '../schemaOps';
+import { autoUIJsonSchemaPick } from '../schemaOps';
 import type { Dictionary } from 'rendition';
 
 type Transformers<
 	T extends Dictionary<any>,
 	TTransformer extends Dictionary<any>,
-	TContext extends any,
+	TContext,
 > = {
 	[field in keyof TTransformer]: (
 		entry: T,
@@ -27,7 +24,7 @@ export const autoUIDefaultPermissions = {
 export const autoUIRunTransformers = <
 	T extends Dictionary<any>,
 	TResult extends T,
-	TContext extends any,
+	TContext,
 >(
 	data: T | undefined,
 	transformers: Transformers<T, Omit<TResult, keyof T>, TContext>,
@@ -41,12 +38,13 @@ export const autoUIRunTransformers = <
 		return data as TResult;
 	}
 
-	const transformEntry = (entry: TResult) =>
+	const transformEntry = (entry: TResult) => {
 		Object.entries(transformers).forEach(
 			([fieldName, transformer]: [keyof TResult, any]) => {
 				entry[fieldName] = transformer(entry, context);
 			},
 		);
+	};
 
 	// We mutate the data for performance reasons, it shouldn't matter as it is just a middleware.
 	const mutatedData = data as TResult;
@@ -64,12 +62,12 @@ export const autoUIGetModelForCollection = <T>(
 	context?: { accessRole?: string | null },
 ): AutoUIModel<T> => {
 	const accessRole = context?.accessRole;
-	const schema = !!model.priorities
+	const schema = model.priorities
 		? autoUIJsonSchemaPick(model.schema, [
 				...model.priorities.primary,
 				...model.priorities.secondary,
 				...model.priorities.tertiary,
-		  ])
+			])
 		: model.schema;
 	return {
 		...model,

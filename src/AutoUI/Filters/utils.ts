@@ -109,7 +109,7 @@ export const constructSchemaProperties = (
 	const [firstRefSchemeKey, ...restRefScheme] = transformedXRefScheme;
 
 	// If the current level is a JSON schema and has properties || items definition, apply the transformation to them.
-	if (schemaOrProperties.properties || schemaOrProperties.items) {
+	if (schemaOrProperties.properties ?? schemaOrProperties.items) {
 		return {
 			...schemaOrProperties,
 			title: title ?? schemaOrProperties.title, // Use provided title or default to existing title.
@@ -171,7 +171,7 @@ export const modifySchemaWithRefSchemes = (schema: JSONSchema): JSONSchema => {
 			}
 			const description = parseDescription(value);
 			const refScheme =
-				description?.['x-foreign-key-scheme'] || description?.['x-ref-scheme'];
+				description?.['x-foreign-key-scheme'] ?? description?.['x-ref-scheme'];
 			delete description?.['x-foreign-key-scheme'];
 			delete description?.['x-ref-scheme'];
 

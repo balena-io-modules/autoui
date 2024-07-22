@@ -131,7 +131,7 @@ export const Content = ({ openApiJson, openActionSidebar }: ContentProps) => {
 						'$ref',
 					);
 					const requestSchema = requestSchemaRef
-						? getFromRef(openApiJson, requestSchemaRef)
+						? getFromRef(openApiJson, requestSchemaRef as string)
 						: id;
 					if (pathKey === ActionMethods.POST) {
 						return {
@@ -169,7 +169,7 @@ export const Content = ({ openApiJson, openActionSidebar }: ContentProps) => {
 	}
 
 	return (
-		<AutoUI
+		<AutoUI<any>
 			model={model}
 			actions={memoizedActions}
 			data={memoizedData}

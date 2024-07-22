@@ -1,11 +1,12 @@
 import * as React from 'react';
 import qs from 'qs';
-import { JSONSchema } from 'rendition';
-import { History } from 'history';
-import { Filters, FiltersProps } from '../../components/Filters';
+import type { JSONSchema } from 'rendition';
+import type { History } from 'history';
+import type { FiltersProps } from '../../components/Filters';
+import { Filters } from '../../components/Filters';
+import type { FilterDescription } from '../../components/Filters/SchemaSieve';
 import {
 	FULL_TEXT_SLUG,
-	FilterDescription,
 	createFilter,
 	createFullTextSearchFilter,
 	parseFilterDescription,
@@ -45,25 +46,22 @@ export const listFilterQuery = (filters: JSONSchema[]) => {
 			filter.title === FULL_TEXT_SLUG
 				? [parseFilterDescription(filter)].filter(
 						(f): f is FilterDescription => !!f,
-				  )
+					)
 				: filter.anyOf
 						?.filter((f): f is JSONSchema => isJSONSchema(f))
-						.map(
-							(f) =>
-								({
-									...parseFilterDescription(f),
-									operatorSlug: f.title,
-								} as FilterDescription & { operatorSlug?: string }),
-						)
+						.map((f) => ({
+							...parseFilterDescription(f),
+							operatorSlug: f.title,
+						}))
 						.filter((f) => !!f);
 
-		return signatures?.map<ListQueryStringFilterObject>(
+		return signatures?.map(
 			({
 				field,
 				operator,
 				operatorSlug,
 				value,
-			}: FilterDescription & { operatorSlug?: string }) => ({
+			}: Partial<FilterDescription> & { operatorSlug?: string }) => ({
 				n: field,
 				o: operatorSlug ?? operator,
 				v: value,
@@ -93,12 +91,12 @@ export const loadRulesFromUrl = (
 	const rules = (Array.isArray(parsed) ? parsed : Object.values(parsed))
 		.filter(isQueryStringFilterRuleset)
 		.map(
-			(rules: ListQueryStringFilterObject[]) => {
-				if (!Array.isArray(rules)) {
-					rules = [rules];
+			(queries: ListQueryStringFilterObject[]) => {
+				if (!Array.isArray(queries)) {
+					queries = [queries];
 				}
 
-				const signatures = rules.map(
+				const signatures = queries.map(
 					({ n, o, v }: ListQueryStringFilterObject) => ({
 						field: n,
 						operator: o,
@@ -159,14 +157,14 @@ export const PersistentFilters = ({
 	}, [locationSearch, schema]);
 
 	const onFiltersUpdate = React.useCallback(
-		(filters: JSONSchema[]) => {
+		(data: JSONSchema[]) => {
 			const { pathname } = window.location;
 			history?.replace?.({
 				pathname,
-				search: listFilterQuery(filters),
+				search: listFilterQuery(data),
 			});
 
-			onFiltersChange?.(filters);
+			onFiltersChange?.(data);
 		},
 		[window.location.pathname, onFiltersChange],
 	);

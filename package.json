@@ -42,7 +42,6 @@
     "enzyme": "^3.11.0",
     "jest": "^26.6.3",
     "jsdom": "^16.0.0",
-    "prettier": "^2.4.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "^5.0.1",
@@ -55,7 +54,7 @@
     "build": "rimraf dist && tsc",
     "test": "jest",
     "eject": "react-scripts eject",
-    "lint:fix": "balena-lint --typescript --fix src",
+    "lint-fix": "balena-lint --typescript --fix src/AutoUI",
     "lint": "balena-lint --typescript src",
     "prepack": "npm run build"
   },

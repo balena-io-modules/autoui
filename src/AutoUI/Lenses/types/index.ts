@@ -1,11 +1,12 @@
 import type { TableSortOptions, Pagination, CheckedState } from 'rendition';
-import { AutoUIEntityPropertyDefinition } from '../../';
-import { AutoUIContext, AutoUIModel } from '../../schemaOps';
-import { Material } from '@balena/ui-shared-components';
+import type { AutoUIEntityPropertyDefinition } from '../../';
+import type { AutoUIContext, AutoUIModel } from '../../schemaOps';
+import type { Material } from '@balena/ui-shared-components';
+
 export { table } from './table';
 export { entity } from './entity';
 
-export interface LensRendererBaseProps<T>
+export interface LensRendererBaseProps<T = unknown>
 	extends Pick<Material.BoxProps, 'flex'> {
 	properties: Array<AutoUIEntityPropertyDefinition<T>>;
 	autouiContext: AutoUIContext<T>;
@@ -13,7 +14,7 @@ export interface LensRendererBaseProps<T>
 	hasUpdateActions: boolean;
 	onEntityClick?: (
 		entity: T,
-		event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+		event: React.MouseEvent<HTMLAnchorElement>,
 	) => void;
 }
 
