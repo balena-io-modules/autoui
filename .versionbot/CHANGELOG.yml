@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix autoui loading and some lint rules
+      hash: bb754933845b1f5464c54125a4edb37ad88351e0
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.1.5
+  title: ""
+  date: 2024-07-25T16:14:23.760Z
+- commits:
     - subject: Fix filters dialog to correctly handle null as a valid default value
       hash: 042ee4e5e7cd34ea6c55fe6dc47cc173f76e51d9
       body: ""
