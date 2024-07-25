@@ -191,7 +191,10 @@ export const isJSONSchema = (
 		| null,
 ): value is JSONSchema => {
 	return (
-		typeof value === 'object' && value !== null && typeof value !== 'boolean'
+		typeof value === 'object' &&
+		value !== null &&
+		typeof value !== 'boolean' &&
+		!!Object.keys(value).length
 	);
 };
 

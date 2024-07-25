@@ -1,3 +1,4 @@
+import { isJSONSchema } from '../AutoUI/schemaOps';
 import { FULL_TEXT_SLUG } from '../components/Filters/SchemaSieve';
 import { CreateFilter, getDataTypeSchema } from './utils';
 import { JSONSchema7 as JSONSchema } from 'json-schema';
@@ -14,8 +15,33 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 	field,
 	operator,
 	value,
+	propertySchema,
 ) => {
-	if (operator === 'is' || operator === FULL_TEXT_SLUG) {
+	if (operator === FULL_TEXT_SLUG) {
+		const constValues =
+			propertySchema?.oneOf
+				?.filter(
+					(o) =>
+						isJSONSchema(o) &&
+						o.title?.toLowerCase().includes(value.toLowerCase()),
+				)
+				.map((v: JSONSchema) => ({ const: v.const })) || null;
+
+		if (!constValues?.length) {
+			return {};
+		}
+
+		return {
+			type: 'object',
+			properties: {
+				[field]:
+					constValues.length > 1 ? { anyOf: constValues } : constValues[0],
+			},
+			required: [field],
+		};
+	}
+
+	if (operator === 'is') {
 		return {
 			type: 'object',
 			properties: {

@@ -40,10 +40,10 @@ const buildFilterForPropertySchema = (
 	schema: JSONSchema,
 ): JSONSchema => {
 	const filter = getFilter(field, schema, value, operator);
+
 	if (!Object.keys(filter).length) {
 		return {};
 	}
-
 	return {
 		type: 'object',
 		properties: { [field]: { type: 'array', ...filter } },
@@ -99,6 +99,7 @@ const getFilter = (
 	const recursiveFilter = hasPrimitiveItems
 		? filter.properties?.[field]
 		: filter;
+
 	return recursiveFilter &&
 		isJSONSchema(recursiveFilter) &&
 		Object.keys(recursiveFilter).length
@@ -114,11 +115,16 @@ const buildArrayOfObjectFilter = (
 	if (!isJSONSchema(schema.items) || !isJSONSchema(schema.items.properties)) {
 		return {};
 	}
+
 	const propertyFilters = Object.entries(schema.items.properties)
 		.map(([key, propSchema]) =>
 			createModelFilter(propSchema, { field: key, operator, value }),
 		)
 		.filter(isJSONSchema);
+
+	if (!propertyFilters.length) {
+		return {};
+	}
 
 	return {
 		minItems: 1,
