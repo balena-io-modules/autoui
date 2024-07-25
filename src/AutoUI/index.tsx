@@ -1,15 +1,17 @@
 import React from 'react';
+import type {
+	AutoUIContext,
+	ActionData,
+	Priorities,
+	AutoUITagsSdk,
+} from './schemaOps';
 import {
 	AutoUIAction,
 	AutoUIModel,
 	AutoUIBaseResource,
 	getFieldForFormat,
-	AutoUIContext,
 	AutoUIRawModel,
 	autoUIJsonSchemaPick,
-	ActionData,
-	Priorities,
-	AutoUITagsSdk,
 	autoUIAdaptRefScheme,
 	autoUIAddToSchema,
 	generateSchemaFromRefScheme,
@@ -41,18 +43,19 @@ import {
 } from './utils';
 import { FocusSearch } from '../components/Filters/FocusSearch';
 import { CustomWidget } from './CustomWidget';
-import {
-	defaultFormats,
+import type {
 	Dictionary,
 	Format,
 	TableColumn,
-	Link,
 	Pagination,
 	TableSortOptions,
 	CheckedState,
 } from 'rendition';
-import { getLenses, LensTemplate } from './Lenses';
-import { TFunction, useTranslation } from '../hooks/useTranslation';
+import { defaultFormats, Link } from 'rendition';
+import type { LensTemplate } from './Lenses';
+import { getLenses } from './Lenses';
+import type { TFunction } from '../hooks/useTranslation';
+import { useTranslation } from '../hooks/useTranslation';
 import { useHistory } from '../hooks/useHistory';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleQuestion } from '@fortawesome/free-regular-svg-icons';
@@ -61,7 +64,7 @@ import {
 	convertToPineClientFilter,
 	orderbyBuilder,
 } from '../oData/jsonToOData';
-import { CollectionLensRendererProps } from './Lenses/types';
+import type { CollectionLensRendererProps } from './Lenses/types';
 import pickBy from 'lodash/pickBy';
 import { NoRecordsFoundView } from './NoRecordsFoundView';
 import {
@@ -69,7 +72,7 @@ import {
 	Material,
 	Spinner,
 } from '@balena/ui-shared-components';
-import { FiltersView } from '../components/Filters';
+import type { FiltersView } from '../components/Filters';
 import { ajvFilter } from '../components/Filters/SchemaSieve';
 const { Box, styled } = Material;
 
@@ -123,7 +126,7 @@ export interface AutoUIProps<T> extends Omit<Material.BoxProps, 'onChange'> {
 	/** Event emitted on entity click */
 	onEntityClick?: (
 		entry: T,
-		event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+		event: React.MouseEvent<HTMLAnchorElement>,
 	) => void;
 	// TODO: onChange should also be called when data in the table is sorted and when columns change
 	/** Function that gets called when filters change */
@@ -225,7 +228,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		(items, checkedState = undefined) => {
 			setSelected(items);
 			setCheckedState(checkedState ?? 'none');
-			if (!!actionData) {
+			if (actionData) {
 				setActionData({ ...actionData, affectedEntries: items, checkedState });
 			}
 		},
@@ -243,7 +246,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		if (pagination?.serverSide) {
 			return (data ?? []) as T[];
 		}
-		return (Array.isArray(data) ? ajvFilter(filters, data) : []) as T[];
+		return Array.isArray(data) ? ajvFilter(filters, data) : [];
 	}, [pagination?.serverSide, data, filters]);
 
 	React.useEffect(() => {
@@ -304,7 +307,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 
 	const autouiContext = React.useMemo((): AutoUIContext<T> => {
 		const tagField = getFieldForFormat(model.schema, 'tag');
-		const tagsAction: AutoUIAction<T> | null = !!sdk?.tags
+		const tagsAction: AutoUIAction<T> | null = sdk?.tags
 			? {
 					title: t('actions.manage_tags'),
 					type: 'update',
@@ -341,7 +344,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 			tagField,
 			getBaseUrl,
 			onEntityClick,
-			actions: !!tagsAction ? (actions || []).concat(tagsAction) : actions,
+			actions: tagsAction ? (actions || []).concat(tagsAction) : actions,
 			customSort,
 			sdk,
 			internalPineFilter,
@@ -431,7 +434,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	return (
 		<AnalyticsContextProvider>
 			<Box display="flex" flex={1} flexDirection="column" {...boxProps}>
-				<Spinner label={isBusyMessage} show={!!isBusyMessage}>
+				<Spinner label={isBusyMessage} show={!!isBusyMessage || loading}>
 					<Box display="flex" height="100%" flexDirection="column">
 						{
 							// We need to mount the Filters component so that it can load the filters
@@ -525,7 +528,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 										</Box>
 									) : (
 										!filters.length &&
-										(!!autouiContext.actions?.filter(
+										(autouiContext.actions?.filter(
 											(action) => action.type === 'create',
 										).length ? (
 											<NoRecordsFoundView
@@ -599,13 +602,12 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 								/>
 							)}
 
-						{actionData?.action?.renderer &&
-							actionData.action.renderer({
-								schema: actionData.schema,
-								affectedEntries: actionData.affectedEntries,
-								onDone: () => setActionData(undefined),
-								setSelected: $setSelected,
-							})}
+						{actionData?.action?.renderer?.({
+							schema: actionData.schema,
+							affectedEntries: actionData.affectedEntries,
+							onDone: () => setActionData(undefined),
+							setSelected: $setSelected,
+						})}
 					</Box>
 				</Spinner>
 			</Box>
@@ -803,10 +805,7 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 					const calculatedField = autoUIAdaptRefScheme(fieldVal, val);
 					return (
 						<CustomWidget
-							extraFormats={[
-								...(formats ?? ([] as Format[])),
-								...defaultFormats,
-							]}
+							extraFormats={[...(formats ?? []), ...defaultFormats]}
 							schema={widgetSchema}
 							value={calculatedField}
 							extraContext={entry}
