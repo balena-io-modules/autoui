@@ -12,7 +12,7 @@ export type CreateFilter<TOperatorSlugs = string> = (
 	field: string,
 	operator: TOperatorSlugs,
 	value: any,
-	propertySchema?: JSONSchema,
+	propertySchema?: JSONSchema & { enumNames?: string[] },
 ) => JSONSchema;
 
 export const getDefaultDate = (): string => {

@@ -13,20 +13,84 @@ export type OperatorSlug =
 	| typeof FULL_TEXT_SLUG;
 
 const notNullObj = { not: { const: null } };
-const isNotNullObj = (value: unknown) => isEqual(value, notNullObj);
+const isNotNullObj = (value: unknown): boolean => isEqual(value, notNullObj);
+
+const getFilter = (index: number, enums: JSONSchema['enum']) => {
+	if (!enums) {
+		return null;
+	}
+	const enumValue = enums[index];
+	if (typeof enumValue === 'string') {
+		return {
+			type: 'string',
+			regexp: {
+				pattern: regexEscape(enumValue),
+				flags: 'i',
+			},
+		};
+	}
+	if (typeof enumValue === 'object') {
+		return isNotNullObj(enumValue)
+			? enumValue
+			: {
+					const: enumValue,
+			  };
+	}
+	return null;
+};
+
+const getValues = (
+	value: string,
+	propertySchema?: JSONSchema & { enumNames?: string[] },
+) => {
+	if (!propertySchema?.enum || !propertySchema.enumNames) {
+		return null;
+	}
+	const enums = propertySchema.enum;
+	const enumNamesIncludingValueIndexes: number[] = [];
+	const lowerCaseValue = value.toLowerCase();
+	propertySchema.enumNames.forEach((enumName, index) => {
+		if (enumName.toLowerCase().includes(lowerCaseValue)) {
+			enumNamesIncludingValueIndexes.push(index);
+		}
+	});
+
+	const values = enums
+		? enumNamesIncludingValueIndexes.map((i) => getFilter(i, enums))
+		: [];
+	return values.length > 1
+		? {
+				anyOf: values,
+		  }
+		: values[0] || null;
+};
 
 export const createFilter: CreateFilter<OperatorSlug> = (
 	field,
 	operator,
 	value,
+	propertySchema,
 ) => {
+	if (operator === FULL_TEXT_SLUG && propertySchema?.enumNames) {
+		const filter = getValues(value, propertySchema);
+		if (!filter) {
+			return {};
+		}
+		return {
+			type: 'object',
+			properties: {
+				[field]: filter,
+			},
+			required: [field],
+		};
+	}
+
 	if (operator === FULL_TEXT_SLUG && typeof value === 'string') {
 		return {
 			type: 'object',
 			properties: {
 				[field]: {
 					type: 'string',
-					// Note: An alternative could be to do: { enum: subSchema.enum.filter(x => x.toLowerCase().includes(value.toLowerCase())) }
 					regexp: {
 						pattern: regexEscape(value),
 						flags: 'i',
@@ -37,7 +101,7 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 		};
 	}
 
-	if (operator === 'is' || operator === FULL_TEXT_SLUG) {
+	if (operator === 'is') {
 		return {
 			type: 'object',
 			properties: {

@@ -125,7 +125,7 @@ export const createFilter = (
 				operator,
 				value,
 			});
-			if (!filter) {
+			if (!filter || !Object.keys(filter).length) {
 				return {};
 			}
 			return {
