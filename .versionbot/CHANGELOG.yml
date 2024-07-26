@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix enum filters when operator is FULL_TEXT_SEARCH
+      hash: 93e728c11f3bf4295ab463e608db23347c51085a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.1.6
+  title: ""
+  date: 2024-07-26T10:55:15.553Z
+- commits:
     - subject: Fix autoui loading and some lint rules
       hash: bb754933845b1f5464c54125a4edb37ad88351e0
       body: ""
