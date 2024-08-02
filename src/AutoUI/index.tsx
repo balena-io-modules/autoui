@@ -434,7 +434,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	return (
 		<AnalyticsContextProvider>
 			<Box display="flex" flex={1} flexDirection="column" {...boxProps}>
-				<Spinner label={isBusyMessage} show={!!isBusyMessage || loading}>
+				<Spinner label={isBusyMessage} show={!!isBusyMessage}>
 					<Box display="flex" height="100%" flexDirection="column">
 						{
 							// We need to mount the Filters component so that it can load the filters
