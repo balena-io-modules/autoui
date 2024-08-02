@@ -168,7 +168,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	pagination,
 	customLenses,
 	lensContext,
-	loading,
+	loading = false,
 	rowKey,
 	noDataInfo,
 	persistFilters = true,
