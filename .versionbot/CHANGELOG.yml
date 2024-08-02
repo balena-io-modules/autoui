@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix table loading by setting loading to false by default
+      hash: 525a41214d663d0cdaf648f58d8734084e9fd86a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.1.8
+  title: ""
+  date: 2024-08-02T14:05:04.772Z
+- commits:
     - subject: Replace Alert with Callout in no records views
       hash: 6d63d0a8dca6510218ccd80d565b2149e82a6132
       body: ""
