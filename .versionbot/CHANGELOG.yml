@@ -1,4 +1,15 @@
 - commits:
+    - subject: Drop unused dependency `crypto`
+      hash: e5c43676ae58a54740a4d486a978c67cc48887a9
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 4.1.9
+  title: ""
+  date: 2024-08-05T18:26:49.661Z
+- commits:
     - subject: Fix table loading by setting loading to false by default
       hash: 525a41214d663d0cdaf648f58d8734084e9fd86a
       body: ""
