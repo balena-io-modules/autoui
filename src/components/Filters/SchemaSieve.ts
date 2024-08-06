@@ -125,7 +125,11 @@ export const createFilter = (
 				operator,
 				value,
 			});
-			if (!filter || !Object.keys(filter).length) {
+			if (
+				!filter ||
+				typeof filter !== 'object' ||
+				!Object.keys(filter).length
+			) {
 				return {};
 			}
 			return {
@@ -193,7 +197,7 @@ export const createFullTextSearchFilter = (
 					value: term,
 				}),
 				anyOf: [filter],
-		  }
+			}
 		: null;
 };
 
