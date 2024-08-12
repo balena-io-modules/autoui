@@ -3,11 +3,12 @@ import { ActionMethods, ACTION_SIDEBAR_WIDTH } from '.';
 import { OpenApiJson } from './openApiJson';
 import { getFromRef, pine } from './odata';
 import { ISubmitEvent } from '@rjsf/core';
-import { Form, JSONSchema, notifications } from 'rendition';
+import { Form, notifications } from 'rendition';
 import { Material } from '@balena/ui-shared-components';
 import { useTranslation } from '../hooks/useTranslation';
 import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { JSONSchema7 as JSONSchema } from 'json-schema';
 
 const { Button, Box, styled } = Material;
 
