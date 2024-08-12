@@ -97,7 +97,7 @@ export const getTagsDisabledReason = async <T extends AutoUIBaseResource<T>>(
 						!entry.__permissions.create.includes(tagField) &&
 						!entry.__permissions.update.includes(tagField as keyof T)
 					);
-			  });
+				});
 
 	if (lacksPermissionsOnSelected) {
 		// TODO: Pass the resource name instead.
@@ -168,20 +168,21 @@ const sortFn = (
 	return diff(aa, bb);
 };
 
-export const getSortingFunction = <T extends any>(
+export const getSortingFunction = <T>(
 	schemaKey: keyof T,
 	schemaValue: JSONSchema,
 ): TableSortFunction<T> => {
 	const types = castArray(schemaValue.type);
 	const refScheme = getPropertyScheme(schemaValue);
 	if (types.includes(JsonTypes.string)) {
-		return (a: T, b: T) => sortFn(a, b, schemaKey);
+		return (a: T, b: T) => sortFn(a, b, schemaKey as string);
 	}
 	if (types.includes(JsonTypes.object) && refScheme) {
-		return (a: T, b: T) => sortFn(a, b, [schemaKey, ...refScheme]);
+		return (a: T, b: T) => sortFn(a, b, [schemaKey as string, ...refScheme]);
 	}
 	if (types.includes(JsonTypes.array) && refScheme) {
-		return (a: T, b: T) => sortFn(a, b, [schemaKey, '0', ...refScheme]);
+		return (a: T, b: T) =>
+			sortFn(a, b, [schemaKey as string, '0', ...refScheme]);
 	}
 	return (a: T, b: T) => diff(a[schemaKey], b[schemaKey]);
 };
