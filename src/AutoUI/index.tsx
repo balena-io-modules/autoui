@@ -43,16 +43,14 @@ import {
 	DEFAULT_ITEMS_PER_PAGE,
 } from './utils';
 import { FocusSearch } from '../components/Filters/FocusSearch';
-import { CustomWidget } from './CustomWidget';
+import { Widget } from '../components/Widget';
 import type {
-	Dictionary,
-	Format,
 	TableColumn,
 	Pagination,
 	TableSortOptions,
 	CheckedState,
 } from 'rendition';
-import { defaultFormats, Link } from 'rendition';
+import { Link } from 'rendition';
 import type { LensTemplate } from './Lenses';
 import { getLenses } from './Lenses';
 import type { TFunction } from '../hooks/useTranslation';
@@ -75,6 +73,9 @@ import {
 } from '@balena/ui-shared-components';
 import type { FiltersView } from '../components/Filters';
 import { ajvFilter } from '../components/Filters/SchemaSieve';
+import type { Format } from '../components/Widget/utils';
+import type { Dictionary } from '../common';
+import { defaultFormats } from '../components/Widget/Formats';
 const { Box, styled } = Material;
 
 const HeaderGrid = styled(Box)(({ theme }) => ({
@@ -816,7 +817,7 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 				render: (fieldVal: string, entry: T) => {
 					const calculatedField = autoUIAdaptRefScheme(fieldVal, val);
 					return (
-						<CustomWidget
+						<Widget
 							extraFormats={[...(formats ?? []), ...defaultFormats]}
 							schema={widgetSchema}
 							value={calculatedField}
