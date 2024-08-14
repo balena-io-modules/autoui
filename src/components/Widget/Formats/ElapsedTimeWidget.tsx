@@ -1,6 +1,11 @@
 import React from 'react';
-import { UiOption } from './ui-options';
-import { JsonTypes, widgetFactory, formatTimestamp, timeSince } from '../utils';
+import {
+	UiOption,
+	JsonTypes,
+	widgetFactory,
+	formatTimestamp,
+	timeSince,
+} from '../utils';
 import { Material, Tooltip } from '@balena/ui-shared-components';
 const { Typography } = Material;
 

@@ -12,7 +12,7 @@ export const DisabledTextWidget = widgetFactory('DisabledText', {}, [
 	const val =
 		value != null && typeof value !== 'string' ? value.toString() : value;
 	return (
-		//TODO: check which color do we use for disabled text
+		// TODO: check which color do we use for disabled text
 		<Truncate sx={{ maxWidth: '350px' }} color="#b3b6b9" lineCamp={1}>
 			{val ?? t('info.not_defined')}
 		</Truncate>

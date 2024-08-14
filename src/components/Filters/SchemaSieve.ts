@@ -10,7 +10,7 @@ import pickBy from 'lodash/pickBy';
 import { enqueueSnackbar } from '@balena/ui-shared-components';
 
 const ajv = new Ajv();
-// TODO: remove as soon as we remove rendition
+// TODO: remove the any cast as soon as we remove rendition
 ajvKeywords(ajv as any, ['regexp']);
 addFormats(ajv);
 
@@ -194,7 +194,7 @@ export const createFullTextSearchFilter = (
 					value: term,
 				}),
 				anyOf: [filter],
-			}
+		  }
 		: null;
 };
 

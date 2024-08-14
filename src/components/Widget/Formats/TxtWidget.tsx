@@ -2,8 +2,8 @@ import * as React from 'react';
 import get from 'lodash/get';
 import invokeMap from 'lodash/invokeMap';
 import isArray from 'lodash/isArray';
-import { UiOption } from './ui-options';
 import {
+	UiOption,
 	JsonTypes,
 	UiSchema,
 	Value,

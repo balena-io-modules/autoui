@@ -69,7 +69,7 @@ export const autoUIGetModelForCollection = <T>(
 				...model.priorities.primary,
 				...model.priorities.secondary,
 				...model.priorities.tertiary,
-			])
+		  ])
 		: model.schema;
 	return {
 		...model,

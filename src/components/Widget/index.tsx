@@ -4,19 +4,51 @@ import {
 	getSchemaFormat,
 	getSubSchemaFromRefScheme,
 } from '../../AutoUI/schemaOps';
+import { Format, JsonTypes, UiSchema, Value, WidgetProps } from './utils';
+import { typeWidgets } from './Formats';
+import { JSONSchema7 as JSONSchema } from 'json-schema';
 
-import {
-	getSchemaNormalizedValue,
-	JsonTypes,
-	transformUiSchema,
-	WidgetProps,
-} from './utils';
-import { getWidget } from './Renderer';
+const getValue = (value?: Value, schema?: JSONSchema, uiSchema?: UiSchema) => {
+	const calculatedValue = uiSchema?.['ui:value'];
+	// Fall back to schema's default value if value is undefined
+	return calculatedValue !== undefined
+		? calculatedValue
+		: value !== undefined
+		? value
+		: schema?.default;
+};
+
+const getType = (value?: Value) => {
+	if (value === undefined) {
+		return 'default';
+	}
+	if (value === null) {
+		return 'null';
+	}
+	return Array.isArray(value) ? 'array' : typeof value;
+};
+
+const getWidget = (
+	value?: Value,
+	format?: string,
+	uiSchemaWidget?: UiSchema['ui:widget'],
+	extraFormats?: Format[],
+) => {
+	const valueType = getType(value);
+
+	const extraFormat = extraFormats?.find(
+		(extraFormat) =>
+			(extraFormat.name === format || extraFormat.name === uiSchemaWidget) &&
+			extraFormat.widget?.supportedTypes?.includes(valueType),
+	);
+
+	return extraFormat?.widget ?? typeWidgets[valueType] ?? typeWidgets.default;
+};
 
 export const Widget = ({
 	value,
 	extraContext,
-	schema,
+	schema = {},
 	extraFormats,
 	uiSchema,
 }: WidgetProps) => {
@@ -24,17 +56,8 @@ export const Widget = ({
 	if (!format) {
 		return <>{value}</>;
 	}
-	const processedUiSchema = transformUiSchema({
-		value,
-		uiSchema,
-		extraContext,
-	});
 
-	const processedValue = getSchemaNormalizedValue(
-		value,
-		schema,
-		processedUiSchema,
-	);
+	const processedValue = getValue(value, schema, uiSchema);
 	const subSchema = getSubSchemaFromRefScheme(schema);
 	const types = subSchema?.type != null ? castArray(subSchema.type) : [];
 

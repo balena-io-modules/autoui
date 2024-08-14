@@ -94,7 +94,7 @@ export const getTagsDisabledReason = async <T extends AutoUIBaseResource<T>>(
 						!entry.__permissions.create.includes(tagField) &&
 						!entry.__permissions.update.includes(tagField as keyof T)
 					);
-				});
+			  });
 
 	if (lacksPermissionsOnSelected) {
 		// TODO: Pass the resource name instead.

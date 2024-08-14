@@ -1,5 +1,3 @@
-import ArrayWidget from './ArrayWidget';
-import ObjectWidget from './ObjectWidget';
 import TxtWidget from './TxtWidget';
 import { ElapsedTimeWidget } from './ElapsedTimeWidget';
 import { DurationWidget } from './DurationWidget';
@@ -11,8 +9,6 @@ import { BooleanAsIconWidget } from './BooleanAsIconWidget';
 import { PlaceholderTextWidget } from './PlaceholderTextWidget';
 import { WrapWidget } from './WrapWidget';
 import { Format, Widget } from '../utils';
-export { WidgetWrapperUiOptions } from './ui-options';
-export { default as WidgetMeta } from './WidgetMeta';
 
 type Widgets = {
 	[key: string]: Widget;
@@ -67,12 +63,10 @@ export const defaultFormats: Format[] = [
 ];
 
 export const typeWidgets: Widgets = {
-	object: ObjectWidget,
 	string: TxtWidget,
 	null: TxtWidget,
 	integer: TxtWidget,
 	number: TxtWidget,
 	boolean: TxtWidget,
-	array: ArrayWidget,
 	default: TxtWidget,
 };

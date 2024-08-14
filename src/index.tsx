@@ -47,13 +47,13 @@ export {
 
 export { Widget } from './components/Widget';
 export type {
-	UiOptions,
 	UiSchema,
 	WidgetProps,
 	Widget as WidgetType,
 	Format,
 	JsonTypesTypeMap,
 } from './components/Widget/utils';
+
 export { widgetFactory, JsonTypes } from './components/Widget/utils';
 
 export { Permissions } from './AutoUI/schemaOps';

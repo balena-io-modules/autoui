@@ -170,8 +170,8 @@ export const getRefSchemePrefix = (schema: JSONSchema) => {
 	return schema.items
 		? 'items.properties.'
 		: schema.properties
-			? 'properties.'
-			: '';
+		? 'properties.'
+		: '';
 };
 
 export const getRefSchemeTitle = (
