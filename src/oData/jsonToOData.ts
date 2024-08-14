@@ -1,4 +1,5 @@
-import { JSONSchema, TableSortOptions } from 'rendition';
+import { TableSortOptions } from 'rendition';
+import { JSONSchema7 as JSONSchema } from 'json-schema';
 import { AutoUIContext } from '../AutoUI/schemaOps';
 
 export type PineFilterObject = Record<string, any>;
@@ -225,11 +226,11 @@ export const orderbyBuilder = <T>(
 	}
 
 	const { field, reverse, refScheme } = sortInfo;
-	if (!field) {
+	if (!field || typeof field !== 'string') {
 		return null;
 	}
 	const direction = !reverse ? 'asc' : 'desc';
-	const customOrderByKey = customSort?.[field];
+	const customOrderByKey = customSort?.[field as keyof typeof customSort];
 	if (typeof customOrderByKey === 'string') {
 		return [`${customOrderByKey} ${direction}`, `id ${direction}`];
 	} else if (customOrderByKey != null && typeof customOrderByKey !== 'string') {

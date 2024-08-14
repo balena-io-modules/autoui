@@ -1,7 +1,7 @@
 import template from 'lodash/template';
 import { useContext } from 'react';
-import { Dictionary } from 'rendition';
 import { ContextProvider } from '../contexts/ContextProvider';
+import type { Dictionary } from '../common';
 
 export type TFunction = (str: string, options?: any) => string;
 

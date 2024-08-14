@@ -4,27 +4,14 @@ import {
 	getSchemaFormat,
 	getSubSchemaFromRefScheme,
 } from '../../AutoUI/schemaOps';
-// import {
-// 	JsonTypes,
-// 	WidgetProps,
-// 	getRendererWidget,
-// 	getSchemaNormalizedValue,
-// 	transformUiSchema,
-// } from 'rendition';
 
 import {
 	getSchemaNormalizedValue,
-	getWidget,
 	JsonTypes,
 	transformUiSchema,
 	WidgetProps,
 } from './utils';
-
-// interface WidgetProps
-// 	extends Pick<WidgetProps<object>, 'value' | 'extraContext' | 'uiSchema'> {
-// 	schema: NonNullable<WidgetProps['schema']>;
-// 	extraFormats: NonNullable<WidgetProps['extraFormats']>;
-// }
+import { getWidget } from './Renderer';
 
 export const Widget = ({
 	value,

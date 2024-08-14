@@ -1,6 +1,5 @@
 import * as React from 'react';
 import qs from 'qs';
-import { JSONSchema } from 'rendition';
 import { History } from 'history';
 import { Filters, FiltersProps } from '../../components/Filters';
 import {
@@ -12,7 +11,7 @@ import {
 } from '../../components/Filters/SchemaSieve';
 import { isJSONSchema } from '../../AutoUI/schemaOps';
 import { AnalyticsContextProvider } from '@balena/ui-shared-components';
-
+import { JSONSchema7 as JSONSchema } from 'json-schema';
 export interface ListQueryStringFilterObject {
 	n: string;
 	o: string;
@@ -45,7 +44,7 @@ export const listFilterQuery = (filters: JSONSchema[]) => {
 			filter.title === FULL_TEXT_SLUG
 				? [parseFilterDescription(filter)].filter(
 						(f): f is FilterDescription => !!f,
-				  )
+					)
 				: filter.anyOf
 						?.filter((f): f is JSONSchema => isJSONSchema(f))
 						.map(
@@ -53,7 +52,7 @@ export const listFilterQuery = (filters: JSONSchema[]) => {
 								({
 									...parseFilterDescription(f),
 									operatorSlug: f.title,
-								} as FilterDescription & { operatorSlug?: string }),
+								}) as FilterDescription & { operatorSlug?: string },
 						)
 						.filter((f) => !!f);
 

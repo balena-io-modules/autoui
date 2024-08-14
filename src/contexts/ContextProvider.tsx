@@ -1,7 +1,7 @@
 import { History } from 'history';
 import { createContext } from 'react';
-import { Dictionary } from 'rendition';
 import { TFunction } from '../hooks/useTranslation';
+import type { Dictionary } from '../common';
 export interface ContextProviderInterface {
 	history: History;
 	t?: TFunction;

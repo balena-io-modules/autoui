@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { JsonTypes, widgetFactory } from '../utils';
 import { Material } from '@balena/ui-shared-components';
-const { Stack, Typography } = Material;
+const { Box, Typography } = Material;
 
 export const BooleanAsIconWidget = widgetFactory('BooleanAsIcon', {}, [
 	JsonTypes.boolean,
@@ -12,9 +12,9 @@ export const BooleanAsIconWidget = widgetFactory('BooleanAsIcon', {}, [
 ])(({ value }) => {
 	const text = value ? 'true' : 'false';
 	return (
-		<Stack alignItems="center">
+		<Box alignItems="center" gap={2}>
 			<FontAwesomeIcon icon={value ? faCheckCircle : faTimesCircle} />{' '}
-			<Typography ml="1">{text}</Typography>
-		</Stack>
+			<Typography>{text}</Typography>
+		</Box>
 	);
 });

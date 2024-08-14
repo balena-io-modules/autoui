@@ -42,16 +42,14 @@ import {
 	getSortingFunction,
 } from './utils';
 import { FocusSearch } from '../components/Filters/FocusSearch';
-import { CustomWidget } from './CustomWidget';
+import { Widget } from '../components/Widget';
 import type {
-	Dictionary,
-	Format,
 	TableColumn,
 	Pagination,
 	TableSortOptions,
 	CheckedState,
 } from 'rendition';
-import { defaultFormats, Link } from 'rendition';
+import { Link } from 'rendition';
 import type { LensTemplate } from './Lenses';
 import { getLenses } from './Lenses';
 import type { TFunction } from '../hooks/useTranslation';
@@ -74,6 +72,9 @@ import {
 } from '@balena/ui-shared-components';
 import type { FiltersView } from '../components/Filters';
 import { ajvFilter } from '../components/Filters/SchemaSieve';
+import { Format } from '../components/Widget/utils';
+import { Dictionary } from '../common';
+import { defaultFormats } from '../components/Widget/Formats';
 const { Box, styled } = Material;
 
 const DEFAULT_ITEMS_PER_PAGE = 50;
@@ -334,7 +335,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							sdk.tags,
 							t,
 						),
-			  }
+				}
 			: null;
 
 		return {
@@ -410,7 +411,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 						$skip: page * itemsPerPage,
 					},
 					(v) => v != null,
-			  )
+				)
 			: null;
 		setInternalPineFilter(pineFilter);
 		onChange?.({
@@ -683,8 +684,8 @@ const hasPropertyEnabled = (
 	return Array.isArray(value) && value.some((v) => v === propertyKey)
 		? true
 		: typeof value === 'boolean'
-		? true
-		: false;
+			? true
+			: false;
 };
 
 const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
@@ -759,10 +760,10 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 			)
 				? 'primary'
 				: definedPriorities.secondary.find(
-						(prioritizedKey) => prioritizedKey === key,
-				  )
-				? 'secondary'
-				: 'tertiary';
+							(prioritizedKey) => prioritizedKey === key,
+					  )
+					? 'secondary'
+					: 'tertiary';
 
 			const widgetSchema = { ...val, title: undefined };
 
@@ -794,17 +795,17 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 				sortable: xNoSort
 					? false
 					: typeof fieldCustomSort === 'function'
-					? fieldCustomSort
-					: isServerSide
-					? // This is a temporary solution to prevent clientside sorting for server side paginated tables
-					  // This is a noop for .sort
-					  // TODO: We should just avoid sorting in the Table component when isServerSide is true, look into this when rendition is gone
-					  () => 0
-					: getSortingFunction<T>(key, val),
+						? fieldCustomSort
+						: isServerSide
+							? // This is a temporary solution to prevent clientside sorting for server side paginated tables
+								// This is a noop for .sort
+								// TODO: We should just avoid sorting in the Table component when isServerSide is true, look into this when rendition is gone
+								() => 0
+							: getSortingFunction<T>(key, val),
 				render: (fieldVal: string, entry: T) => {
 					const calculatedField = autoUIAdaptRefScheme(fieldVal, val);
 					return (
-						<CustomWidget
+						<Widget
 							extraFormats={[...(formats ?? []), ...defaultFormats]}
 							schema={widgetSchema}
 							value={calculatedField}

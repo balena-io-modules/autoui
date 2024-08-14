@@ -7,7 +7,7 @@ import {
 	getObjectPropertyNames,
 } from '../utils';
 import { Renderer } from '../Renderer';
-import { isJSONSchema } from '~/AutoUI/schemaOps';
+import { isJSONSchema } from '../../../AutoUI/schemaOps';
 
 const ObjectWidget = widgetFactory('Object', undefined, [JsonTypes.object])(({
 	value,

@@ -5,7 +5,6 @@ import pickBy from 'lodash/pickBy';
 import merge from 'lodash/merge';
 import isString from 'lodash/isString';
 import jsone from 'json-e';
-import { typeWidgets } from './Formats';
 import ajvKeywords from 'ajv-keywords';
 import { Overwrite } from '~/common';
 import get from 'lodash/get';
@@ -47,7 +46,7 @@ interface WidgetStaticProperties {
 
 export interface WidgetProps<T extends object = object> {
 	value: Value;
-	schema: JSONSchema;
+	schema: JSONSchema | undefined;
 	extraFormats?: Format[];
 	uiSchema?: UiSchema;
 	extraContext?: T;
@@ -138,23 +137,6 @@ export const getSchemaNormalizedValue = (
 		: value !== undefined
 			? value
 			: schema?.default;
-};
-
-export const getWidget = (
-	value?: Value,
-	format?: string,
-	uiSchemaWidget?: UiSchema['ui:widget'],
-	extraFormats?: Format[],
-) => {
-	const valueType = getType(value);
-
-	const extraFormat = extraFormats?.find(
-		(extraFormat) =>
-			(extraFormat.name === format || extraFormat.name === uiSchemaWidget) &&
-			extraFormat.widget?.supportedTypes?.includes(valueType),
-	);
-
-	return extraFormat?.widget ?? typeWidgets[valueType] ?? typeWidgets.default;
 };
 
 export const getType = (value?: Value) => {
@@ -544,8 +526,8 @@ const JSON_SCHEMA_SCHEMA = {
 // This method mutates the AJV instance.
 const configureAjv = (ajv: Ajv) => {
 	const keywords = [
-		'formatMaximum',
-		'formatMinimum',
+		// 'formatMaximum',
+		// 'formatMinimum',
 		// The regexp keyword is used by Filters to do case insensitive pattern
 		// matching via the AJV package.
 		// See https://github.com/epoberezkin/ajv-keywords#regexp

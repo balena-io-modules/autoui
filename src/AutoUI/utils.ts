@@ -8,12 +8,9 @@ import {
 import castArray from 'lodash/castArray';
 import get from 'lodash/get';
 import { TFunction } from '../hooks/useTranslation';
-import {
-	JSONSchema,
-	JsonTypes,
-	TableSortFunction,
-	CheckedState,
-} from 'rendition';
+import { TableSortFunction, CheckedState } from 'rendition';
+import { JsonTypes } from '../components/Widget/utils';
+import { JSONSchema7 as JSONSchema } from 'json-schema';
 
 export const diff = <T extends unknown>(a: T, b: T) => {
 	if (a === b) {

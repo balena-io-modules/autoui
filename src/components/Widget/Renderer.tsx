@@ -9,12 +9,6 @@ import isArray from 'lodash/isArray';
 import ajv, { type Ajv, type ValidateFunction, type ErrorObject } from 'ajv';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import {
-	defaultFormats,
-	typeWidgets,
-	WidgetWrapperUiOptions,
-	WidgetMeta,
-} from './Formats';
-import {
 	JsonTypes,
 	Value,
 	UiSchema,
@@ -22,6 +16,12 @@ import {
 	transformUiSchema,
 	getBestSchemaMatch,
 } from './utils';
+import {
+	defaultFormats,
+	WidgetWrapperUiOptions,
+	WidgetMeta,
+	typeWidgets,
+} from './Formats';
 import { Material, Tooltip } from '@balena/ui-shared-components';
 const { Stack, Typography } = Material;
 

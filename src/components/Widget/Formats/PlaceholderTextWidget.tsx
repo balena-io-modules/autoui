@@ -18,9 +18,8 @@ export const PlaceholderTextWidget = widgetFactory('PlaceholderText', {}, [
 		<Stack>
 			<Truncate
 				sx={{ maxWidth: '300px' }}
-				truncate
-				title={val}
 				{...(!value && { color: 'gray.main' })}
+				lineCamp={1}
 			>
 				{val}
 			</Truncate>

@@ -4,7 +4,7 @@ import {
 	autoUIJsonSchemaPick,
 	AutoUIRawModel,
 } from '../schemaOps';
-import type { Dictionary } from 'rendition';
+import { Dictionary } from '../../common';
 
 type Transformers<
 	T extends Dictionary<any>,
@@ -69,7 +69,7 @@ export const autoUIGetModelForCollection = <T>(
 				...model.priorities.primary,
 				...model.priorities.secondary,
 				...model.priorities.tertiary,
-		  ])
+			])
 		: model.schema;
 	return {
 		...model,

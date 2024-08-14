@@ -4,9 +4,10 @@ import type {
 } from 'json-schema';
 import get from 'lodash/get';
 import pick from 'lodash/pick';
-import { CheckedState, Dictionary, ResourceTagModelService } from 'rendition';
+import { CheckedState, ResourceTagModelService } from 'rendition';
 import { PineFilterObject } from '../oData/jsonToOData';
 import { findInObject } from './utils';
+import { Dictionary } from '../common';
 
 type MaybePromise<T> = T | Promise<T>;
 
@@ -169,8 +170,8 @@ export const getRefSchemePrefix = (schema: JSONSchema) => {
 	return schema.items
 		? 'items.properties.'
 		: schema.properties
-		? 'properties.'
-		: '';
+			? 'properties.'
+			: '';
 };
 
 export const getRefSchemeTitle = (
