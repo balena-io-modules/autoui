@@ -4,7 +4,9 @@ import { JSDOM } from 'jsdom';
 
 Enzyme.configure({ adapter: new Adapter() });
 
-const jsdom = new JSDOM('<!doctype html><html><body></body></html>');
+const jsdom = new JSDOM('<!doctype html><html><body></body></html>', {
+	url: 'http://localhost/',
+});
 const { window: $window } = jsdom;
 
 function copyProps(src: object, target: Record<string, any>) {
