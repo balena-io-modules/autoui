@@ -1,8 +1,4 @@
-import Enzyme from 'enzyme';
-import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import { JSDOM } from 'jsdom';
-
-Enzyme.configure({ adapter: new Adapter() });
 
 const jsdom = new JSDOM('<!doctype html><html><body></body></html>');
 const { window: $window } = jsdom;
