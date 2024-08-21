@@ -1,4 +1,15 @@
 - commits:
+    - subject: Remove unused test and libraries
+      hash: f8bbe89b71b7859ddc07dce444ee276f1b82e486
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.1.10
+  title: ""
+  date: 2024-08-21T19:07:33.204Z
+- commits:
     - subject: Drop unused dependency `crypto`
       hash: e5c43676ae58a54740a4d486a978c67cc48887a9
       body: ""
