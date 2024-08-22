@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update dependency jest to v24.1.1, ts-jest to v29.2.4 and jsdom to
+        v21.1.7
+      hash: 933bcd09019acf519dc58757ce05313ee28153a4
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.1.11
+  title: ""
+  date: 2024-08-22T18:56:46.601Z
+- commits:
     - subject: Remove unused test and libraries
       hash: f8bbe89b71b7859ddc07dce444ee276f1b82e486
       body: ""
