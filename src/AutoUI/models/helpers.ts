@@ -4,7 +4,7 @@ import {
 	autoUIJsonSchemaPick,
 	AutoUIRawModel,
 } from '../schemaOps';
-import type { Dictionary } from 'rendition';
+import { Dictionary } from '../../common';
 
 type Transformers<
 	T extends Dictionary<any>,
