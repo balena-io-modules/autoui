@@ -1,4 +1,17 @@
 - commits:
+    - subject: Improve toggle buttons
+      hash: 7db66e149d0f855a1ebb65c5f3a2d52caecb5681
+      body: >
+        Update ui-shared-components, fix filter button color, fix views button
+        padding
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Jonathan Berger
+  version: 4.2.0
+  title: ""
+  date: 2024-08-23T12:59:40.721Z
+- commits:
     - subject: Update dependency jest to v24.1.1, ts-jest to v29.2.4 and jsdom to
         v21.1.7
       hash: 933bcd09019acf519dc58757ce05313ee28153a4
