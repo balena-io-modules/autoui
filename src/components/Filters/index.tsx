@@ -238,6 +238,7 @@ export const Filters = ({
 						variant={dark ? 'light' : 'outlined'}
 						onClick={() => setShowFilterDialog(true)}
 						startIcon={matches ? <FontAwesomeIcon icon={faFilter} /> : null}
+						color="secondary"
 						sx={{
 							whiteSpace: 'nowrap',
 							...(dark && darkStyles),

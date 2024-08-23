@@ -102,7 +102,7 @@ export const Views = ({ views, setFilters, deleteView, dark }: ViewsProps) => {
 				variant={!memoizedViews?.length && dark ? 'contained' : 'outlined'}
 				color={!memoizedViews?.length && dark ? 'primary' : 'secondary'}
 				startIcon={matches ? <FontAwesomeIcon icon={faChartPie} /> : null}
-				sx={{ py: '6px', ...(dark && darkStyles) }}
+				sx={{ ...(dark && darkStyles) }}
 			/>
 		</Tooltip>
 	);
