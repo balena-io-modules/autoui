@@ -68,9 +68,9 @@ import type { CollectionLensRendererProps } from './Lenses/types';
 import pickBy from 'lodash/pickBy';
 import { NoRecordsFoundView } from './NoRecordsFoundView';
 import {
-	AnalyticsContextProvider,
 	Material,
 	Spinner,
+	useAnalyticsContext,
 } from '@balena/ui-shared-components';
 import type { FiltersView } from '../components/Filters';
 import { ajvFilter } from '../components/Filters/SchemaSieve';
@@ -175,6 +175,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	...boxProps
 }: AutoUIProps<T>) => {
 	const { t } = useTranslation();
+	const { state: analytics } = useAnalyticsContext();
 	const history = useHistory();
 
 	const modelRef = React.useRef(modelRaw);
@@ -432,186 +433,194 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	}
 
 	return (
-		<AnalyticsContextProvider>
-			<Box display="flex" flex={1} flexDirection="column" {...boxProps}>
-				<Spinner label={isBusyMessage} show={!!isBusyMessage || loading}>
-					<Box display="flex" height="100%" flexDirection="column">
-						{
-							// We need to mount the Filters component so that it can load the filters
-							// & pagination state from the url (or use defaults) and provide them to
-							// the parent component (via $setFilters -> onChange) to use them for the
-							// initial data fetching request.
-							(data == null || Array.isArray(data)) && (
-								<>
-									{!hideUtils ? (
-										<Box
-											mb={3}
-											display={
-												// This hides the Filters component during the initial load but keeps them mounted so that
-												// it can trigger onChange on mount to communicate to the parent component the pineOptions
-												// that need to be used.
-												data == null ? 'none' : undefined
-											}
+		<Box display="flex" flex={1} flexDirection="column" {...boxProps}>
+			<Spinner label={isBusyMessage} show={!!isBusyMessage || loading}>
+				<Box display="flex" height="100%" flexDirection="column">
+					{
+						// We need to mount the Filters component so that it can load the filters
+						// & pagination state from the url (or use defaults) and provide them to
+						// the parent component (via $setFilters -> onChange) to use them for the
+						// initial data fetching request.
+						(data == null || Array.isArray(data)) && (
+							<>
+								{!hideUtils ? (
+									<Box
+										mb={3}
+										display={
+											// This hides the Filters component during the initial load but keeps them mounted so that
+											// it can trigger onChange on mount to communicate to the parent component the pineOptions
+											// that need to be used.
+											data == null ? 'none' : undefined
+										}
+									>
+										<HeaderGrid
+											flexWrap="wrap"
+											justifyContent="space-between"
+											alignItems="center"
 										>
-											<HeaderGrid
-												flexWrap="wrap"
-												justifyContent="space-between"
-												alignItems="center"
-											>
-												<Create
-													model={model}
-													autouiContext={autouiContext}
-													hasOngoingAction={false}
-													onActionTriggered={onActionTriggered}
-												/>
-
-												<Update
-													model={model}
-													selected={selected}
-													autouiContext={autouiContext}
-													hasOngoingAction={false}
-													onActionTriggered={onActionTriggered}
-													checkedState={checkedState}
-												/>
-												<Box
-													order={[-1, -1, -1, 0]}
-													flex={['1 0 100%', '1 0 100%', '1 0 100%', 'auto']}
-												>
-													<Filters
-														renderMode={['add', 'search', 'views']}
-														schema={model.schema}
-														filters={filters}
-														views={views}
-														viewsRestorationKey={`${autouiContext.resource}__views`}
-														persistFilters={persistFilters}
-														changeFilters={$setFilters}
-														changeViews={setViews}
-														// TODO: add a way to handle the focus search on server side pagination as well
-														{...(!pagination?.serverSide && {
-															onSearch: (term: string) => (
-																<FocusSearch
-																	searchTerm={term}
-																	filtered={filtered}
-																	selected={selected ?? []}
-																	setSelected={$setSelected}
-																	autouiContext={autouiContext}
-																	model={model}
-																	hasUpdateActions={hasUpdateActions}
-																	rowKey={rowKey}
-																/>
-															),
-														})}
-													/>
-												</Box>
-												<LensSelection
-													lenses={lenses}
-													lens={lens}
-													setLens={(lens) => {
-														setLens(lens);
-														setToLocalStorage(
-															`${model.resource}__view_lens`,
-															lens.slug,
-														);
-													}}
-												/>
-											</HeaderGrid>
-											<Filters
-												renderMode={['summaryWithSaveViews']}
-												schema={model.schema}
-												filters={filters}
-												views={views}
-												viewsRestorationKey={`${autouiContext.resource}__views`}
-												changeFilters={$setFilters}
-												changeViews={setViews}
-												persistFilters={persistFilters}
-											/>
-										</Box>
-									) : (
-										!filters.length &&
-										(autouiContext.actions?.filter(
-											(action) => action.type === 'create',
-										).length ? (
-											<NoRecordsFoundView
+											<Create
 												model={model}
 												autouiContext={autouiContext}
+												hasOngoingAction={false}
 												onActionTriggered={onActionTriggered}
-												noDataInfo={noDataInfo}
 											/>
-										) : (
-											t('no_data.no_resource_data', {
-												resource: t(
-													`resource.${model.resource}_other`,
-												).toLowerCase(),
-											})
-										))
-									)}
-								</>
-							)
-						}
-						{!Array.isArray(data) && (
-							<HeaderGrid>
-								<LensSelection
-									lenses={lenses}
-									lens={lens}
-									setLens={(lens) => {
-										setLens(lens);
-										setToLocalStorage(
-											`${model.resource}__view_lens`,
-											lens.slug,
-										);
-									}}
-								/>
-							</HeaderGrid>
+
+											<Update
+												model={model}
+												selected={selected}
+												autouiContext={autouiContext}
+												hasOngoingAction={false}
+												onActionTriggered={onActionTriggered}
+												checkedState={checkedState}
+											/>
+											<Box
+												order={[-1, -1, -1, 0]}
+												flex={['1 0 100%', '1 0 100%', '1 0 100%', 'auto']}
+											>
+												<Filters
+													renderMode={['add', 'search', 'views']}
+													schema={model.schema}
+													filters={filters}
+													views={views}
+													viewsRestorationKey={`${autouiContext.resource}__views`}
+													persistFilters={persistFilters}
+													changeFilters={$setFilters}
+													changeViews={setViews}
+													// TODO: add a way to handle the focus search on server side pagination as well
+													{...(!pagination?.serverSide && {
+														onSearch: (term: string) => (
+															<FocusSearch
+																searchTerm={term}
+																filtered={filtered}
+																selected={selected ?? []}
+																setSelected={$setSelected}
+																autouiContext={autouiContext}
+																model={model}
+																hasUpdateActions={hasUpdateActions}
+																rowKey={rowKey}
+															/>
+														),
+													})}
+												/>
+											</Box>
+											<LensSelection
+												lenses={lenses}
+												lens={lens}
+												setLens={(lens) => {
+													setLens(lens);
+													setToLocalStorage(
+														`${model.resource}__view_lens`,
+														lens.slug,
+													);
+
+													analytics.webTracker?.track('Change lens', {
+														current_url: location.origin + location.pathname,
+														resource: model.resource,
+														lens: lens.slug,
+													});
+												}}
+											/>
+										</HeaderGrid>
+										<Filters
+											renderMode={['summaryWithSaveViews']}
+											schema={model.schema}
+											filters={filters}
+											views={views}
+											viewsRestorationKey={`${autouiContext.resource}__views`}
+											changeFilters={$setFilters}
+											changeViews={setViews}
+											persistFilters={persistFilters}
+										/>
+									</Box>
+								) : (
+									!filters.length &&
+									(autouiContext.actions?.filter(
+										(action) => action.type === 'create',
+									).length ? (
+										<NoRecordsFoundView
+											model={model}
+											autouiContext={autouiContext}
+											onActionTriggered={onActionTriggered}
+											noDataInfo={noDataInfo}
+										/>
+									) : (
+										t('no_data.no_resource_data', {
+											resource: t(
+												`resource.${model.resource}_other`,
+											).toLowerCase(),
+										})
+									))
+								)}
+							</>
+						)
+					}
+					{!Array.isArray(data) && (
+						<HeaderGrid>
+							<LensSelection
+								lenses={lenses}
+								lens={lens}
+								setLens={(lens) => {
+									setLens(lens);
+									setToLocalStorage(`${model.resource}__view_lens`, lens.slug);
+								}}
+							/>
+						</HeaderGrid>
+					)}
+
+					{lens &&
+						data &&
+						(!Array.isArray(data) ||
+							filters.length > 0 ||
+							(Array.isArray(data) && data.length > 0)) && (
+							<lens.data.renderer
+								flex={1}
+								filtered={filtered}
+								selected={selected}
+								properties={properties}
+								hasUpdateActions={hasUpdateActions}
+								changeSelected={$setSelected}
+								onSort={(sortInfo) => {
+									setSort(sortInfo);
+									internalOnChange(
+										filters,
+										sortInfo,
+										internalPagination.page,
+										internalPagination.itemsPerPage,
+									);
+								}}
+								data={data}
+								autouiContext={autouiContext}
+								onEntityClick={
+									!!onEntityClick || !!getBaseUrl
+										? lensRendererOnEntityClick
+										: undefined
+								}
+								model={model}
+								onPageChange={(page, itemsPerPage) => {
+									setInternalPagination({ page, itemsPerPage });
+									internalOnChange(filters, sort, page, itemsPerPage);
+
+									analytics.webTracker?.track('Change table page', {
+										current_url: location.origin + location.pathname,
+										resource: model.resource,
+										page,
+										itemsPerPage,
+									});
+								}}
+								pagination={pagination}
+								rowKey={rowKey}
+							/>
 						)}
 
-						{lens &&
-							data &&
-							(!Array.isArray(data) ||
-								filters.length > 0 ||
-								(Array.isArray(data) && data.length > 0)) && (
-								<lens.data.renderer
-									flex={1}
-									filtered={filtered}
-									selected={selected}
-									properties={properties}
-									hasUpdateActions={hasUpdateActions}
-									changeSelected={$setSelected}
-									onSort={(sortInfo) => {
-										setSort(sortInfo);
-										internalOnChange(
-											filters,
-											sortInfo,
-											internalPagination.page,
-											internalPagination.itemsPerPage,
-										);
-									}}
-									data={data}
-									autouiContext={autouiContext}
-									onEntityClick={
-										!!onEntityClick || !!getBaseUrl
-											? lensRendererOnEntityClick
-											: undefined
-									}
-									model={model}
-									onPageChange={(page, itemsPerPage) => {
-										setInternalPagination({ page, itemsPerPage });
-										internalOnChange(filters, sort, page, itemsPerPage);
-									}}
-									pagination={pagination}
-									rowKey={rowKey}
-								/>
-							)}
-
-						{actionData?.action?.renderer?.({
-							schema: actionData.schema,
-							affectedEntries: actionData.affectedEntries,
-							onDone: () => setActionData(undefined),
-							setSelected: $setSelected,
-						})}
-					</Box>
-				</Spinner>
-			</Box>
-		</AnalyticsContextProvider>
+					{actionData?.action?.renderer?.({
+						schema: actionData.schema,
+						affectedEntries: actionData.affectedEntries,
+						onDone: () => setActionData(undefined),
+						setSelected: $setSelected,
+					})}
+				</Box>
+			</Spinner>
+		</Box>
 	);
 };
 

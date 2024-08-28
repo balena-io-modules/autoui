@@ -24,6 +24,7 @@ Wrap your application in the `AutoUIProvider` component and start using componen
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { AutoUIProvider } from 'autoui';
+import { useAnalyticsContext } from '@balena/ui-shared-components';
 import {
 	AutoUIBaseResource,
 	AutoUIRawModel,
@@ -131,12 +132,16 @@ const App = () => {
 		return autoUIGetModelForCollection(model);
 	}, [model]);
 
-	return <AutoUIProvider>
-    <AutoUI<EntityType>
-      data={data}
-      model={model}
-    />
-  </AutoUIProvider>
+	return (
+        <AnalyticsContextProvider>
+            <AutoUIProvider>
+                <AutoUI<EntityType>
+                    data={data}
+                    model={model}
+                />
+            </AutoUIProvider>
+        </AnalyticsContextProvider>
+    );
 };
 
 ReactDOM.render(
@@ -151,6 +156,9 @@ Wrap your application in the `<Provider>` component so that child components can
   - `t`: used for translations (expected lib `i18n-next`)
   - `history`: used to allow persistent filters. (expected lib `history`)
   - `externalTranslationMap`: used to add translations for resources (e.g. {'resource.application': 'Applications'}). Usually used if `i18n-next` is not used.
+
+The `AnalyticsContextProvider` is a mandatory wrapper that is used to send analytics to our [Analytics Backend](https://github.com/balena-io/analytics-backend).
+If you don't want to send analytics you can instantiate the component without any props. 
 
 ## Contributing
 

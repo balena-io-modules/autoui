@@ -11,7 +11,7 @@ import {
 	parseFilterDescription,
 } from '../../components/Filters/SchemaSieve';
 import { isJSONSchema } from '../../AutoUI/schemaOps';
-import { AnalyticsContextProvider } from '@balena/ui-shared-components';
+import { useAnalyticsContext } from '@balena/ui-shared-components';
 
 export interface ListQueryStringFilterObject {
 	n: string;
@@ -39,7 +39,10 @@ const isQueryStringFilterRuleset = (
 	!!rule?.length &&
 	rule?.every(isListQueryStringFilterRule);
 
-export const listFilterQuery = (filters: JSONSchema[]) => {
+export const listFilterQuery = (
+	filters: JSONSchema[],
+	stringify: boolean = true,
+) => {
 	const queryStringFilters = filters.map((filter) => {
 		const signatures =
 			filter.title === FULL_TEXT_SLUG
@@ -70,9 +73,11 @@ export const listFilterQuery = (filters: JSONSchema[]) => {
 			}),
 		);
 	});
-	return qs.stringify(queryStringFilters, {
-		strictNullHandling: true,
-	});
+	return stringify
+		? qs.stringify(queryStringFilters, {
+				strictNullHandling: true,
+		  })
+		: queryStringFilters;
 };
 
 export const loadRulesFromUrl = (
@@ -153,6 +158,7 @@ export const PersistentFilters = ({
 	...otherProps
 }: PersistentFiltersProps &
 	Required<Pick<PersistentFiltersProps, 'renderMode'>>) => {
+	const { state: analytics } = useAnalyticsContext();
 	const locationSearch = history?.location?.search ?? '';
 	const storedFilters = React.useMemo(() => {
 		return loadRulesFromUrl(locationSearch, schema, history);
@@ -161,12 +167,28 @@ export const PersistentFilters = ({
 	const onFiltersUpdate = React.useCallback(
 		(filters: JSONSchema[]) => {
 			const { pathname } = window.location;
+			// Get filter query in two steps: first parse the filters, then stringify outside the function for performance
+			const parsedFilters = listFilterQuery(filters, false) as Array<
+				ListQueryStringFilterObject[] | undefined
+			>;
+			const filterQuery = qs.stringify(parsedFilters, {
+				strictNullHandling: true,
+			});
+
 			history?.replace?.({
 				pathname,
-				search: listFilterQuery(filters),
+				search: filterQuery,
 			});
 
 			onFiltersChange?.(filters);
+
+			if (filterQuery !== locationSearch.substring(1)) {
+				analytics.webTracker?.track('Update table filters', {
+					current_url: location.origin + location.pathname,
+					// Need to reduce to a nested object instead of nested array for Amplitude to pick up on the property
+					filters: Object.assign({}, parsedFilters),
+				});
+			}
 		},
 		[window.location.pathname, onFiltersChange],
 	);
@@ -187,16 +209,14 @@ export const PersistentFilters = ({
 	}, []);
 
 	return (
-		<AnalyticsContextProvider>
-			<Filters
-				schema={schema}
-				filters={filters ?? storedFilters}
-				views={views}
-				onFiltersChange={onFiltersUpdate}
-				onViewsChange={onViewsChange}
-				{...otherProps}
-				onSearch={onSearch}
-			/>
-		</AnalyticsContextProvider>
+		<Filters
+			schema={schema}
+			filters={filters ?? storedFilters}
+			views={views}
+			onFiltersChange={onFiltersUpdate}
+			onViewsChange={onViewsChange}
+			{...otherProps}
+			onSearch={onSearch}
+		/>
 	);
 };
