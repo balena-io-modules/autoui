@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix build failing
+      hash: 24d4bee092e2823d587bada12d553604df90b8fe
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Jonathan Berger
+  version: 4.2.1
+  title: ""
+  date: 2024-08-30T15:31:45.109Z
+- commits:
     - subject: Improve toggle buttons
       hash: 7db66e149d0f855a1ebb65c5f3a2d52caecb5681
       body: >
