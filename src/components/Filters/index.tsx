@@ -1,5 +1,9 @@
 import React from 'react';
-import { designTokens, Material } from '@balena/ui-shared-components';
+import {
+	designTokens,
+	Material,
+	useAnalyticsContext,
+} from '@balena/ui-shared-components';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Search } from './Search';
 import { Views } from './Views';
@@ -81,6 +85,7 @@ export const Filters = ({
 	onSearch,
 }: FiltersProps) => {
 	const { t } = useTranslation();
+	const { state: analytics } = useAnalyticsContext();
 	const theme = useTheme();
 	const matches = useMediaQuery(theme.breakpoints.up('sm'));
 	const [showFilterDialog, setShowFilterDialog] = React.useState(false);
@@ -105,6 +110,11 @@ export const Filters = ({
 			}
 			setStoredViews(newViews);
 			onViewsChange?.(newViews);
+
+			analytics.webTracker?.track('Update table views', {
+				current_url: location.origin + location.pathname,
+				...newViews,
+			});
 		},
 		[viewsRestorationKey, setToLocalStorage, setStoredViews, onViewsChange],
 	);

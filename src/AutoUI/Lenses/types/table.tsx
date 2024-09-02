@@ -2,7 +2,12 @@ import React from 'react';
 import { faTable } from '@fortawesome/free-solid-svg-icons/faTable';
 import { LensTemplate } from '..';
 import { CollectionLensRendererProps } from '.';
-import { Table } from 'rendition';
+import { Table, TableColumn } from 'rendition';
+import { setToLocalStorage } from '../../utils';
+import pick from 'lodash/pick';
+import { useAnalyticsContext } from '@balena/ui-shared-components';
+
+const TableColumnStateStoredProps = ['key', 'selected', 'type', 'tagKey'];
 
 export const table: LensTemplate = {
 	slug: 'table',
@@ -22,8 +27,11 @@ export const table: LensTemplate = {
 			onPageChange,
 			onSort,
 			pagination,
+			model,
 			rowKey = 'id',
 		}: CollectionLensRendererProps<any>) => {
+			const { state: analytics } = useAnalyticsContext();
+
 			const itemsPerPage = pagination?.itemsPerPage ?? 50;
 			const totalItems = pagination?.serverSide
 				? pagination.totalItems
@@ -47,6 +55,29 @@ export const table: LensTemplate = {
 					sortingStateRestorationKey={`${autouiContext.resource}__sort`}
 					tagField={autouiContext.tagField}
 					enableCustomColumns
+					saveColumnPreferences={(newCols) => {
+						const columnStateRestorationKey = `${autouiContext.resource}__columns`;
+
+						const savePayload = newCols.map((c) =>
+							pick(c, TableColumnStateStoredProps),
+						);
+
+						setToLocalStorage(columnStateRestorationKey, savePayload);
+
+						const columnsAnalyticsObject = Object.fromEntries(
+							// FIXME figure out why `newCols` output is different than the type from the callback signature
+							(newCols as Array<TableColumn<any>>).map((col) => [
+								col.field,
+								col.selected,
+							]),
+						);
+
+						analytics.webTracker?.track('Update table column display', {
+							current_url: location.origin + location.pathname,
+							resource: model.resource,
+							columns: columnsAnalyticsObject,
+						});
+					}}
 				/>
 			);
 		},
