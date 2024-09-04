@@ -51,7 +51,6 @@ export const getLenses = <T extends any>(
 	}
 
 	const filteredLenses: LensTemplate[] = lenses.concat(customLenses ?? []);
-
 	const slugs = filteredLenses.map((lens) => lens.slug);
 	if (slugs.length > uniq(slugs).length) {
 		throw new Error('Lenses must have unique slugs');
