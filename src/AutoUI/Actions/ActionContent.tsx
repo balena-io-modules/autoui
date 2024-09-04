@@ -1,4 +1,4 @@
-import type { CheckedState } from 'rendition';
+import type { CheckedState } from '../../components/Table/utils';
 import { useRequest } from 'rendition';
 import type { AutoUIAction } from '../schemaOps';
 

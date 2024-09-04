@@ -4,10 +4,11 @@ import type {
 } from 'json-schema';
 import get from 'lodash/get';
 import pick from 'lodash/pick';
-import type { CheckedState, ResourceTagModelService } from 'rendition';
+import type { ResourceTagModelService } from 'rendition';
 import type { PineFilterObject } from '../oData/jsonToOData';
 import { findInObject } from './utils';
 import type { Dictionary } from '../common';
+import type { CheckedState } from '../components/Table/utils';
 
 type MaybePromise<T> = T | Promise<T>;
 

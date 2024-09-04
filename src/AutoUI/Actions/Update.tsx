@@ -8,7 +8,6 @@ import type {
 import { autoUIJsonSchemaPick } from '../schemaOps';
 import { autoUIGetDisabledReason } from '../utils';
 import { useTranslation } from '../../hooks/useTranslation';
-import type { CheckedState } from 'rendition';
 import { ActionContent, LOADING_DISABLED_REASON } from './ActionContent';
 import type { DropDownButtonProps } from '@balena/ui-shared-components';
 import {
@@ -19,6 +18,7 @@ import {
 } from '@balena/ui-shared-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons/faPenToSquare';
+import type { CheckedState } from '../../components/Table/utils';
 
 const { Box, Button, useMediaQuery, useTheme } = Material;
 
