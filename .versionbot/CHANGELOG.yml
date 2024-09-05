@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix Update spinner spacing
+      hash: 951269f6cc4685f81bcaa204298a0b25f25e7555
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.3.1
+  title: ""
+  date: 2024-09-05T13:12:56.503Z
+- commits:
     - subject: Add analytics to tables
       hash: 2c99f185654247cdd3aa81a424c0a11a3c81d8ea
       body: ""
