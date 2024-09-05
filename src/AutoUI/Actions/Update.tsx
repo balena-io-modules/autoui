@@ -98,6 +98,7 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 						<Box
 							display="flex"
 							justifyContent="space-between"
+							gap={2}
 							color={
 								action.isDangerous && !disabledReasonsByAction[action.title]
 									? 'error.main'
