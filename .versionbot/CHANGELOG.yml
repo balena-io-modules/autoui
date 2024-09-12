@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update ui-shared-components from 8.0.6 to 9.0.0
+      hash: 8eb98366eb47297358ce0573ce50eeb1b6058a49
+      body: Update ui-shared-components from 8.0.4 to 9.0.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+  version: 4.3.2
+  title: ""
+  date: 2024-09-12T13:06:02.966Z
+- commits:
     - subject: Fix Update spinner spacing
       hash: 951269f6cc4685f81bcaa204298a0b25f25e7555
       body: ""
