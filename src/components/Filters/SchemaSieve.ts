@@ -2,7 +2,11 @@ import {
 	JSONSchema7 as JSONSchema,
 	JSONSchema7Definition as JSONSchemaDefinition,
 } from 'json-schema';
-import { getDataModel, isDateTimeFormat } from '../../DataTypes';
+import {
+	getAllOperators,
+	getDataModel,
+	isDateTimeFormat,
+} from '../../DataTypes';
 import Ajv from 'ajv';
 import ajvKeywords from 'ajv-keywords';
 import addFormats from 'ajv-formats';
@@ -115,11 +119,9 @@ export const createFilter = (
 			if (!field || !operator) {
 				return {};
 			}
-			const propertySchema = properties[field];
-			const model = getDataModel(propertySchema);
-			const operatorLabel = model?.operatorsOneOf.find(
-				(o) => o.const === operator,
-			)?.title;
+			const propertySchema = properties[field] as JSONSchema;
+			const operators = getAllOperators(propertySchema);
+			const operatorLabel = operators[operator as keyof typeof operators];
 			const filter = createModelFilter(propertySchema, {
 				field,
 				operator,

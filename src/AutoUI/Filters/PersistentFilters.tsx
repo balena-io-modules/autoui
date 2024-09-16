@@ -93,6 +93,36 @@ export const loadRulesFromUrl = (
 		qs.parse(searchLocation, {
 			ignoreQueryPrefix: true,
 			strictNullHandling: true,
+			// The 'qs' library doesn't automatically parse values into their respective types (e.g., numbers, booleans).
+			// It treats everything as a string by default, as explained in the documentation:
+			// https://github.com/ljharb/qs#parsing-primitivescalar-values-numbers-booleans-null-etc
+			// To handle this, we use a transformer to avoid scattering parsing logic across multiple filters.
+			decoder: (
+				str: string,
+				defaultDecoder: qs.defaultDecoder,
+				charset: string,
+				type: 'key' | 'value',
+			) => {
+				if (type === 'value') {
+					const num = Number(str);
+					if (!isNaN(num)) {
+						return num;
+					}
+
+					switch (str) {
+						case 'true':
+							return true;
+						case 'false':
+							return false;
+						case 'null':
+							return null;
+						case 'undefined':
+							return undefined;
+					}
+				}
+
+				return defaultDecoder(str, defaultDecoder, charset);
+			},
 		}) || {};
 
 	const rules = (Array.isArray(parsed) ? parsed : Object.values(parsed))
@@ -132,7 +162,10 @@ export const loadRulesFromUrl = (
 					// TODO: listFilterQuery serializes the already escaped value and this
 					// then re-escapes while de-serializing. Fix that loop, which can keep
 					// escaping regex characters (eg \) indefinitely on each call/reload from the url.
-					return createFullTextSearchFilter(schema, signatures[0].value);
+					return createFullTextSearchFilter(
+						schema,
+						String(signatures[0].value),
+					);
 				}
 				return createFilter(schema, signatures);
 			},

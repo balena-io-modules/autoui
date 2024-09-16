@@ -10,6 +10,7 @@ import { isDateTimeFormat } from '../../DataTypes';
 import { format as dateFormat } from 'date-fns';
 import { isJSONSchema } from '../../AutoUI/schemaOps';
 import isEqual from 'lodash/isEqual';
+import { findInObject } from '../../AutoUI/utils';
 
 const transformToReadableValue = (
 	parsedFilterDescription: SieveFilterDescription,
@@ -18,9 +19,23 @@ const transformToReadableValue = (
 	if (schema && isDateTimeFormat(schema.format)) {
 		return dateFormat(value, 'PPPppp');
 	}
-	if (schema?.enum && 'enumNames' in schema) {
-		const index = schema.enum.findIndex((a) => isEqual(a, value));
-		return (schema.enumNames as string[])[index];
+	const schemaEnum: JSONSchema['enum'] = findInObject(schema, 'enum');
+	const schemaEnumNames: string[] | undefined = findInObject(
+		schema,
+		'enumNames',
+	);
+	if (schemaEnum && schemaEnumNames) {
+		const index = schemaEnum.findIndex((a) => isEqual(a, value));
+		return (schemaEnumNames as string[])[index];
+	}
+
+	const oneOf: JSONSchema['oneOf'] = findInObject(schema, 'oneOf');
+	if (oneOf) {
+		const selected = oneOf.find(
+			(o) => isJSONSchema(o) && isEqual(o.const, value),
+		);
+
+		return isJSONSchema(selected) && selected.title ? selected.title : value;
 	}
 
 	if (typeof value === 'object') {

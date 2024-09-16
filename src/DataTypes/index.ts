@@ -124,3 +124,16 @@ export const getPropertySchemaAndModel = (
 
 	return { model: getDataModel(refSchema), propertySchema: refSchema };
 };
+
+export const getAllOperators = (schema: JSONSchema) => {
+	return {
+		...arrayType.operators(),
+		...stringType.operators(),
+		...objectType.operators(schema),
+		...booleanType.operators(),
+		...numberType.operators(),
+		...enumType.operators(),
+		...oneOfType.operators(),
+		...dateTimeType.operators(),
+	};
+};
