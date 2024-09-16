@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fix filter description and filter edit by adding `qs` decoder and
+        changing operator logic
+      hash: a39cfc07a943bcc5160d40f143bf7b5215a9bdd6
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.3.3
+  title: ""
+  date: 2024-09-16T12:38:25.060Z
+- commits:
     - subject: Update ui-shared-components from 8.0.6 to 9.0.0
       hash: 8eb98366eb47297358ce0573ce50eeb1b6058a49
       body: Update ui-shared-components from 8.0.4 to 9.0.0
