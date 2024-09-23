@@ -8,13 +8,23 @@ interface FilterMutation extends JSONSchema {
 	$or?: any[];
 }
 
-const maybePluralOp = ($op: string, filters: any[]): PineFilterObject => {
+const maybePluralOp = (
+	$op: string,
+	filters: any[],
+): PineFilterObject | undefined => {
 	const filtered = filters.filter((f) => f != null);
+	if (filtered.length === 0) {
+		// No valid filters remain
+		return undefined;
+	}
 	if (filtered.length === 1) {
+		// Only one filter remains, return it directly
 		return filtered[0];
 	}
+	// Multiple filters remain, wrap them in the operator
 	return { [$op]: filtered };
 };
+
 const createAlias = (prop: string) =>
 	prop
 		.split('_')
@@ -45,7 +55,7 @@ const handlePrimitiveFilter = (
 		formatExclusiveMaximum?: string;
 		formatExclusiveMinimum?: string;
 	},
-): PineFilterObject => {
+): PineFilterObject | undefined => {
 	if (value.const !== undefined) {
 		return wrapValue(parentKeys, value.const);
 	}
@@ -83,7 +93,12 @@ const handlePrimitiveFilter = (
 	for (const [$op, jsonSchemaProps] of Object.entries(comparisonOperatorMap)) {
 		for (const jsonSchemaProp of jsonSchemaProps) {
 			if (value[jsonSchemaProp] != null) {
-				filters.push(wrapValue(parentKeys, { [$op]: value[jsonSchemaProp] }));
+				const filter = wrapValue(parentKeys, {
+					[$op]: value[jsonSchemaProp],
+				});
+				if (filter != null) {
+					filters.push(filter);
+				}
 			}
 		}
 	}
@@ -97,7 +112,15 @@ const handlePrimitiveFilter = (
 	return maybePluralOp('$and', filters);
 };
 
-const wrapValue = (parentKeys: string[], value: any): PineFilterObject => {
+const wrapValue = (
+	parentKeys: string[],
+	value: any,
+): PineFilterObject | undefined => {
+	// TODO: Remove me as soon as we have a fix for OData
+	if (typeof value === 'number' && value % 1 !== 0) {
+		// Skip processing decimal numbers by returning undefined
+		return undefined;
+	}
 	for (let i = parentKeys.length - 1; i >= 0; i--) {
 		value = { [parentKeys[i]]: value };
 	}
@@ -107,7 +130,7 @@ const wrapValue = (parentKeys: string[], value: any): PineFilterObject => {
 const handleFilterArray = (
 	parentKeys: string[],
 	filterObj: JSONSchema,
-): PineFilterObject => {
+): PineFilterObject | undefined => {
 	const filters: PineFilterObject[] = [];
 	if (filterObj.minItems != null && filterObj.minItems > 1) {
 		const field = parentKeys[parentKeys.length - 1];
@@ -154,11 +177,11 @@ const handleOperators = (
 		throw new Error('Calling handleOperators without anyOf and allOf');
 	}
 	const operator = filter.anyOf || filter.oneOf ? '$or' : '$and';
-	const filters = filter.anyOf || filter.oneOf || filter.allOf;
-	return convertToPineClientFilter(
-		parentKeys,
-		maybePluralOp(operator, filters!),
-	);
+	const filtersArray = filter.anyOf || filter.oneOf || filter.allOf;
+	const filters = filtersArray
+		?.map((f) => convertToPineClientFilter(parentKeys, f as JSONSchema))
+		.filter((f) => f != null);
+	return maybePluralOp(operator, filters!);
 };
 
 export const convertToPineClientFilter = (
@@ -170,20 +193,19 @@ export const convertToPineClientFilter = (
 	}
 
 	if (Array.isArray(filter)) {
-		return filter.length > 1
-			? { $and: filter.map((f) => convertToPineClientFilter(parentKeys, f)) }
-			: convertToPineClientFilter(parentKeys, filter[0]);
+		const filters = filter
+			.map((f) => convertToPineClientFilter(parentKeys, f))
+			.filter((f) => f != null);
+		return filters.length > 1 ? maybePluralOp('$and', filters) : filters[0];
 	}
 
-	// TODO: Check if possible to remove and improve
 	if (filter.$or || filter.$and) {
 		const operator = filter.$or ? '$or' : '$and';
-		const filters = filter.$or || filter.$and;
-		return {
-			[operator]: filters?.map((f: any) =>
-				convertToPineClientFilter(parentKeys, f),
-			),
-		};
+		const filtersArray = filter.$or || filter.$and;
+		const filters = filtersArray
+			?.map((f: any) => convertToPineClientFilter(parentKeys, f))
+			.filter((f) => f != null);
+		return maybePluralOp(operator, filters!);
 	}
 
 	if (filter.anyOf || filter.oneOf || filter.allOf) {
@@ -195,22 +217,20 @@ export const convertToPineClientFilter = (
 	}
 
 	if (filter.properties != null) {
-		const propFilters: any = Object.entries(filter.properties).map(
-			([key, value]: [string, JSONSchema]) => {
+		const propFilters: any = Object.entries(filter.properties)
+			.map(([key, value]: [string, JSONSchema]) => {
 				return convertToPineClientFilter([...parentKeys, key], value);
-			},
-		);
-
-		return maybePluralOp('$and', propFilters);
+			})
+			.filter((filter) => filter != null);
+		return propFilters.length ? maybePluralOp('$and', propFilters) : undefined;
 	}
 
-	// Tiny optimization
 	if (typeof filter.not !== 'boolean' && filter.not?.const != null) {
 		return wrapValue(parentKeys, { $ne: filter.not.const });
 	}
 	if (filter.not != null && typeof filter.not !== 'boolean') {
-		// !properties && !contains && type = string | number | boolean
-		return { $not: convertToPineClientFilter(parentKeys, filter.not) };
+		const notFilter = convertToPineClientFilter(parentKeys, filter.not);
+		return notFilter != null ? { $not: notFilter } : undefined;
 	}
 
 	return handlePrimitiveFilter(parentKeys, filter);
@@ -229,15 +249,17 @@ export const orderbyBuilder = <T>(
 		return null;
 	}
 	const direction = !reverse ? 'asc' : 'desc';
-	const customOrderByKey = customSort?.[field];
+	const customOrderByKey = customSort?.[field as string];
 	if (typeof customOrderByKey === 'string') {
 		return [`${customOrderByKey} ${direction}`, `id ${direction}`];
 	} else if (customOrderByKey != null && typeof customOrderByKey !== 'string') {
 		throw new Error(
-			`Field ${field} error: custom sort for this field must be of type string, ${typeof customOrderByKey} is not accepted.`,
+			`Field ${
+				field as string
+			} error: custom sort for this field must be of type string, ${typeof customOrderByKey} is not accepted.`,
 		);
 	}
-	let fieldPath: string = field;
+	let fieldPath = field as string;
 	if (refScheme) {
 		fieldPath += `/${refScheme.replace(/\[(.*?)\]/g, '').replace(/\./g, '/')}`;
 	}

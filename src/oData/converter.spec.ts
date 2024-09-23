@@ -406,6 +406,66 @@ const filterTests: FilterTest[] = [
 			},
 		},
 	},
+	{
+		testCase: 'should skip numeric filters if value is decimal',
+		filters: [
+			{
+				$id: 'YtR4IFqMW9gNRL2y',
+				title: 'full_text_search',
+				description:
+					'{"field":"Any field","operator":"full_text_search","value":"16.5"}',
+				anyOf: [
+					{
+						$id: 'nzAZe7onD5k2zEFY',
+						anyOf: [
+							{
+								$id: 'UcKm4MpsGGR3m0H6',
+								title: 'full_text_search',
+								description:
+									'{"schema":{"title":"Name","type":["string","null"],"format":"device-name"},"field":"device_name","value":"16.5"}',
+								type: 'object',
+								properties: {
+									device_name: {
+										type: 'string',
+										// @ts-expect-error regexp is a custom ajv field
+										regexp: {
+											pattern: '16.5',
+											flags: 'i',
+										},
+									},
+								},
+								required: ['device_name'],
+							},
+							{
+								$id: 'f1AFJYI9foBkdKeS',
+								title: 'full_text_search',
+								description:
+									'{"schema":{"title":"Storage usage","type":"number","format":"unit-of-memory"},"field":"storage_usage","value":"16.5"}',
+								type: 'object',
+								properties: {
+									storage_usage: {
+										type: 'number',
+										const: 16.5,
+									},
+								},
+								required: ['storage_usage'],
+							},
+						],
+					},
+				],
+			},
+		],
+		expected: {
+			$contains: [
+				{
+					$tolower: {
+						$: 'device_name',
+					},
+				},
+				'16.5',
+			],
+		},
+	},
 ];
 
 describe('JSONSchema to Pine client converter', () => {
