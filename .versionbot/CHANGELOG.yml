@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fix string filters by ensuring string values are passed to prevent type
+        coercion
+      hash: c7421acdaf2dac693123af5c2e84d383e2b77cec
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.3.4
+  title: ""
+  date: 2024-09-23T09:53:26.475Z
+- commits:
     - subject: Fix filter description and filter edit by adding `qs` decoder and
         changing operator logic
       hash: a39cfc07a943bcc5160d40f143bf7b5215a9bdd6
