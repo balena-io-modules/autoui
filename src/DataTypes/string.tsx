@@ -21,13 +21,18 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 	operator,
 	value,
 ) => {
+	// When parsing query parameters on page reload using 'qs', we need to ensure that string properties remain strings.
+	// For example, a string like "16.7" might be automatically converted to a number (16.7).
+	// This conversion can cause issues with functions like 'regexEscape', which expect string inputs.
+	// https://github.com/balena-io-modules/autoui/blob/a39cfc07a943bcc5160d40f143bf7b5215a9bdd6/src/AutoUI/Filters/PersistentFilters.tsx#L96
+	const stringValue = String(value);
 	if (operator === 'is') {
 		return {
 			type: 'object',
 			properties: {
 				[field]: {
 					type: 'string',
-					const: value,
+					const: stringValue,
 				},
 			},
 			required: [field],
@@ -41,7 +46,7 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 				[field]: {
 					type: 'string',
 					not: {
-						const: value,
+						const: stringValue,
 					},
 				},
 			},
@@ -56,7 +61,7 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 				[field]: {
 					type: 'string',
 					regexp: {
-						pattern: regexEscape(value),
+						pattern: regexEscape(stringValue),
 						flags: 'i',
 					},
 				},
@@ -73,7 +78,7 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 					not: {
 						type: 'string',
 						regexp: {
-							pattern: regexEscape(value),
+							pattern: regexEscape(stringValue),
 							flags: 'i',
 						},
 					},
@@ -88,7 +93,7 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 			properties: {
 				[field]: {
 					type: 'string',
-					pattern: value,
+					pattern: stringValue,
 				},
 			},
 			required: [field],
@@ -102,7 +107,7 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 				[field]: {
 					type: 'string',
 					not: {
-						pattern: value,
+						pattern: stringValue,
 					},
 				},
 			},
