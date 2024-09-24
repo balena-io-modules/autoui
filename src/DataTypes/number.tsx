@@ -22,10 +22,10 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 		typeof value === 'number'
 			? value
 			: value !== '' && value != null
-			? Number(value)
-			: undefined;
+				? Number(value)
+				: undefined;
 
-	if (val == null || isNaN(val)) {
+	if (val == null || isNaN(val) || val % 1 !== 0) {
 		return {};
 	}
 
