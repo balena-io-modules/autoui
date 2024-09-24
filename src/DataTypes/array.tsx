@@ -150,6 +150,7 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 
 export const rendererSchema = (
 	schemaField: JSONSchema,
+	index: number,
 	schema: JSONSchema,
 	data: FormData,
 ) => {
@@ -160,10 +161,10 @@ export const rendererSchema = (
 			return;
 		}
 
-		return model.rendererSchema(schemaField, refSchema.items, data);
+		return model.rendererSchema(schemaField, index, refSchema.items, data);
 	}
 	// we are not considering items as array, we don't need it atm
 	const propertyItems = isJSONSchema(refSchema.items) ? refSchema.items : {};
 
-	return getDataTypeSchema(schemaField, operators(), propertyItems);
+	return getDataTypeSchema(schemaField, index, operators(), propertyItems);
 };

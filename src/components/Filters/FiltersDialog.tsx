@@ -24,6 +24,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 import { getRefSchema } from '../../AutoUI/schemaOps';
 import { findInObject } from '../../AutoUI/utils';
+import validator from '@rjsf/validator-ajv8';
 
 const { Box, Button, IconButton, Typography, DialogContent } = Material;
 
@@ -35,69 +36,71 @@ const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({
 	const { t } = useTranslation();
 	return (
 		<>
-			{items?.map((element, index) => (
-				<Box key={element.key}>
-					{index > 0 && (
-						<Typography
+			{items?.map((element, index) => {
+				return (
+					<Box key={element.key}>
+						{index > 0 && (
+							<Typography
+								sx={{
+									width: 'calc(100% - 50px)',
+									textAlign: 'center',
+									fontWeight: 'bold',
+								}}
+							>
+								{t('commons.or').toUpperCase()}
+							</Typography>
+						)}
+						<Box
 							sx={{
-								width: 'calc(100% - 50px)',
-								textAlign: 'center',
-								fontWeight: 'bold',
+								display: 'flex',
+								'& .form-group.field.field-object': {
+									display: 'flex',
+									flex: 1,
+								},
+								'& label': {
+									display: 'none',
+								},
+								// This is necessary to remove the gap of Tags label. RJSF render nested objects  with multi label levels.
+								'.MuiGrid-root > .form-group.field.field-object > .MuiFormControl-root > .MuiGrid-root.MuiGrid-container.MuiGrid-spacing-xs-2':
+									{
+										marginTop: '-8px!important',
+									},
 							}}
 						>
-							{t('commons.or').toUpperCase()}
-						</Typography>
-					)}
-					<Box
-						sx={{
-							display: 'flex',
-							'& .form-group.field.field-object': {
-								display: 'flex',
-								flex: 1,
-							},
-							'& label': {
-								display: 'none',
-							},
-							// This is necessary to remove the gap of Tags label. RJSF render nested objects  with multi label levels.
-							'.MuiGrid-root > .form-group.field.field-object > .MuiFormControl-root > .MuiGrid-root.MuiGrid-container.MuiGrid-spacing-xs-2':
-								{
-									marginTop: '-8px!important',
-								},
-						}}
-					>
-						{element.children}
-						<Box
-							display="flex"
-							width="50px"
-							alignItems="center"
-							justifyContent="center"
-						>
-							{index !== 0 && (
-								<IconButton
-									aria-label={t('actions.remove_filter')}
-									onClick={element.onDropIndexClick(element.index)}
-									sx={{ mt: 2 }}
+							{element.children}
+							<Box
+								display="flex"
+								width="50px"
+								alignItems="center"
+								justifyContent="center"
+							>
+								{index !== 0 && (
+									<IconButton
+										aria-label={t('actions.remove_filter')}
+										onClick={element.onDropIndexClick(element.index)}
+										sx={{ mt: 2 }}
+									>
+										<FontAwesomeIcon icon={faTimes} />
+									</IconButton>
+								)}
+							</Box>
+						</Box>
+						<Box display="flex" my={2}>
+							{canAdd && index === items.length - 1 && (
+								<Button
+									aria-label={t('aria_labels.add_filter_in_or')}
+									variant="text"
+									color="primary"
+									onClick={onAddClick}
+									startIcon={<FontAwesomeIcon icon={faPlus} />}
 								>
-									<FontAwesomeIcon icon={faTimes} />
-								</IconButton>
+									{t('actions.add_alternative')}
+								</Button>
 							)}
 						</Box>
 					</Box>
-					<Box display="flex" my={2}>
-						{canAdd && index === items.length - 1 && (
-							<Button
-								aria-label={t('aria_labels.add_filter_in_or')}
-								variant="text"
-								color="primary"
-								onClick={onAddClick}
-								startIcon={<FontAwesomeIcon icon={faPlus} />}
-							>
-								{t('actions.add_alternative')}
-							</Button>
-						)}
-					</Box>
-				</Box>
-			))}
+				);
+			})}
 		</>
 	);
 };
@@ -178,9 +181,15 @@ export const FiltersDialog = ({
 	const [formData, setFormData] = React.useState<
 		FormData[] | FormData | undefined
 	>(normalizeFormData(data, schema));
+	// This ensures that validation errors only appear after the user first submit, providing a better user experience.
+	// See react-jsonschema-form issue #512 for more details: https://github.com/rjsf-team/react-jsonschema-form/issues/512
+	const [isFirstValidation, setIsFirstValidation] = React.useState(true);
 
 	const handleChange = React.useCallback(
 		({ formData: data }: IChangeEvent<FormData[]>) => {
+			if (Array.isArray(formData) && formData.length !== data.length) {
+				setIsFirstValidation(true);
+			}
 			// Unfortunately we cannot detect which field is changing so we need to set a previous state
 			// github.com/rjsf-team/react-jsonschema-form/issues/718
 			const newFormData = Array.isArray(formData)
@@ -192,6 +201,7 @@ export const FiltersDialog = ({
 							(d.field !== formData[i].field ||
 								d.operator !== formData[i].operator)
 						) {
+							setIsFirstValidation(true);
 							return { ...d, value: undefined };
 						}
 						return d;
@@ -204,6 +214,7 @@ export const FiltersDialog = ({
 	);
 
 	const handleSubmit = ({ formData }: IChangeEvent<FormData[] | FormData>) => {
+		setIsFirstValidation(false);
 		if (!onClose) {
 			return;
 		}
@@ -284,9 +295,9 @@ export const FiltersDialog = ({
 			schema: {
 				type: 'array',
 				minItems: 1,
-				items: formData.map((data) => {
+				items: formData.map((data, index) => {
 					const schemaField: JSONSchema = {
-						$id: 'field',
+						$id: `filter-dialog-item-${index}`,
 						title: 'Field',
 						type: 'string',
 						oneOf,
@@ -299,7 +310,8 @@ export const FiltersDialog = ({
 						return {};
 					}
 					const rendererSchema =
-						model.rendererSchema(schemaField, propertySchema, data) ?? {};
+						model.rendererSchema(schemaField, index, propertySchema, data) ??
+						{};
 					// This if statement is needed to display objects in a nice way.
 					// Would be nice to find a better way and keep schema and uiSchema separated
 					if (propertySchema?.type === 'object') {
@@ -321,6 +333,7 @@ export const FiltersDialog = ({
 					return rendererSchema;
 				}),
 				additionalItems: {
+					$id: 'filter-dialog-additional-item-0',
 					field: formData?.[0].field,
 					operator: formData?.[0].operator,
 					value: undefined,
@@ -351,12 +364,16 @@ export const FiltersDialog = ({
 					onSubmit={handleSubmit}
 					{...internalSchemaAndUiSchema}
 					formData={formData}
-					noValidate
 					widgets={widgets}
+					validator={validator}
+					liveValidate={!isFirstValidation}
 					submitButtonProps={{
 						sx: {
 							mt: 2,
 							float: 'right',
+						},
+						onClick: () => {
+							setIsFirstValidation(false);
 						},
 					}}
 				/>

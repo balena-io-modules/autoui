@@ -33,6 +33,7 @@ export const normalizeDateTime = memoize((timestamp: string | number) => {
 
 export const getDataTypeSchema = (
 	schemaField: Partial<JSONSchema>,
+	index: number,
 	operators: Record<string, string>,
 	valueSchema: Partial<JSONSchema>,
 ): JSONSchema => {
@@ -42,12 +43,16 @@ export const getDataTypeSchema = (
 			const: operatorKey,
 		}),
 	);
+	// Let's keep all ids generation here to have a better view.
+	schemaField.$id = `field-${index}`;
+	valueSchema.$id = `value-${index}`;
 	return {
+		$id: `filter-schema-${index}`,
 		type: 'object',
 		properties: {
 			field: schemaField,
 			operator: {
-				$id: 'operator',
+				$id: `operator-${index}`,
 				title: 'Operator',
 				type: 'string',
 				oneOf: operatorsOneOf,

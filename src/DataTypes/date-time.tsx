@@ -91,11 +91,11 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 	return {};
 };
 
-export const rendererSchema = (schemaField: JSONSchema) => {
+export const rendererSchema = (schemaField: JSONSchema, index: number) => {
 	const valueSchema: JSONSchema = {
 		type: 'string',
 		format: 'date-time',
 		title: 'Value',
 	};
-	return getDataTypeSchema(schemaField, operators(), valueSchema);
+	return getDataTypeSchema(schemaField, index, operators(), valueSchema);
 };
