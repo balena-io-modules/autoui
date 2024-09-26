@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update `@balena/ui-shared-components` to 9.1.0
+      hash: aa6bed2a1dee33273dcfcbf4b825a02e72acdfdd
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 4.3.5
+  title: ""
+  date: 2024-09-26T11:28:00.006Z
+- commits:
     - subject: Fix string filters by ensuring string values are passed to prevent type
         coercion
       hash: c7421acdaf2dac693123af5c2e84d383e2b77cec
