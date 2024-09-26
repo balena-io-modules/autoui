@@ -17,6 +17,7 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 	field,
 	operator,
 	value,
+	propertySchema,
 ) => {
 	const val =
 		typeof value === 'number'
@@ -28,13 +29,14 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 	if (val == null || isNaN(val)) {
 		return {};
 	}
+	const fieldType = propertySchema?.type ?? 'number';
 
 	if (operator === 'is' || operator === FULL_TEXT_SLUG) {
 		return {
 			type: 'object',
 			properties: {
 				[field]: {
-					type: 'number',
+					type: fieldType,
 					const: val,
 				},
 			},
@@ -47,7 +49,7 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 			type: 'object',
 			properties: {
 				[field]: {
-					type: 'number',
+					type: fieldType,
 					not: {
 						const: val,
 					},
@@ -62,7 +64,7 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 			type: 'object',
 			properties: {
 				[field]: {
-					type: 'number',
+					type: fieldType,
 					exclusiveMinimum: val,
 				},
 			},
@@ -75,7 +77,7 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 			type: 'object',
 			properties: {
 				[field]: {
-					type: 'number',
+					type: fieldType,
 					exclusiveMaximum: val,
 				},
 			},
@@ -86,10 +88,14 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 	return {};
 };
 
-export const rendererSchema = (schemaField: JSONSchema) => {
+export const rendererSchema = (
+	schemaField: JSONSchema,
+	index: number,
+	propertySchema: JSONSchema,
+) => {
 	const valueSchema: JSONSchema = {
-		type: 'number',
+		type: propertySchema.type ?? 'number',
 		title: 'Value',
 	};
-	return getDataTypeSchema(schemaField, operators(), valueSchema);
+	return getDataTypeSchema(schemaField, index, operators(), valueSchema);
 };

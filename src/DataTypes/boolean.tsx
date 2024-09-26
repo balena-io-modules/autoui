@@ -46,10 +46,10 @@ export const uiSchema = () => ({
 	'ui:widget': 'select',
 });
 
-export const rendererSchema = (schemaField: JSONSchema) => {
+export const rendererSchema = (schemaField: JSONSchema, index: number) => {
 	const valueSchema: JSONSchema = {
 		type: 'boolean',
 		title: 'Value',
 	};
-	return getDataTypeSchema(schemaField, operators(), valueSchema);
+	return getDataTypeSchema(schemaField, index, operators(), valueSchema);
 };

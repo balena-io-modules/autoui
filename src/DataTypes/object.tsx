@@ -403,6 +403,7 @@ const reworkTagsProperties = (
 
 export const rendererSchema = (
 	schemaField: JSONSchema,
+	index: number,
 	schema: JSONSchema,
 	data: FormData,
 ) => {
@@ -424,5 +425,5 @@ export const rendererSchema = (
 		title: '',
 		properties,
 	};
-	return getDataTypeSchema(schemaField, operators(schema), valueSchema);
+	return getDataTypeSchema(schemaField, index, operators(schema), valueSchema);
 };

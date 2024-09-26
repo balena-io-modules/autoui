@@ -21,16 +21,14 @@ import { getRefSchema } from '../AutoUI/schemaOps';
 
 type ExcludeLiteral<T, U> = T extends U ? never : T;
 
-type PartialJSONSchemaTypeName = ExcludeLiteral<
-	JSONSchemaTypeName,
-	'integer' | 'null'
->;
+type PartialJSONSchemaTypeName = ExcludeLiteral<JSONSchemaTypeName, 'null'>;
 
 type DataTypeModule = {
 	operators: (property?: JSONSchemaDefinition) => Record<string, string>;
 	createFilter: CreateFilter;
 	rendererSchema: (
 		schemaField: JSONSchema,
+		index: number,
 		// This is the field/property schema,
 		// not the entire schema so schema.properties[key]
 		schema?: JSONSchema,
@@ -49,6 +47,7 @@ const dataTypeMap: Record<PartialJSONSchemaTypeName, DataTypeModule> = {
 	object: objectType,
 	boolean: booleanType,
 	number: numberType,
+	integer: numberType,
 };
 
 export const isDateTimeFormat = (format: string | undefined) =>
