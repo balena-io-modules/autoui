@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add support for integer RJSF type
+      hash: e16c864d293a6146ba7b8bc7fe9d1b21ab1e4f9b
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.3.6
+  title: ""
+  date: 2024-09-26T15:48:01.984Z
+- commits:
     - subject: Update `@balena/ui-shared-components` to 9.1.0
       hash: aa6bed2a1dee33273dcfcbf4b825a02e72acdfdd
       body: ""
