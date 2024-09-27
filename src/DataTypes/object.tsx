@@ -38,7 +38,7 @@ export const operators = (s: JSONSchema) => {
 			? {
 					contains: 'contains',
 					not_contains: 'does not contain',
-			  }
+				}
 			: (() => {
 					const keyLabel = getKeyLabel(s);
 					const valueLabel = getValueLabel(s);
@@ -46,15 +46,19 @@ export const operators = (s: JSONSchema) => {
 						key_contains: `${keyLabel} contains`,
 						key_not_contains: `${keyLabel} does not contain`,
 						key_is: `${keyLabel} is`,
-						key_matches_re: `${keyLabel} matches RegEx`,
-						key_not_matches_re: `${keyLabel} does not match RegEx`,
+						key_starts_with: `${keyLabel} starts with`,
+						key_ends_with: `${keyLabel} ends with`,
+						key_not_starts_with: `${keyLabel} does not starts with`,
+						key_not_ends_with: `${keyLabel} does not ends with`,
 						value_is: `${valueLabel} is`,
 						value_contains: `${valueLabel} contains`,
 						value_not_contains: `${valueLabel} does not contain`,
-						value_matches_re: `${valueLabel} matches RegEx`,
-						value_not_matches_re: `${valueLabel} does not match RegEx`,
+						value_starts_with: `${valueLabel} starts with`,
+						value_ends_with: `${valueLabel} ends with`,
+						value_not_starts_with: `${valueLabel} does not starts with`,
+						value_not_ends_with: `${valueLabel} does not ends with`,
 					};
-			  })()),
+				})()),
 	};
 };
 
@@ -62,16 +66,20 @@ const keySpecificOperators = [
 	'key_is',
 	'key_contains',
 	'key_not_contains',
-	'key_matches_re',
-	'key_not_matches_re',
+	'key_starts_with',
+	'key_ends_with',
+	'key_not_starts_with',
+	'key_not_ends_with',
 ];
 
 const valueSpecificOperators = [
 	'value_is',
 	'value_contains',
 	'value_not_contains',
-	'value_matches_re',
-	'value_not_matches_re',
+	'value_starts_with',
+	'value_ends_with',
+	'value_not_starts_with',
+	'value_not_ends_with',
 ];
 
 const getValueForOperation = (
@@ -87,8 +95,8 @@ const getValueForOperation = (
 	const schemaField = isKeyOperation
 		? 'key'
 		: isValueOperation
-		? 'value'
-		: null;
+			? 'value'
+			: null;
 	const schemaProperty = schemaField
 		? findKey(schema.properties!, { description: schemaField })
 		: null;
@@ -166,8 +174,13 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 		},
 	});
 
-	const matchReGexFilter = (v: any) => ({
-		pattern: v,
+	const startsWithFilter = (v: any) => ({
+		pattern: `^${regexEscape(v)}`,
+		$comment: 'starts_with',
+	});
+	const endsWithFilter = (v: any) => ({
+		pattern: `${regexEscape(v)}$`,
+		$comment: 'ends_with',
 	});
 
 	if (!isKeyValue) {
@@ -302,7 +315,15 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 		};
 	}
 
-	if (operator === 'key_matches_re' || operator === 'value_matches_re') {
+	if (
+		operator === 'key_starts_with' ||
+		operator === 'value_starts_with' ||
+		operator === 'key_ends_with' ||
+		operator === 'value_ends_with'
+	) {
+		const filterMethod = operator.includes('starts')
+			? startsWithFilter
+			: endsWithFilter;
 		return {
 			type: 'object',
 			properties: {
@@ -313,8 +334,8 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 						title: propertyTitle,
 						properties:
 							typeof internalValue !== 'object'
-								? matchReGexFilter(internalValue)
-								: mapValues(internalValue, matchReGexFilter),
+								? filterMethod(internalValue)
+								: mapValues(internalValue, filterMethod),
 					},
 				},
 			},
@@ -323,9 +344,14 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 	}
 
 	if (
-		operator === 'key_not_matches_re' ||
-		operator === 'value_not_matches_re'
+		operator === 'key_not_starts_with' ||
+		operator === 'value_not_starts_with' ||
+		operator === 'key_not_ends_with' ||
+		operator === 'value_not_ends_with'
 	) {
+		const filterMethod = operator.includes('starts')
+			? startsWithFilter
+			: endsWithFilter;
 		return {
 			type: 'object',
 			properties: {
@@ -336,8 +362,8 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 							title: propertyTitle,
 							properties:
 								typeof internalValue !== 'object'
-									? matchReGexFilter(internalValue)
-									: mapValues(internalValue, matchReGexFilter),
+									? filterMethod(internalValue)
+									: mapValues(internalValue, filterMethod),
 						},
 					},
 				},
@@ -371,7 +397,7 @@ export const getFilter = (
 	}
 	const fieldFilter = createModelFilter(schema, { field, operator, value });
 
-	if (!fieldFilter) {
+	if (!fieldFilter || typeof fieldFilter !== 'object') {
 		return {};
 	}
 
@@ -415,8 +441,8 @@ export const rendererSchema = (
 		data?.operator && data.operator.includes('key')
 			? 'key'
 			: data?.operator && data.operator.includes('value')
-			? 'value'
-			: null,
+				? 'value'
+				: null,
 	);
 
 	const valueSchema: JSONSchema = {
