@@ -1,4 +1,15 @@
 - commits:
+    - subject: Prevent creating decimal filters for integer types
+      hash: 33e0ace4f1d46459da320dc782e6df009a376d08
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.3.7
+  title: ""
+  date: 2024-09-27T08:42:12.277Z
+- commits:
     - subject: Add support for integer RJSF type
       hash: e16c864d293a6146ba7b8bc7fe9d1b21ab1e4f9b
       body: ""
