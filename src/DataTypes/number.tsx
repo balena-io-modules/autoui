@@ -26,10 +26,11 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 			? Number(value)
 			: undefined;
 
-	if (val == null || isNaN(val)) {
+	const fieldType = propertySchema?.type ?? 'number';
+
+	if (val == null || isNaN(val) || (fieldType === 'integer' && val % 1 !== 0)) {
 		return {};
 	}
-	const fieldType = propertySchema?.type ?? 'number';
 
 	if (operator === 'is' || operator === FULL_TEXT_SLUG) {
 		return {
