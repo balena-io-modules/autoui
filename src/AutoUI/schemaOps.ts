@@ -101,7 +101,7 @@ export interface AutoUIContext<T> {
 	getBaseUrl?: (entry: T) => string;
 	onEntityClick?: (
 		entity: T,
-		event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+		event: React.MouseEvent<HTMLTableCellElement, MouseEvent>,
 	) => void;
 	idField: string;
 	nameField?: string;
