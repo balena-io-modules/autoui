@@ -9,6 +9,23 @@ import { useAnalyticsContext } from '@balena/ui-shared-components';
 
 const TableColumnStateStoredProps = ['key', 'selected', 'type', 'tagKey'];
 
+// TODO: Remove this workaround after the table refactor.
+// This is a temporary hack to disable sorting on the tag column without modifying the Rendition library.
+// Refactor the implementation to properly handle sorting once the table logic is updated.
+const removeTagSortingElement = () => {
+	const elements = document.querySelectorAll('[data-field^="device_tag."]');
+
+	elements.forEach((element) => {
+		if (!element) {
+			return;
+		}
+		const lastChild = element.lastChild as Element | null;
+		if (lastChild?.tagName === 'svg') {
+			lastChild.remove();
+		}
+	});
+};
+
 export const table: LensTemplate = {
 	slug: 'table',
 	name: 'Default table lens',
@@ -30,6 +47,15 @@ export const table: LensTemplate = {
 			model,
 			rowKey = 'id',
 		}: CollectionLensRendererProps<any>) => {
+			// TODO: Remove this workaround after the table refactor.
+			// This is a temporary hack to disable sorting on the tag column without modifying the Rendition library.
+			// Refactor the implementation to properly handle sorting once the table logic is updated.
+			React.useEffect(() => {
+				if (pagination?.serverSide) {
+					removeTagSortingElement();
+				}
+			}, [properties, pagination?.serverSide]);
+
 			const { state: analytics } = useAnalyticsContext();
 
 			const itemsPerPage = pagination?.itemsPerPage ?? 50;
@@ -71,7 +97,12 @@ export const table: LensTemplate = {
 								col.selected,
 							]),
 						);
-
+						// TODO: Remove this workaround after the table refactor.
+						// This is a temporary hack to disable sorting on the tag column without modifying the Rendition library.
+						// Refactor the implementation to properly handle sorting once the table logic is updated.
+						if (pagination?.serverSide) {
+							removeTagSortingElement();
+						}
 						analytics.webTracker?.track('Update table column display', {
 							current_url: location.origin + location.pathname,
 							resource: model.resource,
