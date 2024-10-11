@@ -1,4 +1,15 @@
 - commits:
+    - subject: Temporary fix to disable tag sorting with server-side pagination
+      hash: 79922da4dacc8ec30b8c9029d6259da06af8698b
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.3.9
+  title: ""
+  date: 2024-10-11T11:33:03.234Z
+- commits:
     - subject: Improve copy on column header tooltip
       hash: ed8fdb2b3346f6ad6ee4e68d857461ec0574f21d
       body: ""
