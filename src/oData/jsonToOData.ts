@@ -241,5 +241,5 @@ export const orderbyBuilder = <T>(
 	if (refScheme) {
 		fieldPath += `/${refScheme.replace(/\[(.*?)\]/g, '').replace(/\./g, '/')}`;
 	}
-	return [`${fieldPath} ${direction}`, `id ${direction}`];
+	return [`${fieldPath} ${direction} NULLS LAST`, `id ${direction}`];
 };

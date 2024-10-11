@@ -43,7 +43,7 @@ export const TableHead = <T extends object>({
 	return (
 		<MaterialTableHead>
 			<TableRow>
-				<TableCell padding="checkbox">
+				<TableCell data-table="table_cel__sticky_header" padding="checkbox">
 					<Checkbox
 						color="primary"
 						// some does not seems to work as expected

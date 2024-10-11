@@ -5,6 +5,7 @@ import { AutoUIEntityPropertyDefinition } from '../../AutoUI';
 import { CheckedState, Pagination, TableSortOptions } from './utils';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../AutoUI/utils';
 import { Material } from '@balena/ui-shared-components';
+import { Divider } from 'rendition';
 
 const {
 	Box,
@@ -16,7 +17,22 @@ const {
 	TableRow,
 	Paper,
 	Checkbox,
+	styled,
 } = Material;
+
+const StyledMaterialTable = styled(MaterialTable)(() => ({
+	'& [data-table="table_cel__sticky"]': {
+		position: 'sticky',
+		left: 0,
+		zIndex: 9,
+		backgroundColor: 'inherit',
+	},
+	'& [data-table="table_cel__sticky_header"]': {
+		position: 'sticky',
+		left: 0,
+		zIndex: 10,
+	},
+}));
 
 interface TableProps<T> {
 	rowKey: keyof T;
@@ -98,7 +114,7 @@ export const Table = <T extends {}>({
 						pagination.currentPage * pagination.itemsPerPage,
 						pagination.currentPage * pagination.itemsPerPage +
 							pagination.itemsPerPage,
-				  )
+					)
 				: data,
 		[data, pagination.currentPage, pagination.itemsPerPage],
 	);
@@ -188,7 +204,7 @@ export const Table = <T extends {}>({
 					onColumnPreferencesChange={onColumnPreferencesChange}
 				/>
 				<TableContainer sx={{ maxHeight: '60vh' }}>
-					<MaterialTable stickyHeader>
+					<StyledMaterialTable stickyHeader>
 						<TableHead
 							columns={columns}
 							numSelected={numSelected}
@@ -212,9 +228,25 @@ export const Table = <T extends {}>({
 										tabIndex={-1}
 										key={row[rowKey] as string}
 										selected={false}
-										sx={{ cursor: 'pointer' }}
+										sx={{
+											cursor: 'pointer',
+											background:
+												index % 2 === 0
+													? '#f3f5f7!important'
+													: '#fff!important',
+											'&:hover': {
+												background: '#e6f2fc!important',
+											},
+										}}
 									>
-										<TableCell padding="checkbox" sx={{ whiteSpace: 'nowrap' }}>
+										<TableCell
+											data-table="table_cel__sticky"
+											padding="checkbox"
+											sx={{
+												backgroundColor: 'inherit',
+												whiteSpace: 'nowrap',
+											}}
+										>
 											<Checkbox
 												color="primary"
 												onClick={handleToggleCheck(row)}
@@ -244,14 +276,17 @@ export const Table = <T extends {}>({
 								);
 							})}
 						</TableBody>
-					</MaterialTable>
+					</StyledMaterialTable>
 				</TableContainer>
+				<Divider m={0} />
 				<TablePagination
 					rowsPerPageOptions={[5, 10, 25, DEFAULT_ITEMS_PER_PAGE, 100]}
 					component="div"
 					count={pagination.totalItems}
 					rowsPerPage={pagination.itemsPerPage}
 					page={pagination.currentPage}
+					showFirstButton
+					showLastButton
 					onPageChange={(_event, page) => {
 						onPageChange?.(page, pagination.itemsPerPage);
 					}}

@@ -71,12 +71,15 @@ export const TableActions = <T extends object>({
 			>
 				<FormGroup>
 					{columns.map((column) => (
-						<MenuItem
-							key={column.key}
-							onClick={() => handleColumnSelection(column)}
-						>
+						<MenuItem key={column.key}>
 							<FormControlLabel
-								control={<Checkbox checked={column.selected} />}
+								sx={{ flex: 1 }}
+								control={
+									<Checkbox
+										onClick={() => handleColumnSelection(column)}
+										checked={column.selected}
+									/>
+								}
 								label={column.label}
 							/>
 						</MenuItem>

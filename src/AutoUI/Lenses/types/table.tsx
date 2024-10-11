@@ -162,13 +162,16 @@ export const table: LensTemplate = {
 					`${model.resource}__sort`,
 				);
 
-				return (
+				const sortPref =
 					sortPreferences ??
 					({
 						direction: 'asc',
 						...columns[0],
-					} as TableSortOptions)
-				);
+					} as TableSortOptions);
+
+				onSort?.(sortPref);
+
+				return sortPref;
 			}, [sort, model, columns]);
 
 			// We want to save latest user settings only on destroy not on every change.
