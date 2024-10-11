@@ -666,7 +666,7 @@ const getTitleAndLabel = (
 				<Link
 					mr={1}
 					blank
-					tooltip={t('info.click_to_read_more', { title })}
+					tooltip={t('info.learn_more', { title })}
 					color="info.main"
 					{...headerLink}
 				>
