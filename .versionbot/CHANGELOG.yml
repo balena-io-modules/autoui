@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update `@balena/ui-shared-components`
+      hash: 132c1f7b2f3e5e0500ac2b8ac412868f5ad52e6c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 4.3.10
+  title: ""
+  date: 2024-10-14T07:12:06.353Z
+- commits:
     - subject: Temporary fix to disable tag sorting with server-side pagination
       hash: 79922da4dacc8ec30b8c9029d6259da06af8698b
       body: ""
