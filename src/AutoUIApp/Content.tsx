@@ -14,8 +14,9 @@ import { findInObject } from '../AutoUI/utils';
 import isEmpty from 'lodash/isEmpty';
 import { ActionMethods } from '.';
 import { ActionSidebarProps } from './ActionSidebar';
-import { JSONSchema, useRequest } from 'rendition';
+import { useRequest } from 'rendition';
 import { useHistory } from '../hooks/useHistory';
+import { JSONSchema7 as JSONSchema } from 'json-schema';
 
 interface ContentProps {
 	openApiJson: OpenApiJson;
