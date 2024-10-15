@@ -668,6 +668,10 @@ const getTitleAndLabel = (
 					blank
 					tooltip={t('info.learn_more', { title })}
 					color="info.main"
+					// Prevent header click from triggering sort or other parent events
+					onClick={(event) => {
+						event.stopPropagation();
+					}}
 					{...headerLink}
 				>
 					<FontAwesomeIcon icon={faCircleQuestion} />
