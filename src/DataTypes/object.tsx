@@ -423,6 +423,7 @@ export const rendererSchema = (
 		...refSchema,
 		type: 'object',
 		title: '',
+		description: '',
 		properties,
 	};
 	return getDataTypeSchema(schemaField, index, operators(schema), valueSchema);

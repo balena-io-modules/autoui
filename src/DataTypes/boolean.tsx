@@ -50,6 +50,7 @@ export const rendererSchema = (schemaField: JSONSchema, index: number) => {
 	const valueSchema: JSONSchema = {
 		type: 'boolean',
 		title: 'Value',
+		description: '',
 	};
 	return getDataTypeSchema(schemaField, index, operators(), valueSchema);
 };
