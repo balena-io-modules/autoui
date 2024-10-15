@@ -39,7 +39,7 @@ const handlePrimitiveFilter = (
 	parentKeys: string[],
 	value: JSONSchema & {
 		// ajv extensions
-		regexp?: { pattern?: string; flags?: string };
+		regexp?: { pattern?: string; flags?: string; description?: string };
 		formatMinimum?: string;
 		formatMaximum?: string;
 		formatExclusiveMaximum?: string;
@@ -63,6 +63,26 @@ const handlePrimitiveFilter = (
 		}
 		if (regexp.flags != null && regexp.flags !== 'i') {
 			throw new Error(`Regex flag ${regexp.flags} is not supported`);
+		}
+		if (
+			value.$comment === 'starts_with' ||
+			value.$comment === 'not_starts_with'
+		) {
+			return {
+				$startswith: [
+					{ $: parentKeys.length === 1 ? parentKeys[0] : parentKeys },
+					regexp.pattern.replace('^', ''),
+				],
+			};
+		}
+
+		if (value.$comment === 'ends_with' || value.$comment === 'not_ends_with') {
+			return {
+				$endswith: [
+					{ $: parentKeys.length === 1 ? parentKeys[0] : parentKeys },
+					regexp.pattern.replace(/\$(?=[^$]*$)/, ''),
+				],
+			};
 		}
 		if (regexp.flags === 'i') {
 			return {
@@ -229,15 +249,15 @@ export const orderbyBuilder = <T>(
 		return null;
 	}
 	const direction = !reverse ? 'asc' : 'desc';
-	const customOrderByKey = customSort?.[field];
+	const customOrderByKey = customSort?.[field as string];
 	if (typeof customOrderByKey === 'string') {
 		return [`${customOrderByKey} ${direction}`, `id ${direction}`];
 	} else if (customOrderByKey != null && typeof customOrderByKey !== 'string') {
 		throw new Error(
-			`Field ${field} error: custom sort for this field must be of type string, ${typeof customOrderByKey} is not accepted.`,
+			`Field ${field as string} error: custom sort for this field must be of type string, ${typeof customOrderByKey} is not accepted.`,
 		);
 	}
-	let fieldPath: string = field;
+	let fieldPath = field as string;
 	if (refScheme) {
 		fieldPath += `/${refScheme.replace(/\[(.*?)\]/g, '').replace(/\./g, '/')}`;
 	}
