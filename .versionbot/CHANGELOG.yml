@@ -1,4 +1,15 @@
 - commits:
+    - subject: Remove filter description from filter dialog
+      hash: e2b71529cefaace07025f46fda012a9156ee0f27
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 4.3.11
+  title: ""
+  date: 2024-10-15T08:37:08.811Z
+- commits:
     - subject: Update `@balena/ui-shared-components`
       hash: 132c1f7b2f3e5e0500ac2b8ac412868f5ad52e6c
       body: ""
