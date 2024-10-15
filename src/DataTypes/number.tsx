@@ -97,6 +97,7 @@ export const rendererSchema = (
 	const valueSchema: JSONSchema = {
 		type: propertySchema.type ?? 'number',
 		title: 'Value',
+		description: '',
 	};
 	return getDataTypeSchema(schemaField, index, operators(), valueSchema);
 };
