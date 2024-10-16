@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fix sorting showing NoDataInfo when no items are returned for
+        serverside pagination
+      hash: 85bebae521edd1537bada92fa3b102c2b67346c4
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 5.1.1
+  title: ""
+  date: 2024-10-16T16:18:21.794Z
+- commits:
     - subject: Add support for custom sorting based on multiple columns
       hash: 77b8b20e0b311a19a569fc57a1f82eed6d0f0904
       body: ""
