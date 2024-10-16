@@ -189,7 +189,12 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	}, [modelRaw]);
 
 	const [filters, setFilters] = React.useState<JSONSchema[]>([]);
-	const [sort, setSort] = React.useState<TableSortOptions<T> | null>(null);
+	const [sort, setSort] = React.useState<TableSortOptions<T> | null>(
+		() =>
+			(getFromLocalStorage(`${model.resource}__sort`) as
+				| TableSortOptions<T>
+				| undefined) || null,
+	);
 	const [internalPagination, setInternalPagination] = React.useState<{
 		page: number;
 		itemsPerPage: number;
