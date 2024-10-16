@@ -252,9 +252,21 @@ export const orderbyBuilder = <T>(
 	const customOrderByKey = customSort?.[field as string];
 	if (typeof customOrderByKey === 'string') {
 		return [`${customOrderByKey} ${direction}`, `id ${direction}`];
-	} else if (customOrderByKey != null && typeof customOrderByKey !== 'string') {
+	}
+	if (Array.isArray(customOrderByKey)) {
+		if (customOrderByKey.length === 0 || customOrderByKey.some(k => typeof k !== 'string')) {
+			throw new Error(
+				`Field ${field as string} error: custom sort for this field must be of type string or a non empty string array, ${customOrderByKey.join(',')} is not accepted.`,
+			);
+		}
+		return [
+			...customOrderByKey.map(k => `${k} ${direction}`),
+			`id ${direction}`
+		];
+	}
+	if (customOrderByKey != null && typeof customOrderByKey !== 'string') {
 		throw new Error(
-			`Field ${field as string} error: custom sort for this field must be of type string, ${typeof customOrderByKey} is not accepted.`,
+			`Field ${field as string} error: custom sort for this field must be of type string or a non empty string array, ${typeof customOrderByKey} is not accepted.`,
 		);
 	}
 	let fieldPath = field as string;
