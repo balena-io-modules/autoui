@@ -1,4 +1,15 @@
 - commits:
+    - subject: "Fix: retain table sort state"
+      hash: 640275c2847bb35bc63f96c19072bfa305257393
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 5.0.2
+  title: ""
+  date: 2024-10-16T09:59:08.451Z
+- commits:
     - subject: "Fix: prevent header click from triggering parent events or sorting"
       hash: 17282da41151494e9fbadbddeb8cb15fead79348
       body: ""
