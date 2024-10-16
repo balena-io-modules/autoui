@@ -1,6 +1,6 @@
 {
   "name": "@balena/autoui",
-  "version": "5.0.2",
+  "version": "5.1.0",
   "description": "",
   "main": "./dist/index.js",
   "sideEffects": false,
@@ -90,6 +90,6 @@
     ]
   },
   "versionist": {
-    "publishedAt": "2024-10-16T09:59:08.590Z"
+    "publishedAt": "2024-10-16T15:29:42.069Z"
   }
 }

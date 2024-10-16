@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add support for custom sorting based on multiple columns
+      hash: 77b8b20e0b311a19a569fc57a1f82eed6d0f0904
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+  version: 5.1.0
+  title: ""
+  date: 2024-10-16T15:29:41.911Z
+- commits:
     - subject: "Fix: retain table sort state"
       hash: 640275c2847bb35bc63f96c19072bfa305257393
       body: ""
