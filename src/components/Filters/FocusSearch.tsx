@@ -1,12 +1,14 @@
 import React from 'react';
+import debounce from 'lodash/debounce';
 import reject from 'lodash/reject';
 import { AutoUIModel, getPropertyScheme } from '../../AutoUI';
-
 import { AutoUIContext } from '../../AutoUI/schemaOps';
 import { useHistory } from '../../hooks/useHistory';
-import { Material, designTokens } from '@balena/ui-shared-components';
+import { Material, Spinner, designTokens } from '@balena/ui-shared-components';
 import { ajvFilter, createFullTextSearchFilter } from './SchemaSieve';
 import { Typography } from '@mui/material';
+import { convertToPineClientFilter } from '../../oData/jsonToOData';
+import { DEFAULT_ITEMS_PER_PAGE } from '../../AutoUI/utils';
 
 const { Box, styled, Checkbox } = Material;
 
@@ -60,14 +62,46 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 	rowKey = 'id',
 }: FocusSearchProps<T>) => {
 	const history = useHistory();
-	const filteredFittingSearchTerms = React.useMemo(() => {
+	const [searchResults, setSearchResults] = React.useState<T[]>([]);
+	const [isLoading, setIsLoading] = React.useState<boolean>(false);
+	const inputSearch = autouiContext.sdk?.inputSearch;
+
+	// Debounce function to limit the frequency of search term changes
+	const debouncedSearch = debounce(async (searchFilter) => {
+		setIsLoading(true);
+		if (inputSearch && searchFilter) {
+			// Keep the same structure we have on AutoUI/index.tsx internalOnChange
+			const pineFilter = convertToPineClientFilter([], searchFilter);
+			const oData = {
+				$filter: pineFilter,
+				// In case of need we can add an infinite scroll logic
+				$top: DEFAULT_ITEMS_PER_PAGE,
+				$skip: 0,
+			};
+			const results = await inputSearch({ oData });
+			setSearchResults(results);
+		} else if (searchFilter) {
+			setSearchResults(ajvFilter(searchFilter, filtered) || []);
+		} else {
+			setSearchResults([]);
+		}
+		setIsLoading(false);
+	}, 300);
+
+	React.useEffect(() => {
 		const filter = createFullTextSearchFilter(model.schema, searchTerm);
-		return filter ? ajvFilter(filter, filtered) : null;
-	}, [searchTerm, filtered]);
+		debouncedSearch(filter);
+		return () => {
+			debouncedSearch.cancel();
+		};
+	}, [model.schema, searchTerm]);
 
 	const getEntityValue = (entity: T) => {
 		const property = model.priorities?.primary[0]!;
-		const schemaProperty = model.schema.properties?.[property];
+		const schemaProperty =
+			model.schema.properties?.[
+				property as keyof typeof model.schema.properties
+			];
 		const refScheme = schemaProperty ? getPropertyScheme(schemaProperty) : null;
 		if (!refScheme || typeof schemaProperty === 'boolean') {
 			return entity[property];
@@ -82,72 +116,74 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 
 	return (
 		<Focus sx={{ top: '30px' }}>
-			{!filteredFittingSearchTerms?.length ? (
-				<Box display="flex" justifyContent="space-around" py={2}>
-					<em>no results</em>
-				</Box>
-			) : (
-				<FocusContent>
-					{filteredFittingSearchTerms.map((entity) => (
-						<FocusItem
-							px={1}
-							py={2}
-							key={entity[rowKey]}
-							onClick={(e) => {
-								e.preventDefault();
-								if (autouiContext.getBaseUrl && history) {
-									try {
-										const url = new URL(autouiContext.getBaseUrl(entity));
-										window.open(url.toString(), '_blank');
-									} catch (err) {
-										history.push?.(autouiContext.getBaseUrl(entity));
+			<Spinner show={isLoading}>
+				{!searchResults?.length ? (
+					<Box display="flex" justifyContent="space-around" py={2}>
+						<em>no results</em>
+					</Box>
+				) : (
+					<FocusContent>
+						{searchResults.map((entity) => (
+							<FocusItem
+								px={1}
+								py={2}
+								key={entity[rowKey]}
+								onClick={(e) => {
+									e.preventDefault();
+									if (autouiContext.getBaseUrl && history) {
+										try {
+											const url = new URL(autouiContext.getBaseUrl(entity));
+											window.open(url.toString(), '_blank');
+										} catch (err) {
+											history.push?.(autouiContext.getBaseUrl(entity));
+										}
 									}
-								}
-							}}
-							hasGetBaseUrl={!!autouiContext.getBaseUrl}
-						>
-							<Box display="flex" flexDirection="row" alignItems="center">
-								{hasUpdateActions && (
+								}}
+								hasGetBaseUrl={!!autouiContext.getBaseUrl}
+							>
+								<Box display="flex" flexDirection="row" alignItems="center">
+									{hasUpdateActions && (
+										<Box
+											display="flex"
+											flexDirection="column"
+											mx={1}
+											alignItems="center"
+										>
+											<Checkbox
+												onChange={() => {
+													const isChecked = !!selected.find(
+														(s) => s[rowKey] === entity[rowKey],
+													);
+													const checkedItems = !isChecked
+														? selected.concat(entity)
+														: (reject(selected, {
+																[rowKey]: entity[rowKey],
+														  }) as unknown as Array<typeof entity>);
+													setSelected(checkedItems);
+												}}
+												checked={
+													!!selected.find((s) => s[rowKey] === entity[rowKey])
+												}
+												onClick={(event) => {
+													event.stopPropagation();
+												}}
+											/>
+										</Box>
+									)}
 									<Box
 										display="flex"
 										flexDirection="column"
-										mx={1}
 										alignItems="center"
+										ml={!hasUpdateActions ? 1 : undefined}
 									>
-										<Checkbox
-											onChange={() => {
-												const isChecked = !!selected.find(
-													(s) => s[rowKey] === entity[rowKey],
-												);
-												const checkedItems = !isChecked
-													? selected.concat(entity)
-													: (reject(selected, {
-															[rowKey]: entity[rowKey],
-													  }) as unknown as Array<typeof entity>);
-												setSelected(checkedItems);
-											}}
-											checked={
-												!!selected.find((s) => s[rowKey] === entity[rowKey])
-											}
-											onClick={(event) => {
-												event.stopPropagation();
-											}}
-										/>
+										<Typography>{getEntityValue(entity)}</Typography>
 									</Box>
-								)}
-								<Box
-									display="flex"
-									flexDirection="column"
-									alignItems="center"
-									ml={!hasUpdateActions ? 1 : undefined}
-								>
-									<Typography>{getEntityValue(entity)}</Typography>
 								</Box>
-							</Box>
-						</FocusItem>
-					))}
-				</FocusContent>
-			)}
+							</FocusItem>
+						))}
+					</FocusContent>
+				)}
+			</Spinner>
 		</Focus>
 	);
 };
