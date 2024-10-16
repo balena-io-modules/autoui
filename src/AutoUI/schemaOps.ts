@@ -111,7 +111,7 @@ export interface AutoUIContext<T> {
 		longitudeField?: string;
 	};
 	actions?: Array<AutoUIAction<T>>;
-	customSort?: Dictionary<(a: T, b: T) => number> | Dictionary<string>;
+	customSort?: Dictionary<(a: T, b: T) => number> | Dictionary<string | string[]>;
 	sdk?: {
 		tags?: AutoUITagsSdk<T>;
 	};
