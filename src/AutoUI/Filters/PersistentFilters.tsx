@@ -39,10 +39,18 @@ const isQueryStringFilterRuleset = (
 	!!rule?.length &&
 	rule?.every(isListQueryStringFilterRule);
 
-export const listFilterQuery = (
+export function listFilterQuery (
+	filters: JSONSchema[],
+	stringify: true,
+): string;
+export function listFilterQuery (
+	filters: JSONSchema[],
+	stringify?: false,
+): Array<ListQueryStringFilterObject[] | undefined>;
+export function listFilterQuery (
 	filters: JSONSchema[],
 	stringify: boolean = true,
-) => {
+) {
 	const queryStringFilters = filters.map((filter) => {
 		const signatures =
 			filter.title === FULL_TEXT_SLUG
@@ -201,9 +209,7 @@ export const PersistentFilters = ({
 		(filters: JSONSchema[]) => {
 			const { pathname } = window.location;
 			// Get filter query in two steps: first parse the filters, then stringify outside the function for performance
-			const parsedFilters = listFilterQuery(filters, false) as Array<
-				ListQueryStringFilterObject[] | undefined
-			>;
+			const parsedFilters = listFilterQuery(filters, false);
 			const filterQuery = qs.stringify(parsedFilters, {
 				strictNullHandling: true,
 			});
