@@ -1,4 +1,15 @@
 - commits:
+    - subject: "Filters: Improve the typings of the listFilterQuery helper"
+      hash: 3213e13c246bc771dd284a3ee975eb7d2799b2ec
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+  version: 5.1.2
+  title: ""
+  date: 2024-10-18T11:27:28.439Z
+- commits:
     - subject: Fix sorting showing NoDataInfo when no items are returned for
         serverside pagination
       hash: 85bebae521edd1537bada92fa3b102c2b67346c4
