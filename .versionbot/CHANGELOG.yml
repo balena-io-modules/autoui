@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix edit on any field filter
+      hash: f4ebdf3768ad523797255174869bddb71e6e4432
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 5.1.3
+  title: ""
+  date: 2024-10-21T10:32:23.746Z
+- commits:
     - subject: "Filters: Improve the typings of the listFilterQuery helper"
       hash: 3213e13c246bc771dd284a3ee975eb7d2799b2ec
       body: ""
