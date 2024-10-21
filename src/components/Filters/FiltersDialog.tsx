@@ -206,7 +206,7 @@ export const FiltersDialog = ({
 						}
 						return d;
 				  })
-				: formData;
+				: data;
 
 			setFormData(normalizeFormData(newFormData, schema));
 		},
