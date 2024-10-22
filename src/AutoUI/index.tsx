@@ -315,14 +315,15 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 
 	const autouiContext = React.useMemo((): AutoUIContext<T> => {
 		const tagField = getFieldForFormat(model.schema, 'tag');
-		const tagsAction: AutoUIAction<T> | null = sdk?.tags
+		const sdkTags = sdk?.tags;
+		const tagsAction: AutoUIAction<T> | null = sdkTags
 			? {
 					title: t('actions.manage_tags'),
 					type: 'update',
 					section: 'settings',
 					renderer: ({ affectedEntries, onDone }) => {
 						return (
-							(!!affectedEntries || (sdk.tags && 'getAll' in sdk.tags)) && (
+							(!!affectedEntries || (sdkTags && 'getAll' in sdkTags)) && (
 								<Tags
 									selected={affectedEntries}
 									autouiContext={autouiContext}
@@ -339,7 +340,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							affectedEntries,
 							tagField as keyof T,
 							checkedState,
-							sdk.tags,
+							sdkTags,
 							t,
 						),
 			  }
@@ -493,20 +494,15 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 													persistFilters={persistFilters}
 													changeFilters={$setFilters}
 													changeViews={setViews}
-													onSearch={(term: string) =>
-														term.length < 2 ? null : (
-															<FocusSearch
-																searchTerm={term}
-																filtered={filtered}
-																selected={selected ?? []}
-																setSelected={$setSelected}
-																autouiContext={autouiContext}
-																model={model}
-																hasUpdateActions={hasUpdateActions}
-																rowKey={rowKey}
-															/>
-														)
-													}
+													onSearch={(term: string) => (
+														<FocusSearch
+															searchTerm={term}
+															filtered={filtered}
+															autouiContext={autouiContext}
+															model={model}
+															rowKey={rowKey}
+														/>
+													)}
 												/>
 											</Box>
 											<LensSelection

@@ -101,7 +101,7 @@ export interface AutoUIAction<T> {
 }
 
 export interface AutoUISdk<T> {
-	tags: AutoUITagsSdk<T>;
+	tags?: AutoUITagsSdk<T>;
 	inputSearch?: (
 		filter: PineFilterObject | undefined,
 	) => Promise<Array<Subset<T>>>;

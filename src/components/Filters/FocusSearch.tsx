@@ -1,6 +1,5 @@
 import React from 'react';
 import debounce from 'lodash/debounce';
-import reject from 'lodash/reject';
 import { AutoUIModel, getPropertyScheme } from '../../AutoUI';
 import { AutoUIContext } from '../../AutoUI/schemaOps';
 import { useHistory } from '../../hooks/useHistory';
@@ -10,7 +9,7 @@ import { Typography } from '@mui/material';
 import { convertToPineClientFilter } from '../../oData/jsonToOData';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../AutoUI/utils';
 
-const { Box, styled, Checkbox } = Material;
+const { Box, styled } = Material;
 
 const Focus = styled(Box)(({ theme }) => ({
 	flexBasis: '100%',
@@ -43,22 +42,16 @@ const FocusItem = styled(Box)<{ hasGetBaseUrl: boolean }>(
 interface FocusSearchProps<T extends { id: number; [key: string]: any }> {
 	searchTerm: string;
 	filtered: T[];
-	selected: T[];
-	setSelected: (selected: T[]) => void;
 	autouiContext: AutoUIContext<T>;
 	model: AutoUIModel<T>;
-	hasUpdateActions?: boolean;
 	rowKey?: keyof T;
 }
 
 export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 	searchTerm,
 	filtered,
-	selected,
-	setSelected,
 	autouiContext,
 	model,
-	hasUpdateActions,
 	rowKey = 'id',
 }: FocusSearchProps<T>) => {
 	const history = useHistory();
@@ -142,39 +135,11 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 								hasGetBaseUrl={!!autouiContext.getBaseUrl}
 							>
 								<Box display="flex" flexDirection="row" alignItems="center">
-									{hasUpdateActions && (
-										<Box
-											display="flex"
-											flexDirection="column"
-											mx={1}
-											alignItems="center"
-										>
-											<Checkbox
-												onChange={() => {
-													const isChecked = !!selected.find(
-														(s) => s[rowKey] === entity[rowKey],
-													);
-													const checkedItems = !isChecked
-														? selected.concat(entity)
-														: (reject(selected, {
-																[rowKey]: entity[rowKey],
-														  }) as unknown as Array<typeof entity>);
-													setSelected(checkedItems);
-												}}
-												checked={
-													!!selected.find((s) => s[rowKey] === entity[rowKey])
-												}
-												onClick={(event) => {
-													event.stopPropagation();
-												}}
-											/>
-										</Box>
-									)}
 									<Box
 										display="flex"
 										flexDirection="column"
 										alignItems="center"
-										ml={!hasUpdateActions ? 1 : undefined}
+										p={1}
 									>
 										<Typography>{getEntityValue(entity)}</Typography>
 									</Box>
