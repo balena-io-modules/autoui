@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update `@balena/ui-shared-components`
+      hash: 13c5b07dca844b062d50f1c20c542eceecf2057e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 5.1.4
+  title: ""
+  date: 2024-10-22T14:38:04.077Z
+- commits:
     - subject: Fix edit on any field filter
       hash: f4ebdf3768ad523797255174869bddb71e6e4432
       body: ""
