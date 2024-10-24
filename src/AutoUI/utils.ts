@@ -15,6 +15,8 @@ import {
 	CheckedState,
 } from 'rendition';
 
+export const DEFAULT_ITEMS_PER_PAGE = 50;
+
 export const diff = <T extends unknown>(a: T, b: T) => {
 	if (a === b) {
 		return 0;
