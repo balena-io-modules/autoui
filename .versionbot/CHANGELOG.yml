@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update UI shared components
+      hash: 7654afec693eeaaa883bf21c84a1a3dca7be3251
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 5.1.5
+  title: ""
+  date: 2024-10-24T15:32:13.434Z
+- commits:
     - subject: Update `@balena/ui-shared-components`
       hash: 13c5b07dca844b062d50f1c20c542eceecf2057e
       body: ""
