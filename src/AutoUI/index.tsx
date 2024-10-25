@@ -3,7 +3,7 @@ import type {
 	AutoUIContext,
 	ActionData,
 	Priorities,
-	AutoUITagsSdk,
+	AutoUISdk,
 } from './schemaOps';
 import {
 	AutoUIAction,
@@ -40,6 +40,7 @@ import {
 	setToLocalStorage,
 	getSelected,
 	getSortingFunction,
+	DEFAULT_ITEMS_PER_PAGE,
 } from './utils';
 import { FocusSearch } from '../components/Filters/FocusSearch';
 import { CustomWidget } from './CustomWidget';
@@ -75,8 +76,6 @@ import {
 import type { FiltersView } from '../components/Filters';
 import { ajvFilter } from '../components/Filters/SchemaSieve';
 const { Box, styled } = Material;
-
-const DEFAULT_ITEMS_PER_PAGE = 50;
 
 const HeaderGrid = styled(Box)(({ theme }) => ({
 	display: 'flex',
@@ -115,7 +114,7 @@ export interface AutoUIProps<T> extends Omit<Material.BoxProps, 'onChange'> {
 	/** Actions is an array of actions applicable on the selected items */
 	actions?: Array<AutoUIAction<T>>;
 	/** The sdk is used to pass the method to handle tags when added removed or updated */
-	sdk?: { tags: AutoUITagsSdk<T> };
+	sdk?: AutoUISdk<T>;
 	/** Dictionary of {[column_property]: customFunction} where the customFunction is the function to sort data on column header click */
 	customSort?:
 		| Dictionary<(a: T, b: T) => number>
@@ -316,14 +315,15 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 
 	const autouiContext = React.useMemo((): AutoUIContext<T> => {
 		const tagField = getFieldForFormat(model.schema, 'tag');
-		const tagsAction: AutoUIAction<T> | null = sdk?.tags
+		const sdkTags = sdk?.tags;
+		const tagsAction: AutoUIAction<T> | null = sdkTags
 			? {
 					title: t('actions.manage_tags'),
 					type: 'update',
 					section: 'settings',
 					renderer: ({ affectedEntries, onDone }) => {
 						return (
-							(!!affectedEntries || (sdk.tags && 'getAll' in sdk.tags)) && (
+							(!!affectedEntries || (sdkTags && 'getAll' in sdkTags)) && (
 								<Tags
 									selected={affectedEntries}
 									autouiContext={autouiContext}
@@ -340,7 +340,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							affectedEntries,
 							tagField as keyof T,
 							checkedState,
-							sdk.tags,
+							sdkTags,
 							t,
 						),
 			  }
@@ -494,21 +494,15 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 													persistFilters={persistFilters}
 													changeFilters={$setFilters}
 													changeViews={setViews}
-													// TODO: add a way to handle the focus search on server side pagination as well
-													{...(!pagination?.serverSide && {
-														onSearch: (term: string) => (
-															<FocusSearch
-																searchTerm={term}
-																filtered={filtered}
-																selected={selected ?? []}
-																setSelected={$setSelected}
-																autouiContext={autouiContext}
-																model={model}
-																hasUpdateActions={hasUpdateActions}
-																rowKey={rowKey}
-															/>
-														),
-													})}
+													onSearch={(term: string) => (
+														<FocusSearch
+															searchTerm={term}
+															filtered={filtered}
+															autouiContext={autouiContext}
+															model={model}
+															rowKey={rowKey}
+														/>
+													)}
 												/>
 											</Box>
 											<LensSelection

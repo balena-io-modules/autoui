@@ -199,7 +199,7 @@ export const createFullTextSearchFilter = (
 					value: term,
 				}),
 				anyOf: [filter],
-			}
+		  }
 		: null;
 };
 

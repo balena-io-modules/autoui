@@ -10,6 +10,10 @@ import { findInObject } from './utils';
 
 type MaybePromise<T> = T | Promise<T>;
 
+type Subset<T> = {
+	[K in keyof T]: T[K];
+};
+
 export interface AutoUIBaseResource<T> {
 	id: number;
 	__permissions: Permissions<T>;
@@ -96,6 +100,13 @@ export interface AutoUIAction<T> {
 	isDangerous?: boolean;
 }
 
+export interface AutoUISdk<T> {
+	tags?: AutoUITagsSdk<T>;
+	inputSearch?: (
+		filter: PineFilterObject | undefined,
+	) => Promise<Array<Subset<T>>>;
+}
+
 export interface AutoUIContext<T> {
 	resource: string;
 	getBaseUrl?: (entry: T) => string;
@@ -111,10 +122,10 @@ export interface AutoUIContext<T> {
 		longitudeField?: string;
 	};
 	actions?: Array<AutoUIAction<T>>;
-	customSort?: Dictionary<(a: T, b: T) => number> | Dictionary<string | string[]>;
-	sdk?: {
-		tags?: AutoUITagsSdk<T>;
-	};
+	customSort?:
+		| Dictionary<(a: T, b: T) => number>
+		| Dictionary<string | string[]>;
+	sdk?: AutoUISdk<T>;
 	internalPineFilter?: PineFilterObject | null;
 	checkedState: CheckedState;
 }
