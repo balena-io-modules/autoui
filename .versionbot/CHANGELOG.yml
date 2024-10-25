@@ -1,4 +1,22 @@
 - commits:
+    - subject: Remove ability to select from focus search component
+      hash: cf63f0bb82c85b9c03e08dbece7997212ebd684c
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Andrea Rosci
+    - subject: Adapt focus search for server side pagination
+      hash: f09f94762e5250a773641a598eb7da49c3d3011d
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Andrea Rosci
+  version: 6.0.0
+  title: ""
+  date: 2024-10-25T13:14:29.414Z
+- commits:
     - subject: Update UI shared components
       hash: 7654afec693eeaaa883bf21c84a1a3dca7be3251
       body: ""
