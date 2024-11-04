@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add Widget and Renderer component
+      hash: 4555a8d6aa7712f62d900e2348b64a80e16c015a
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Andrea Rosci
+  version: 6.1.0
+  title: ""
+  date: 2024-11-04T15:27:01.488Z
+- commits:
     - subject: Update UI shared components
       hash: 1339ed177c5925ffc895b4743f4d88e62c938021
       body: ""
