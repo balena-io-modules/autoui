@@ -8,12 +8,9 @@ import {
 import castArray from 'lodash/castArray';
 import get from 'lodash/get';
 import { TFunction } from '../hooks/useTranslation';
-import {
-	JSONSchema,
-	JsonTypes,
-	TableSortFunction,
-	CheckedState,
-} from 'rendition';
+import { TableSortFunction, CheckedState } from 'rendition';
+import { JsonTypes } from '../components/Widget/utils';
+import { JSONSchema7 as JSONSchema } from 'json-schema';
 
 export const DEFAULT_ITEMS_PER_PAGE = 50;
 
@@ -170,20 +167,21 @@ const sortFn = (
 	return diff(aa, bb);
 };
 
-export const getSortingFunction = <T extends any>(
+export const getSortingFunction = <T>(
 	schemaKey: keyof T,
 	schemaValue: JSONSchema,
 ): TableSortFunction<T> => {
 	const types = castArray(schemaValue.type);
 	const refScheme = getPropertyScheme(schemaValue);
 	if (types.includes(JsonTypes.string)) {
-		return (a: T, b: T) => sortFn(a, b, schemaKey);
+		return (a: T, b: T) => sortFn(a, b, schemaKey as string);
 	}
 	if (types.includes(JsonTypes.object) && refScheme) {
-		return (a: T, b: T) => sortFn(a, b, [schemaKey, ...refScheme]);
+		return (a: T, b: T) => sortFn(a, b, [schemaKey as string, ...refScheme]);
 	}
 	if (types.includes(JsonTypes.array) && refScheme) {
-		return (a: T, b: T) => sortFn(a, b, [schemaKey, '0', ...refScheme]);
+		return (a: T, b: T) =>
+			sortFn(a, b, [schemaKey as string, '0', ...refScheme]);
 	}
 	return (a: T, b: T) => diff(a[schemaKey], b[schemaKey]);
 };

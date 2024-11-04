@@ -45,6 +45,17 @@ export {
 	type FiltersView,
 } from './components/Filters';
 
+export { Widget } from './components/Widget';
+export type {
+	UiSchema,
+	WidgetProps,
+	Widget as WidgetType,
+	Format,
+	JsonTypesTypeMap,
+} from './components/Widget/utils';
+
+export { widgetFactory, JsonTypes } from './components/Widget/utils';
+
 export { Permissions } from './AutoUI/schemaOps';
 
 export { LensTemplate } from './AutoUI/Lenses';

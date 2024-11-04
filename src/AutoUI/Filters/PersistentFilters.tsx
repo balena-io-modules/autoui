@@ -1,6 +1,6 @@
 import * as React from 'react';
 import qs from 'qs';
-import { JSONSchema } from 'rendition';
+import { JSONSchema7 as JSONSchema } from 'json-schema';
 import { History } from 'history';
 import { Filters, FiltersProps } from '../../components/Filters';
 import {

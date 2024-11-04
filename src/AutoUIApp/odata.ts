@@ -1,7 +1,7 @@
 import { Methods, OpenApiJson } from './openApiJson';
 import PineClientFetch from 'pinejs-client-fetch';
 import get from 'lodash/get';
-import { JSONSchema } from 'rendition';
+import { JSONSchema7 as JSONSchema } from 'json-schema';
 
 export const pine = new PineClientFetch(
 	{

@@ -1,4 +1,5 @@
-import { JSONSchema, TableSortOptions } from 'rendition';
+import { TableSortOptions } from 'rendition';
+import { JSONSchema7 as JSONSchema } from 'json-schema';
 import { AutoUIContext } from '../AutoUI/schemaOps';
 
 export type PineFilterObject = Record<string, any>;
@@ -245,23 +246,26 @@ export const orderbyBuilder = <T>(
 	}
 
 	const { field, reverse, refScheme } = sortInfo;
-	if (!field) {
+	if (!field || typeof field !== 'string') {
 		return null;
 	}
 	const direction = !reverse ? 'asc' : 'desc';
-	const customOrderByKey = customSort?.[field as string];
+	const customOrderByKey = customSort?.[field as keyof typeof customSort];
 	if (typeof customOrderByKey === 'string') {
 		return [`${customOrderByKey} ${direction}`, `id ${direction}`];
 	}
 	if (Array.isArray(customOrderByKey)) {
-		if (customOrderByKey.length === 0 || customOrderByKey.some(k => typeof k !== 'string')) {
+		if (
+			customOrderByKey.length === 0 ||
+			customOrderByKey.some((k) => typeof k !== 'string')
+		) {
 			throw new Error(
 				`Field ${field as string} error: custom sort for this field must be of type string or a non empty string array, ${customOrderByKey.join(',')} is not accepted.`,
 			);
 		}
 		return [
-			...customOrderByKey.map(k => `${k} ${direction}`),
-			`id ${direction}`
+			...customOrderByKey.map((k) => `${k} ${direction}`),
+			`id ${direction}`,
 		];
 	}
 	if (customOrderByKey != null && typeof customOrderByKey !== 'string') {
