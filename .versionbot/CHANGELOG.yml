@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix disabled text widget truncation
+      hash: 321efb1d9fc7a2b037c115a2fa8c5fa53fb1301a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 6.1.1
+  title: ""
+  date: 2024-11-05T20:53:11.916Z
+- commits:
     - subject: Add Widget and Renderer component
       hash: 4555a8d6aa7712f62d900e2348b64a80e16c015a
       body: ""
