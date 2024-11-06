@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix DisabledTextWidget truncation
+      hash: 8378071480b922ed5e76402d6aec23aa58a7ec95
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 6.1.2
+  title: ""
+  date: 2024-11-06T20:20:39.245Z
+- commits:
     - subject: Fix disabled text widget truncation
       hash: 321efb1d9fc7a2b037c115a2fa8c5fa53fb1301a
       body: ""
