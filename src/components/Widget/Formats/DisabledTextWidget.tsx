@@ -1,7 +1,8 @@
 import React from 'react';
 import { useTranslation } from '../../../hooks/useTranslation';
 import { JsonTypes, widgetFactory } from '../utils';
-import { Tooltip, Truncate } from '@balena/ui-shared-components';
+import { Material } from '@balena/ui-shared-components';
+const { Typography, Tooltip } = Material;
 
 export const DisabledTextWidget = widgetFactory('DisabledText', {}, [
 	JsonTypes.string,
@@ -13,9 +14,9 @@ export const DisabledTextWidget = widgetFactory('DisabledText', {}, [
 		value != null && typeof value !== 'string' ? value.toString() : value;
 	return (
 		<Tooltip title={val}>
-			<Truncate color="text.secondary" lineCamp={1} maxWidth={300}>
+			<Typography display="block" color="text.secondary" maxWidth={300} noWrap>
 				{val ?? t('info.not_defined')}
-			</Truncate>
+			</Typography>
 		</Tooltip>
 	);
 });
