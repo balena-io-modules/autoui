@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update ui-shared-components
+      hash: 78d972d279fefc412488b3a27d69bb88e07d637f
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Jonathan Berger
+  version: 6.1.3
+  title: ""
+  date: 2024-11-07T16:30:48.995Z
+- commits:
     - subject: Fix DisabledTextWidget truncation
       hash: 8378071480b922ed5e76402d6aec23aa58a7ec95
       body: ""
