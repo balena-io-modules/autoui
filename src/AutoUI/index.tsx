@@ -76,6 +76,8 @@ import { ajvFilter } from '../components/Filters/SchemaSieve';
 import type { Format } from '../components/Widget/utils';
 import type { Dictionary } from '../common';
 import { defaultFormats } from '../components/Widget/Formats';
+import { listFilterQuery } from './Filters/PersistentFilters';
+import { removeRefSchemeSeparatorsFromFilters } from './Filters/utils';
 const { Box, styled } = Material;
 
 const HeaderGrid = styled(Box)(({ theme }) => ({
@@ -179,6 +181,10 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	const { t } = useTranslation();
 	const { state: analytics } = useAnalyticsContext();
 	const history = useHistory();
+	// Use a flag to make sure table view event is only triggered once (without the tag
+	// it will be triggered whenever the data is updated)
+	const [shouldTableViewEventBeTriggered, setShouldTableViewEventBeTriggered] =
+		React.useState(true);
 
 	const modelRef = React.useRef(modelRaw);
 	// This allows the component to work even if
@@ -431,6 +437,30 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		});
 	};
 
+	React.useEffect(() => {
+		if (!lens || !shouldTableViewEventBeTriggered) {
+			return;
+		}
+
+		const dataCount = Array.isArray(data) ? data.length : null;
+		const totalItems = pagination?.serverSide
+			? pagination.totalItems
+			: dataCount;
+
+		analytics.webTracker?.track('Resource List View', {
+			lens: lens.slug,
+			resource: model.resource,
+			totalItems,
+			filters: Object.assign(
+				{},
+				listFilterQuery(removeRefSchemeSeparatorsFromFilters(filters), false),
+			),
+			sort,
+		});
+
+		setShouldTableViewEventBeTriggered(false);
+	}, [lens, model.resource, pagination, filters, sort, data]);
+
 	if (loading && data == null) {
 		return (
 			<Spinner
@@ -521,6 +551,8 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 														resource: model.resource,
 														lens: lens.slug,
 													});
+
+													setShouldTableViewEventBeTriggered(true);
 												}}
 											/>
 										</HeaderGrid>
