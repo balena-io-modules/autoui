@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update ui-shared-components to 9.6.0
+      hash: f858f9e592f2386b25bfd01c1583611bb537855f
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 6.1.5
+  title: ""
+  date: 2024-11-11T18:38:23.123Z
+- commits:
     - subject: Add `renovate.json` to `.github`
       hash: 61f9e285d6b5c1f5f3b3d9283d838f078dce71a3
       body: ""
