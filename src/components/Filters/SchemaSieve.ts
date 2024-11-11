@@ -1,4 +1,4 @@
-import {
+import type {
 	JSONSchema7 as JSONSchema,
 	JSONSchema7Definition as JSONSchemaDefinition,
 } from 'json-schema';
@@ -12,6 +12,9 @@ import ajvKeywords from 'ajv-keywords';
 import addFormats from 'ajv-formats';
 import pickBy from 'lodash/pickBy';
 import { enqueueSnackbar } from '@balena/ui-shared-components';
+import { format as dateFormat } from 'date-fns';
+import isEqual from 'lodash/isEqual';
+import { findInObject } from '../../AutoUI/utils';
 
 const ajv = new Ajv();
 // TODO: remove the any cast as soon as we remove rendition
@@ -120,7 +123,7 @@ export const createFilter = (
 			if (!field || !operator) {
 				return {};
 			}
-			const propertySchema = properties[field] as JSONSchema;
+			const propertySchema = properties[field];
 			const operators = getAllOperators(propertySchema);
 			const operatorLabel = operators[operator as keyof typeof operators];
 			const filter = createModelFilter(propertySchema, {
@@ -252,4 +255,86 @@ export const parseFilterDescription = (
 	} catch {
 		return;
 	}
+};
+
+const transformToReadableValue = (
+	parsedFilterDescription: FilterDescription,
+): string => {
+	const { schema, value } = parsedFilterDescription;
+	if (schema && isDateTimeFormat(schema.format)) {
+		return dateFormat(value, 'PPPppp');
+	}
+	const schemaEnum: JSONSchema['enum'] = findInObject(schema, 'enum');
+	const schemaEnumNames: string[] | undefined = findInObject(
+		schema,
+		'enumNames',
+	);
+	if (schemaEnum && schemaEnumNames) {
+		const index = schemaEnum.findIndex((a) => isEqual(a, value));
+		return schemaEnumNames[index];
+	}
+
+	const oneOf: JSONSchema['oneOf'] = findInObject(schema, 'oneOf');
+	if (oneOf) {
+		const selected = oneOf.find(
+			(o) => isJSONSchema(o) && isEqual(o.const, value),
+		);
+
+		return isJSONSchema(selected) && selected.title ? selected.title : value;
+	}
+
+	if (typeof value === 'object') {
+		if (Object.keys(value).length > 1) {
+			return Object.entries(value)
+				.map(([key, value]) => {
+					const property = schema.properties?.[key];
+					return isJSONSchema(property)
+						? `${property.title ?? key}: ${value}`
+						: `${key}: ${value}`;
+				})
+				.join(', ');
+		}
+		return Object.values(value)[0] as string;
+	}
+
+	return String(value);
+};
+
+export const convertFilterToHumanReadable = (filter: JSONSchema) => {
+	if (filter.title === FULL_TEXT_SLUG) {
+		const parsedFilterDescription = parseFilterDescription(filter);
+		if (!parsedFilterDescription) {
+			return;
+		}
+		return parsedFilterDescription
+			? [
+					{
+						name: parsedFilterDescription.field,
+						operator: 'contains',
+						value: transformToReadableValue(parsedFilterDescription),
+					},
+			  ]
+			: undefined;
+	}
+
+	return filter.anyOf
+		?.map((f, index) => {
+			if (!isJSONSchema(f)) {
+				return;
+			}
+			const parsedFilterDescription = parseFilterDescription(f);
+			if (!parsedFilterDescription) {
+				return;
+			}
+			const value = transformToReadableValue(parsedFilterDescription);
+			return {
+				name:
+					parsedFilterDescription?.schema?.title ??
+					parsedFilterDescription.field,
+				operator: parsedFilterDescription.operator,
+				value,
+				prefix: index > 0 ? 'or' : undefined,
+			};
+		})
+		.filter((f) => Boolean(f));
 };
