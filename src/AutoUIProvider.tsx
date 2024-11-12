@@ -1,8 +1,6 @@
 import React from 'react';
-import {
-	ContextProvider,
-	ContextProviderInterface,
-} from './contexts/ContextProvider';
+import type { ContextProviderInterface } from './contexts/ContextProvider';
+import { ContextProvider } from './contexts/ContextProvider';
 
 export const AutoUIProvider = ({
 	children,

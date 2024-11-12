@@ -27,7 +27,7 @@ import { getFromLocalStorage, setToLocalStorage } from '../../AutoUI/utils';
 const { Box, Button, useTheme, useMediaQuery } = Material;
 
 const getViews = (views?: FiltersView[], viewsRestorationKey?: string) => {
-	if (!!views?.length) {
+	if (views?.length) {
 		return views;
 	}
 	if (viewsRestorationKey) {
@@ -92,9 +92,9 @@ export const Filters = ({
 	const [showSearchDropDown, setShowSearchDropDown] = React.useState(false);
 	const [searchString, setSearchString] = React.useState<string>('');
 	const [editFilter, setEditFilter] = React.useState<JSONSchema>();
-	const searchBarRef = useClickOutsideOrEsc<HTMLDivElement>(() =>
-		setShowSearchDropDown(false),
-	);
+	const searchBarRef = useClickOutsideOrEsc<HTMLDivElement>(() => {
+		setShowSearchDropDown(false);
+	});
 	const [storedViews, setStoredViews] = React.useState(
 		getViews(views, viewsRestorationKey),
 	);
@@ -116,7 +116,7 @@ export const Filters = ({
 				...newViews,
 			});
 		},
-		[viewsRestorationKey, setToLocalStorage, setStoredViews, onViewsChange],
+		[viewsRestorationKey, setStoredViews, onViewsChange, analytics.webTracker],
 	);
 
 	const formData = React.useMemo(() => {
@@ -148,10 +148,10 @@ export const Filters = ({
 				// We need to recalculate the operator, as it is provided as a value in the description instead of as a key.
 				// TODO: The operator should be passed as an object in the description, not as a value.
 				const operator = model
-					? Object.entries(model.operators).find(
+					? (Object.entries(model.operators).find(
 							([key, value]) =>
 								value === description.operator || key === description.operator,
-					  )?.[0] ?? description.operator
+						)?.[0] ?? description.operator)
 					: description.operator;
 				return {
 					field: description.field,
@@ -160,7 +160,7 @@ export const Filters = ({
 				};
 			})
 			.filter((f) => !!f) as FormData[];
-	}, [editFilter]);
+	}, [editFilter, schema]);
 
 	const handleFilterChange = React.useCallback(
 		(filter: JSONSchema | null | undefined) => {
@@ -177,8 +177,9 @@ export const Filters = ({
 	);
 
 	const handleDeleteFilter = React.useCallback(
-		(filter: JSONSchema) =>
-			onFiltersChange?.(filters?.filter((f) => f.$id !== filter.$id) ?? []),
+		(filter: JSONSchema) => {
+			onFiltersChange?.(filters?.filter((f) => f.$id !== filter.$id) ?? []);
+		},
 		[filters, onFiltersChange],
 	);
 
@@ -197,8 +198,9 @@ export const Filters = ({
 	);
 
 	const handleDeleteView = React.useCallback(
-		(view: FiltersView) =>
-			viewsUpdate?.(storedViews?.filter((v) => v.id !== view.id) ?? []),
+		(view: FiltersView) => {
+			viewsUpdate?.(storedViews?.filter((v) => v.id !== view.id) ?? []);
+		},
 		[storedViews, viewsUpdate],
 	);
 
@@ -246,7 +248,9 @@ export const Filters = ({
 				{(!renderMode || renderMode.includes('add')) && (
 					<Button
 						variant={dark ? 'light' : 'outlined'}
-						onClick={() => setShowFilterDialog(true)}
+						onClick={() => {
+							setShowFilterDialog(true);
+						}}
 						startIcon={matches ? <FontAwesomeIcon icon={faFilter} /> : null}
 						color="secondary"
 						sx={{
@@ -264,7 +268,9 @@ export const Filters = ({
 				{(!renderMode || renderMode.includes('views')) && (
 					<Views
 						views={storedViews}
-						setFilters={(filters) => onFiltersChange?.(filters)}
+						setFilters={(updatedFilters) => {
+							onFiltersChange?.(updatedFilters);
+						}}
 						deleteView={handleDeleteView}
 						dark={dark}
 					/>
@@ -289,7 +295,9 @@ export const Filters = ({
 							renderMode?.includes('summaryWithSaveViews') ||
 							renderMode?.includes('all')
 						}
-						onSaveView={({ name }) => handleSaveView(name)}
+						onSaveView={({ name }) => {
+							handleSaveView(name);
+						}}
 						filters={filters}
 						dark={dark}
 					/>

@@ -4,8 +4,8 @@ import type {
 } from 'json-schema';
 import get from 'lodash/get';
 import pick from 'lodash/pick';
-import { CheckedState, ResourceTagModelService } from 'rendition';
-import { PineFilterObject } from '../oData/jsonToOData';
+import type { CheckedState, ResourceTagModelService } from 'rendition';
+import type { PineFilterObject } from '../oData/jsonToOData';
 import { findInObject } from './utils';
 import type { Dictionary } from '../common';
 
@@ -19,6 +19,11 @@ export interface AutoUIBaseResource<T> {
 	id: number;
 	__permissions: Permissions<T>;
 }
+
+type XHeaderLink = {
+	tooltip: string;
+	href: string;
+};
 
 export interface Permissions<T> {
 	read: Array<keyof T>;
@@ -40,6 +45,7 @@ export interface AutoUIRawModel<T> {
 	permissions: Dictionary<Permissions<T>>;
 	priorities?: Priorities<T>;
 }
+
 export interface AutoUIModel<T> {
 	resource: string;
 	schema: JSONSchema;
@@ -57,7 +63,7 @@ export interface CustomSchemaDescription {
 
 export type AutoUITagsSdk<T> = ResourceTagModelService &
 	(
-		| {}
+		| object
 		| {
 				getAll: (itemsOrFilters: any) => T[] | Promise<T[]>;
 				canAccess: (param: {
@@ -78,34 +84,32 @@ export interface AutoUIAction<T> {
 		/** setSelected can be can be used for delete function on server side pagination */
 		setSelected?: (
 			selected: Array<Partial<T>> | undefined,
-			allChecked?: CheckedState | undefined,
+			allChecked?: CheckedState,
 		) => void;
 	}) => React.ReactNode;
 	actionFn?: (props: {
 		/** affectedEntries will be undefined if pagination is server side and checkedState is "all" */
 		affectedEntries: T[] | undefined;
 		/** checkState can be undefined only for entity case, since card does not have a selection event  */
-		checkedState: CheckedState | undefined;
+		checkedState?: CheckedState;
 		/** setSelected can be can be used for delete function on server side pagination */
 		setSelected?: (
 			selected: Array<Partial<T>> | undefined,
-			allChecked?: CheckedState | undefined,
+			allChecked?: CheckedState,
 		) => void;
 	}) => void;
 	isDisabled?: (props: {
 		/** affectedEntries will be undefined if pagination is server side and checkedState is "all" */
 		affectedEntries: T[] | undefined;
-		/** checkState can be undefined only for entity case, since card does not have a selection event  */
-		checkedState: CheckedState | undefined;
+		/** checkState can be undefined only for entity case, since card does not have a selection event */
+		checkedState?: CheckedState;
 	}) => MaybePromise<string | null>;
 	isDangerous?: boolean;
 }
 
 export interface AutoUISdk<T> {
 	tags?: AutoUITagsSdk<T>;
-	inputSearch?: (
-		filter: PineFilterObject | undefined,
-	) => Promise<Array<Subset<T>>>;
+	inputSearch?: (filter?: PineFilterObject) => Promise<Array<Subset<T>>>;
 }
 
 export interface AutoUIContext<T> {
@@ -123,9 +127,7 @@ export interface AutoUIContext<T> {
 		longitudeField?: string;
 	};
 	actions?: Array<AutoUIAction<T>>;
-	customSort?:
-		| Dictionary<(a: T, b: T) => number>
-		| Dictionary<string | string[]>;
+	customSort?: Dictionary<((a: T, b: T) => number) | string | string[]>;
 	sdk?: AutoUISdk<T>;
 	internalPineFilter?: PineFilterObject | null;
 	checkedState: CheckedState;
@@ -141,17 +143,17 @@ export interface ActionData<T> {
 export const isJson = (str: string) => {
 	try {
 		JSON.parse(str);
-	} catch (err) {
+		return true;
+	} catch {
 		return false;
 	}
-	return true;
 };
 
 // The implementation lacks handling of nested schemas and some edge cases, but is enough for now.
 export const autoUIJsonSchemaPick = <T>(
 	schema: JSONSchema,
 	selectors: Array<keyof T>,
-) => {
+): JSONSchema => {
 	const res: JSONSchema = {
 		...schema,
 		properties: pick(schema.properties ?? {}, selectors as string[]),
@@ -168,11 +170,13 @@ export const autoUIJsonSchemaPick = <T>(
 export const getFieldForFormat = (schema: JSONSchema, format: string) => {
 	let propertyKeyWithFormat: string | undefined;
 
-	Object.entries(schema.properties ?? {}).forEach(([key, val]: any) => {
-		if (typeof val === 'object' && val.format === format) {
-			propertyKeyWithFormat = key;
-		}
-	});
+	Object.entries(schema.properties ?? {}).forEach(
+		([key, val]: [string, any]) => {
+			if (typeof val === 'object' && val.format === format) {
+				propertyKeyWithFormat = key;
+			}
+		},
+	);
 
 	return propertyKeyWithFormat;
 };
@@ -181,17 +185,16 @@ export const getRefSchemePrefix = (schema: JSONSchema) => {
 	return schema.items
 		? 'items.properties.'
 		: schema.properties
-		? 'properties.'
-		: '';
+			? 'properties.'
+			: '';
 };
 
 export const getRefSchemeTitle = (
 	refScheme: string | undefined,
 	schema: JSONSchema,
-): string | undefined => {
-	return refScheme
-		? get(schema, `${getRefSchemePrefix(schema)}${refScheme}.title`)
-		: schema.title;
+) => {
+	const key = `${getRefSchemePrefix(schema)}${refScheme}.title`;
+	return refScheme ? get(schema, key) : schema.title;
 };
 
 export const isJSONSchema = (
@@ -226,21 +229,19 @@ export const parseDescription = (
 export const parseDescriptionProperty = (
 	schemaValue: JSONSchema,
 	property: string,
-): boolean | string[] | null | undefined => {
+) => {
 	const description = parseDescription(schemaValue);
-	if (description && property in description) {
-		const value = description[property as keyof typeof description];
-		return value;
-	}
-	return null;
+	return description && property in description
+		? description[property as keyof typeof description]
+		: null;
 };
 
 export const autoUIAddToSchema = (
 	schema: JSONSchema,
 	schemaProperty: string,
 	property: string,
-	value: any,
-) => {
+	value: unknown,
+): JSONSchema => {
 	return {
 		...schema,
 		properties: {
@@ -255,20 +256,20 @@ export const autoUIAddToSchema = (
 
 export const getHeaderLink = (
 	schemaValue: JSONSchema | JSONSchemaDefinition,
-) => {
+): XHeaderLink | null => {
 	if (typeof schemaValue === 'boolean' || !schemaValue.description) {
 		return null;
 	}
 	try {
-		const json = JSON.parse(schemaValue.description!);
+		const json = JSON.parse(schemaValue.description);
 		return json['x-header-link'];
-	} catch (err) {
+	} catch {
 		return null;
 	}
 };
 
+// TODO: This atm doesn't support ['my property']
 export const convertRefSchemeToSchemaPath = (refScheme: string | undefined) => {
-	// TODO: This atm doesn't support ['my property']
 	return refScheme
 		?.split('.')
 		.join('.properties.')
@@ -313,16 +314,19 @@ export const generateSchemaFromRefScheme = (
 	};
 };
 
-export const getRefSchema = (schema: JSONSchema, refSchemePrefix: string) => {
+export const getRefSchema = (
+	schema: JSONSchema,
+	refSchemePrefix: string,
+): JSONSchema => {
 	const refScheme = parseDescriptionProperty(schema, 'x-ref-scheme');
 	return refScheme
-		? get(schema, `${refSchemePrefix}${refScheme}`) ?? schema
+		? ((get(schema, `${refSchemePrefix}${refScheme}`) as JSONSchema) ?? schema)
 		: schema;
 };
 
 export const getPropertyScheme = (
-	schemaValue: JSONSchema | JSONSchemaDefinition,
-) => {
+	schemaValue: JSONSchema | JSONSchemaDefinition | null,
+): string[] | null => {
 	const json = isJSONSchema(schemaValue) ? parseDescription(schemaValue) : null;
 	return json?.['x-foreign-key-scheme'] ?? json?.['x-ref-scheme'] ?? null;
 };
@@ -331,33 +335,29 @@ export const getSubSchemaFromRefScheme = (
 	schema: JSONSchema | JSONSchemaDefinition,
 	refScheme?: string,
 ): JSONSchema => {
-	const referenceScheme = refScheme || getPropertyScheme(schema)?.[0];
+	const referenceScheme = refScheme ?? getPropertyScheme(schema)?.[0];
 	const convertedRefScheme = convertRefSchemeToSchemaPath(referenceScheme);
-	if (!convertedRefScheme) {
+	if (!convertedRefScheme || !isJSONSchema(schema)) {
 		return schema as JSONSchema;
 	}
 	const properties = findInObject(schema, 'properties');
-	return get(properties, convertedRefScheme);
+	return get(properties, convertedRefScheme) as JSONSchema;
 };
 
 export const getSchemaFormat = (schema: JSONSchema) => {
 	const property = getSubSchemaFromRefScheme(schema);
-	const format = property.format ?? schema.format;
-	return format;
+	return property.format ?? schema.format;
 };
 
 export const getSchemaTitle = (
 	jsonSchema: JSONSchema,
 	propertyKey: string,
-	refScheme?: string | undefined,
+	refScheme?: string,
 ) => {
-	if (!refScheme) {
-		return jsonSchema?.title || propertyKey;
-	}
 	return (
-		getSubSchemaFromRefScheme(jsonSchema, refScheme).title ??
-		jsonSchema.title ??
-		propertyKey
+		(refScheme
+			? getSubSchemaFromRefScheme(jsonSchema, refScheme).title
+			: jsonSchema?.title) ?? propertyKey
 	);
 };
 
@@ -380,8 +380,5 @@ export const autoUIAdaptRefScheme = (
 	const refScheme = getPropertyScheme(property);
 	const transformed =
 		(Array.isArray(value) && value.length <= 1 ? value[0] : value) ?? null;
-	if (refScheme) {
-		return get(transformed, refScheme[0]) ?? null;
-	}
-	return transformed;
+	return refScheme ? (get(transformed, refScheme[0]) ?? null) : transformed;
 };

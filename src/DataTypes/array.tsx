@@ -4,7 +4,8 @@ import {
 	createModelFilter,
 	type FormData,
 } from '../components/Filters/SchemaSieve';
-import { CreateFilter, getDataTypeSchema } from './utils';
+import type { CreateFilter } from './utils';
+import { getDataTypeSchema } from './utils';
 import { getDataModel } from '.';
 import { isJSONSchema, getRefSchema } from '../AutoUI/schemaOps';
 

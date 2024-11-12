@@ -1,14 +1,15 @@
 import React from 'react';
 import { ActionMethods, ACTION_SIDEBAR_WIDTH } from '.';
-import { OpenApiJson } from './openApiJson';
+import type { OpenApiJson } from './openApiJson';
 import { getFromRef, pine } from './odata';
-import { ISubmitEvent } from '@rjsf/core';
+import type { ISubmitEvent } from '@rjsf/core';
 import { Form, notifications } from 'rendition';
 import { Material } from '@balena/ui-shared-components';
 import { useTranslation } from '../hooks/useTranslation';
 import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { JSONSchema7 as JSONSchema } from 'json-schema';
+import type { JSONSchema7 as JSONSchema } from 'json-schema';
+import { isJSONSchema } from '../AutoUI/schemaOps';
 
 const { Button, Box, styled } = Material;
 
@@ -29,16 +30,26 @@ const replaceRefValues = (
 
 	const build: any = {};
 	for (const key in object) {
-		if (object.hasOwnProperty(key)) {
-			let value = object[key as keyof JSONSchema] as JSONSchema;
+		if (Object.prototype.hasOwnProperty.call(object, key)) {
+			let value = object[key as keyof JSONSchema];
 
 			// If this is an object, containing the $ref, evaluate it
-			if (typeof value === 'object' && !!value['$ref']) {
+			if (
+				typeof value === 'object' &&
+				!Array.isArray(value) &&
+				isJSONSchema(value) &&
+				!!value['$ref']
+			) {
 				value = getFromRef(openApiJson, value['$ref']);
 			}
 
 			// If this is an object without $ref, recurse
-			if (typeof value === 'object' && !value['$ref']) {
+			if (
+				typeof value === 'object' &&
+				!Array.isArray(value) &&
+				isJSONSchema(value) &&
+				!value['$ref']
+			) {
 				value = replaceRefValues(value, openApiJson);
 			}
 

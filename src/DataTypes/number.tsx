@@ -1,6 +1,7 @@
 import { FULL_TEXT_SLUG } from '../components/Filters/SchemaSieve';
-import { CreateFilter, getDataTypeSchema } from './utils';
-import { JSONSchema7 as JSONSchema } from 'json-schema';
+import type { CreateFilter } from './utils';
+import { getDataTypeSchema } from './utils';
+import type { JSONSchema7 as JSONSchema } from 'json-schema';
 
 export const operators = () => ({
 	is: 'is',
@@ -23,8 +24,8 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 		typeof value === 'number'
 			? value
 			: value !== '' && value != null
-			? Number(value)
-			: undefined;
+				? Number(value)
+				: undefined;
 
 	const fieldType = propertySchema?.type ?? 'number';
 

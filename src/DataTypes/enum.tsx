@@ -1,7 +1,8 @@
 import isEqual from 'lodash/isEqual';
 import { FULL_TEXT_SLUG } from '../components/Filters/SchemaSieve';
-import { CreateFilter, getDataTypeSchema, regexEscape } from './utils';
-import { JSONSchema7 as JSONSchema } from 'json-schema';
+import type { CreateFilter } from './utils';
+import { getDataTypeSchema, regexEscape } from './utils';
+import type { JSONSchema7 as JSONSchema } from 'json-schema';
 
 export const operators = () => ({
 	is: 'is',
@@ -34,7 +35,7 @@ const getFilter = (index: number, enums: JSONSchema['enum']) => {
 			? enumValue
 			: {
 					const: enumValue,
-			  };
+				};
 	}
 	return null;
 };
@@ -61,8 +62,8 @@ const getValues = (
 	return values.length > 1
 		? {
 				anyOf: values,
-		  }
-		: values[0] || null;
+			}
+		: (values[0] ?? null);
 };
 
 export const createFilter: CreateFilter<OperatorSlug> = (
@@ -109,7 +110,7 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 					? value
 					: {
 							const: value,
-					  },
+						},
 			},
 			required: [field],
 		};
@@ -125,7 +126,7 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 							not: {
 								const: value,
 							},
-					  },
+						},
 			},
 		};
 	}

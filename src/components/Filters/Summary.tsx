@@ -1,5 +1,5 @@
 import React from 'react';
-import { JSONSchema7 as JSONSchema } from 'json-schema';
+import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import {
 	DialogWithCloseButton,
 	Material,
@@ -64,7 +64,12 @@ export const Summary = ({
 					</Button>
 				</Box>
 				{showSaveView && (
-					<Button variant="text" onClick={() => setShowViewForm(true)}>
+					<Button
+						variant="text"
+						onClick={() => {
+							setShowViewForm(true);
+						}}
+					>
 						{t('actions.save_view')}
 					</Button>
 				)}
@@ -72,12 +77,14 @@ export const Summary = ({
 			<Box display="flex" flexWrap="wrap">
 				{filters.map((filter, index) => (
 					<FilterDescription
-						key={filter.$id || index}
+						key={filter.$id ?? index}
 						filter={filter}
 						onClick={() => {
 							onEdit(filter);
 						}}
-						onClose={() => onDelete(filter)}
+						onClose={() => {
+							onDelete(filter);
+						}}
 					/>
 				))}
 			</Box>

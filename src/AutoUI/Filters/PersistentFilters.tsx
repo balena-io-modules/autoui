@@ -1,17 +1,19 @@
 import * as React from 'react';
 import qs from 'qs';
-import { JSONSchema7 as JSONSchema } from 'json-schema';
-import { History } from 'history';
-import { Filters, FiltersProps } from '../../components/Filters';
+import type { JSONSchema7 as JSONSchema } from 'json-schema';
+import type { History } from 'history';
+import type { FiltersProps } from '../../components/Filters';
+import { Filters } from '../../components/Filters';
+import type { FilterDescription } from '../../components/Filters/SchemaSieve';
 import {
 	FULL_TEXT_SLUG,
-	FilterDescription,
 	createFilter,
 	createFullTextSearchFilter,
 	parseFilterDescription,
 } from '../../components/Filters/SchemaSieve';
 import { isJSONSchema } from '../../AutoUI/schemaOps';
 import { useAnalyticsContext } from '@balena/ui-shared-components';
+import { useLocation } from 'react-router';
 
 export interface ListQueryStringFilterObject {
 	n: string;
@@ -39,24 +41,18 @@ const isQueryStringFilterRuleset = (
 	!!rule?.length &&
 	rule?.every(isListQueryStringFilterRule);
 
-export function listFilterQuery (
-	filters: JSONSchema[],
-	stringify: true,
-): string;
-export function listFilterQuery (
+export function listFilterQuery(filters: JSONSchema[], stringify: true): string;
+export function listFilterQuery(
 	filters: JSONSchema[],
 	stringify?: false,
 ): Array<ListQueryStringFilterObject[] | undefined>;
-export function listFilterQuery (
-	filters: JSONSchema[],
-	stringify: boolean = true,
-) {
+export function listFilterQuery(filters: JSONSchema[], stringify = true) {
 	const queryStringFilters = filters.map((filter) => {
 		const signatures =
 			filter.title === FULL_TEXT_SLUG
 				? [parseFilterDescription(filter)].filter(
 						(f): f is FilterDescription => !!f,
-				  )
+					)
 				: filter.anyOf
 						?.filter((f): f is JSONSchema => isJSONSchema(f))
 						.map(
@@ -64,7 +60,7 @@ export function listFilterQuery (
 								({
 									...parseFilterDescription(f),
 									operatorSlug: f.title,
-								} as FilterDescription & { operatorSlug?: string }),
+								}) as FilterDescription & { operatorSlug?: string },
 						)
 						.filter((f) => !!f);
 
@@ -84,9 +80,9 @@ export function listFilterQuery (
 	return stringify
 		? qs.stringify(queryStringFilters, {
 				strictNullHandling: true,
-		  })
+			})
 		: queryStringFilters;
-};
+}
 
 export const loadRulesFromUrl = (
 	searchLocation: string,
@@ -136,12 +132,12 @@ export const loadRulesFromUrl = (
 	const rules = (Array.isArray(parsed) ? parsed : Object.values(parsed))
 		.filter(isQueryStringFilterRuleset)
 		.map(
-			(rules: ListQueryStringFilterObject[]) => {
-				if (!Array.isArray(rules)) {
-					rules = [rules];
+			(r: ListQueryStringFilterObject[]) => {
+				if (!Array.isArray(r)) {
+					r = [r];
 				}
 
-				const signatures = rules.map(
+				const signatures = r.map(
 					({ n, o, v }: ListQueryStringFilterObject) => ({
 						field: n,
 						operator: o,
@@ -200,16 +196,16 @@ export const PersistentFilters = ({
 }: PersistentFiltersProps &
 	Required<Pick<PersistentFiltersProps, 'renderMode'>>) => {
 	const { state: analytics } = useAnalyticsContext();
+	const { pathname } = useLocation();
 	const locationSearch = history?.location?.search ?? '';
 	const storedFilters = React.useMemo(() => {
 		return loadRulesFromUrl(locationSearch, schema, history);
-	}, [locationSearch, schema]);
+	}, [locationSearch, schema, history]);
 
 	const onFiltersUpdate = React.useCallback(
-		(filters: JSONSchema[]) => {
-			const { pathname } = window.location;
+		(updatedFilters: JSONSchema[]) => {
 			// Get filter query in two steps: first parse the filters, then stringify outside the function for performance
-			const parsedFilters = listFilterQuery(filters, false);
+			const parsedFilters = listFilterQuery(updatedFilters, false);
 			const filterQuery = qs.stringify(parsedFilters, {
 				strictNullHandling: true,
 			});
@@ -219,7 +215,7 @@ export const PersistentFilters = ({
 				search: filterQuery,
 			});
 
-			onFiltersChange?.(filters);
+			onFiltersChange?.(updatedFilters);
 
 			if (filterQuery !== locationSearch.substring(1)) {
 				analytics.webTracker?.track('Update table filters', {
@@ -229,7 +225,7 @@ export const PersistentFilters = ({
 				});
 			}
 		},
-		[window.location.pathname, onFiltersChange],
+		[onFiltersChange, analytics.webTracker, history, locationSearch, pathname],
 	);
 
 	// When the component mounts, filters from the page URL,
@@ -242,9 +238,11 @@ export const PersistentFilters = ({
 				? otherProps.renderMode
 				: [otherProps.renderMode],
 		);
+
 		if (normalizedRenderMode.has('all') || normalizedRenderMode.has('add')) {
 			onFiltersUpdate?.(storedFilters);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (

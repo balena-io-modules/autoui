@@ -54,7 +54,11 @@ export const Search = ({
 				...(value.length > 0 && {
 					endAdornment: (
 						<InputAdornment position="end">
-							<IconButton onClick={() => onChange?.(undefined)}>
+							<IconButton
+								onClick={() => {
+									onChange?.(undefined);
+								}}
+							>
 								<FontAwesomeIcon
 									icon={faTimes}
 									style={{

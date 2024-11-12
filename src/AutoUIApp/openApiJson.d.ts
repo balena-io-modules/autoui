@@ -62,7 +62,7 @@ export interface ParametersEntity {
 	name?: string | null;
 	description?: string | null;
 	in?: string | null;
-	schema?: any | null;
+	schema?: any;
 	explode?: boolean | null;
 }
 export interface Items {

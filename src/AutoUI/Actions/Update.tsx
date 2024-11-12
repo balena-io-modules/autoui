@@ -1,18 +1,18 @@
 import React from 'react';
-import {
+import type {
+	ActionData,
 	AutoUIContext,
 	AutoUIModel,
 	AutoUIBaseResource,
-	autoUIJsonSchemaPick,
 } from '../schemaOps';
-import { ActionData } from '../schemaOps';
+import { autoUIJsonSchemaPick } from '../schemaOps';
 import { autoUIGetDisabledReason } from '../utils';
 import { useTranslation } from '../../hooks/useTranslation';
-import { CheckedState } from 'rendition';
+import type { CheckedState } from 'rendition';
 import { ActionContent, LOADING_DISABLED_REASON } from './ActionContent';
+import type { DropDownButtonProps } from '@balena/ui-shared-components';
 import {
 	DropDownButton,
-	DropDownButtonProps,
 	Material,
 	Tooltip,
 	Spinner,
@@ -26,7 +26,7 @@ interface UpdateProps<T extends AutoUIBaseResource<T>> {
 	model: AutoUIModel<T>;
 	autouiContext: AutoUIContext<T>;
 	selected: T[] | undefined;
-	checkedState: CheckedState | undefined;
+	checkedState?: CheckedState;
 	hasOngoingAction: boolean;
 	onActionTriggered: (data: ActionData<T>) => void;
 }
@@ -72,7 +72,7 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 			return [];
 		}
 		return updateActions.map((action) => {
-			const disabledReason =
+			const disabledActionReason =
 				autoUIGetDisabledReason(
 					selected,
 					checkedState,
@@ -106,11 +106,13 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 							}
 						>
 							{action.title}
-							<Spinner show={disabledReason === LOADING_DISABLED_REASON} />
+							<Spinner
+								show={disabledActionReason === LOADING_DISABLED_REASON}
+							/>
 						</Box>
 					</ActionContent>
 				),
-				onClick: () =>
+				onClick: () => {
 					onActionTriggered({
 						action,
 						schema:
@@ -119,21 +121,34 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 								: autoUIJsonSchemaPick(
 										model.schema,
 										model.permissions[action.type],
-								  ),
+									),
 						affectedEntries: selected,
-					}),
+					});
+				},
 				tooltip:
-					typeof disabledReason === 'string'
+					typeof disabledActionReason === 'string'
 						? {
-								title: disabledReason,
+								title: disabledActionReason,
 								placement: isTablet ? 'top' : 'right',
-						  }
+							}
 						: undefined,
-				disabled: !!disabledReason,
+				disabled: !!disabledActionReason,
 				section: action.section,
 			};
 		});
-	}, [updateActions, disabledReasonsByAction]);
+	}, [
+		updateActions,
+		disabledReasonsByAction,
+		checkedState,
+		hasOngoingAction,
+		isTablet,
+		model.permissions,
+		model.resource,
+		model.schema,
+		onActionTriggered,
+		selected,
+		t,
+	]);
 
 	if (!updateActions || updateActions.length < 1) {
 		return null;
@@ -141,7 +156,7 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 
 	if (updateActions.length === 1) {
 		const action = updateActions[0];
-		const disabledReason =
+		const disabledUpdateReason =
 			autoUIGetDisabledReason(
 				selected,
 				checkedState,
@@ -153,13 +168,15 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 			<Box alignSelf="flex-start">
 				<Tooltip
 					title={
-						typeof disabledReason === 'string' ? disabledReason : undefined
+						typeof disabledUpdateReason === 'string'
+							? disabledUpdateReason
+							: undefined
 					}
 				>
 					<Button
 						key={action.title}
 						data-action={`${action.type}-${model.resource}`}
-						onClick={() =>
+						onClick={() => {
 							onActionTriggered({
 								action,
 								schema:
@@ -168,11 +185,11 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 										: autoUIJsonSchemaPick(
 												model.schema,
 												model.permissions[action.type],
-										  ),
+											),
 								affectedEntries: selected,
-							})
-						}
-						disabled={!!disabledReason}
+							});
+						}}
+						disabled={!!disabledUpdateReason}
 						color={action.isDangerous ? 'error' : 'secondary'}
 					>
 						<ActionContent<T>
@@ -190,7 +207,7 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 								{action.title}
 								<Spinner
 									sx={{ ml: 2 }}
-									show={disabledReason === LOADING_DISABLED_REASON}
+									show={disabledUpdateReason === LOADING_DISABLED_REASON}
 								/>
 							</Box>
 						</ActionContent>
@@ -214,10 +231,11 @@ export const Update = <T extends AutoUIBaseResource<T>>({
 				items={actionHandlers}
 				disabled={!!disabledReason}
 				startIcon={<FontAwesomeIcon icon={faPenToSquare} />}
-				children={t('labels.modify')}
 				color="secondary"
 				groupByProp="section"
-			/>
+			>
+				{t('labels.modify')}
+			</DropDownButton>
 		</Tooltip>
 	);
 };

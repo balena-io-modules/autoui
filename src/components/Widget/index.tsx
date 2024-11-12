@@ -4,9 +4,10 @@ import {
 	getSchemaFormat,
 	getSubSchemaFromRefScheme,
 } from '../../AutoUI/schemaOps';
-import { Format, JsonTypes, UiSchema, Value, WidgetProps } from './utils';
+import type { Format, UiSchema, Value, WidgetProps } from './utils';
+import { JsonTypes } from './utils';
 import { typeWidgets } from './Formats';
-import { JSONSchema7 as JSONSchema } from 'json-schema';
+import type { JSONSchema7 as JSONSchema } from 'json-schema';
 
 const getValue = (value?: Value, schema?: JSONSchema, uiSchema?: UiSchema) => {
 	const calculatedValue = uiSchema?.['ui:value'];
@@ -14,8 +15,8 @@ const getValue = (value?: Value, schema?: JSONSchema, uiSchema?: UiSchema) => {
 	return calculatedValue !== undefined
 		? calculatedValue
 		: value !== undefined
-		? value
-		: schema?.default;
+			? value
+			: schema?.default;
 };
 
 const getType = (value?: Value) => {
@@ -37,9 +38,9 @@ const getWidget = (
 	const valueType = getType(value);
 
 	const extraFormat = extraFormats?.find(
-		(extraFormat) =>
-			(extraFormat.name === format || extraFormat.name === uiSchemaWidget) &&
-			extraFormat.widget?.supportedTypes?.includes(valueType),
+		(exf) =>
+			(exf.name === format || exf.name === uiSchemaWidget) &&
+			exf.widget?.supportedTypes?.includes(valueType),
 	);
 
 	return extraFormat?.widget ?? typeWidgets[valueType] ?? typeWidgets.default;
@@ -65,10 +66,15 @@ export const Widget = ({
 		return null;
 	}
 
-	const Widget = getWidget(processedValue, format, undefined, extraFormats);
+	const WidgetComponent = getWidget(
+		processedValue,
+		format,
+		undefined,
+		extraFormats,
+	);
 
 	return (
-		<Widget
+		<WidgetComponent
 			extraContext={extraContext}
 			extraFormats={extraFormats}
 			value={processedValue ?? null}

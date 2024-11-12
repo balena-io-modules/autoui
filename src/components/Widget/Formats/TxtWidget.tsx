@@ -2,14 +2,8 @@ import * as React from 'react';
 import get from 'lodash/get';
 import invokeMap from 'lodash/invokeMap';
 import isArray from 'lodash/isArray';
-import {
-	UiOption,
-	JsonTypes,
-	UiSchema,
-	Value,
-	widgetFactory,
-	formatTimestamp,
-} from '../utils';
+import type { UiSchema, Value } from '../utils';
+import { UiOption, JsonTypes, widgetFactory, formatTimestamp } from '../utils';
 import { Truncate, Material } from '@balena/ui-shared-components';
 const { Typography } = Material;
 
@@ -62,10 +56,10 @@ const TxtWidget = widgetFactory(
 	const lineCamp = get(uiSchema, ['ui:options', 'lineCamp']);
 	return typeof lineCamp === 'number' ? (
 		<Truncate {...props} lineCamp={lineCamp}>
-			{displayValue || ''}
+			{displayValue ?? ''}
 		</Truncate>
 	) : (
-		<Typography {...props}>{displayValue || ''}</Typography>
+		<Typography {...props}>{displayValue ?? ''}</Typography>
 	);
 });
 

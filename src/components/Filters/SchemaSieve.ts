@@ -1,4 +1,4 @@
-import {
+import type {
 	JSONSchema7 as JSONSchema,
 	JSONSchema7Definition as JSONSchemaDefinition,
 } from 'json-schema';
@@ -200,7 +200,7 @@ export const createFullTextSearchFilter = (
 					value: term,
 				}),
 				anyOf: [filter],
-		  }
+			}
 		: null;
 };
 

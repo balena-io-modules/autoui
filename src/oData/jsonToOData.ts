@@ -1,6 +1,6 @@
-import { TableSortOptions } from 'rendition';
-import { JSONSchema7 as JSONSchema } from 'json-schema';
-import { AutoUIContext } from '../AutoUI/schemaOps';
+import type { TableSortOptions } from 'rendition';
+import type { JSONSchema7 as JSONSchema } from 'json-schema';
+import type { AutoUIContext } from '../AutoUI/schemaOps';
 
 export type PineFilterObject = Record<string, any>;
 
@@ -137,7 +137,7 @@ const handleFilterArray = (
 			: null;
 		filters.push({
 			$ge: [
-				wrapValue([...(parent$alias != null ? [parent$alias!] : []), field], {
+				wrapValue([...(parent$alias != null ? [parent$alias] : []), field], {
 					$count: {},
 				}),
 				filterObj.minItems,
@@ -174,8 +174,8 @@ const handleOperators = (
 	if (!filter.anyOf && !filter.allOf) {
 		throw new Error('Calling handleOperators without anyOf and allOf');
 	}
-	const operator = filter.anyOf || filter.oneOf ? '$or' : '$and';
-	const filters = filter.anyOf || filter.oneOf || filter.allOf;
+	const operator = (filter.anyOf ?? filter.oneOf) ? '$or' : '$and';
+	const filters = filter.anyOf ?? filter.oneOf ?? filter.allOf;
 	return convertToPineClientFilter(
 		parentKeys,
 		maybePluralOp(operator, filters!),
@@ -199,7 +199,7 @@ export const convertToPineClientFilter = (
 	// TODO: Check if possible to remove and improve
 	if (filter.$or || filter.$and) {
 		const operator = filter.$or ? '$or' : '$and';
-		const filters = filter.$or || filter.$and;
+		const filters = filter.$or ?? filter.$and;
 		return {
 			[operator]: filters?.map((f: any) =>
 				convertToPineClientFilter(parentKeys, f),
@@ -260,7 +260,7 @@ export const orderbyBuilder = <T>(
 			customOrderByKey.some((k) => typeof k !== 'string')
 		) {
 			throw new Error(
-				`Field ${field as string} error: custom sort for this field must be of type string or a non empty string array, ${customOrderByKey.join(',')} is not accepted.`,
+				`Field ${field} error: custom sort for this field must be of type string or a non empty string array, ${customOrderByKey.join(',')} is not accepted.`,
 			);
 		}
 		return [
@@ -270,10 +270,10 @@ export const orderbyBuilder = <T>(
 	}
 	if (customOrderByKey != null && typeof customOrderByKey !== 'string') {
 		throw new Error(
-			`Field ${field as string} error: custom sort for this field must be of type string or a non empty string array, ${typeof customOrderByKey} is not accepted.`,
+			`Field ${field} error: custom sort for this field must be of type string or a non empty string array, ${typeof customOrderByKey} is not accepted.`,
 		);
 	}
-	let fieldPath = field as string;
+	let fieldPath: string = field;
 	if (refScheme) {
 		fieldPath += `/${refScheme.replace(/\[(.*?)\]/g, '').replace(/\./g, '/')}`;
 	}
