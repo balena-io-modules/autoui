@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update UI shared components
+      hash: 032f1218067aae25e478f4b22e9b80ade16844d4
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 6.1.6
+  title: ""
+  date: 2024-11-13T17:00:31.149Z
+- commits:
     - subject: Update ui-shared-components to 9.6.0
       hash: f858f9e592f2386b25bfd01c1583611bb537855f
       body: ""
