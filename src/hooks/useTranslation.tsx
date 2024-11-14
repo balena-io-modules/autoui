@@ -15,6 +15,7 @@ const translationMap = {
 	'info.edit_tag_no_permissions':
 		"You don't have permission to edit the tags on the selected {{resource}}",
 	'info.no_selected': "You haven't selected anything yet",
+	'info.not_defined': 'Not defined',
 	'info.learn_more': 'Learn more about {{title}}',
 	'labels.lenses': 'Lenses',
 	'labels.modify': 'Modify',
