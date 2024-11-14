@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update UI shared components
+      hash: 9fff1d51c6d4556307076b5d9564edaa586be447
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 6.1.8
+  title: ""
+  date: 2024-11-14T16:44:31.755Z
+- commits:
     - subject: "Fix missing translation: `info.not_defined`"
       hash: 52b5e7e95b03a676e833fa895a3bfd7454158041
       body: ""
