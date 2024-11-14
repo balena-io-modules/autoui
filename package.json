@@ -27,7 +27,7 @@
     "styled-components": "^5.3.5"
   },
   "devDependencies": {
-    "@balena/lint": "^6.2.0",
+    "@balena/lint": "^7.0.0",
     "@types/history": "^4.7.11",
     "@types/jest": "^29.5.12",
     "@types/jsdom": "^21.1.7",
