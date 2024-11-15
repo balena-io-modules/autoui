@@ -72,10 +72,14 @@ import {
 	useAnalyticsContext,
 } from '@balena/ui-shared-components';
 import type { FiltersView } from '../components/Filters';
-import { ajvFilter } from '../components/Filters/SchemaSieve';
+import {
+	ajvFilter,
+	convertFilterToHumanReadable,
+} from '../components/Filters/SchemaSieve';
 import type { Format } from '../components/Widget/utils';
 import type { Dictionary } from '../common';
 import { defaultFormats } from '../components/Widget/Formats';
+
 const { Box, styled } = Material;
 
 const HeaderGrid = styled(Box)(({ theme }) => ({
@@ -179,6 +183,18 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	const { t } = useTranslation();
 	const { state: analytics } = useAnalyticsContext();
 	const history = useHistory();
+	// Use a flag to make sure table view event is only triggered once (without the tag
+	// it will be triggered whenever the data is updated)
+	const shouldTableViewEventBeTriggered = React.useRef(true);
+	const totalItems = React.useMemo(
+		() =>
+			pagination && 'totalItems' in pagination
+				? pagination.totalItems
+				: Array.isArray(data)
+				? data.length
+				: null,
+		[pagination, data],
+	);
 
 	const modelRef = React.useRef(modelRaw);
 	// This allows the component to work even if
@@ -192,10 +208,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 
 	const [filters, setFilters] = React.useState<JSONSchema[]>([]);
 	const [sort, setSort] = React.useState<TableSortOptions<T> | null>(
-		() =>
-			(getFromLocalStorage(`${model.resource}__sort`) as
-				| TableSortOptions<T>
-				| undefined) || null,
+		() => getFromLocalStorage(`${model.resource}__sort`) || null,
 	);
 	const [internalPagination, setInternalPagination] = React.useState<{
 		page: number;
@@ -431,6 +444,30 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		});
 	};
 
+	React.useEffect(() => {
+		if (!lens || !shouldTableViewEventBeTriggered) {
+			return;
+		}
+
+		const columns = properties.map((property) => [
+			property.field,
+			property.selected,
+		]);
+
+		const amplitudeFilter = filters.map((f) => convertFilterToHumanReadable(f));
+
+		analytics.webTracker?.track('Resource List View', {
+			lens: lens.slug,
+			resource: model.resource,
+			totalItems,
+			filters: Object.assign({}, amplitudeFilter),
+			columns: Object.fromEntries(columns),
+			sort,
+		});
+
+		shouldTableViewEventBeTriggered.current = false;
+	}, [lens, model.resource, filters, sort, totalItems, properties]);
+
 	if (loading && data == null) {
 		return (
 			<Spinner
@@ -611,7 +648,9 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 					{actionData?.action?.renderer?.({
 						schema: actionData.schema,
 						affectedEntries: actionData.affectedEntries,
-						onDone: () => setActionData(undefined),
+						onDone: () => {
+							setActionData(undefined);
+						},
 						setSelected: $setSelected,
 					})}
 				</Box>
