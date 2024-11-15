@@ -1,4 +1,23 @@
 - commits:
+    - subject: Fix linter issues
+      hash: c8a6e540caedd93a6c00b67da1cf6117125211a8
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+    - subject: Update dependency @balena/lint to v9
+      hash: 5fc3ef92f7c826f1a47de637cc9123e4fec07051
+      body: |
+        Update @balena/lint from 6.2.2 to 9.1.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+  version: 6.1.10
+  title: ""
+  date: 2024-11-15T16:05:02.427Z
+- commits:
     - subject: Update ui-shared-components
       hash: 48ca53e98e43d1a6b29fa06690c6423d7a70f548
       body: ""
