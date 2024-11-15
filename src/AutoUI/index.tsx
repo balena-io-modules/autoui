@@ -445,9 +445,14 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	};
 
 	React.useEffect(() => {
-		if (!lens || !shouldTableViewEventBeTriggered || !filters.length) {
+		if (!lens || !shouldTableViewEventBeTriggered) {
 			return;
 		}
+
+		const columns = properties.map((property) => [
+			property.field,
+			property.selected,
+		]);
 
 		const amplitudeFilter = filters.map((f) => convertFilterToHumanReadable(f));
 
@@ -455,12 +460,13 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 			lens: lens.slug,
 			resource: model.resource,
 			totalItems,
-			filters: amplitudeFilter,
+			filters: Object.assign({}, amplitudeFilter),
+			columns: Object.fromEntries(columns),
 			sort,
 		});
 
 		shouldTableViewEventBeTriggered.current = false;
-	}, [lens, model.resource, filters, sort, totalItems]);
+	}, [lens, model.resource, filters, sort, totalItems, properties]);
 
 	if (loading && data == null) {
 		return (

@@ -123,7 +123,7 @@ export const createFilter = (
 			if (!field || !operator) {
 				return {};
 			}
-			const propertySchema = properties[field];
+			const propertySchema = properties[field] as JSONSchema;
 			const operators = getAllOperators(propertySchema);
 			const operatorLabel = operators[operator as keyof typeof operators];
 			const filter = createModelFilter(propertySchema, {
