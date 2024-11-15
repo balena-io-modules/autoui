@@ -8,7 +8,7 @@ import { DisabledTextWidget } from './DisabledTextWidget';
 import { BooleanAsIconWidget } from './BooleanAsIconWidget';
 import { PlaceholderTextWidget } from './PlaceholderTextWidget';
 import { WrapWidget } from './WrapWidget';
-import { Format, Widget } from '../utils';
+import type { Format, Widget } from '../utils';
 import { CodeWidget } from './CodeWidget';
 
 type Widgets = {
@@ -68,6 +68,7 @@ export const defaultFormats: Format[] = [
 	},
 ];
 
+/* eslint-disable id-denylist	*/
 export const typeWidgets: Widgets = {
 	string: TxtWidget,
 	null: TxtWidget,

@@ -192,10 +192,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 
 	const [filters, setFilters] = React.useState<JSONSchema[]>([]);
 	const [sort, setSort] = React.useState<TableSortOptions<T> | null>(
-		() =>
-			(getFromLocalStorage(`${model.resource}__sort`) as
-				| TableSortOptions<T>
-				| undefined) || null,
+		() => getFromLocalStorage(`${model.resource}__sort`) ?? null,
 	);
 	const [internalPagination, setInternalPagination] = React.useState<{
 		page: number;
@@ -217,6 +214,41 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		ActionData<T> | undefined
 	>();
 
+	const internalOnChange = React.useCallback(
+		(
+			updatedFilters: JSONSchema[],
+			sortInfo: TableSortOptions<T> | null,
+			page: number,
+			itemsPerPage: number,
+		) => {
+			if (!onChange) {
+				return;
+			}
+			const pineFilter = pagination?.serverSide
+				? convertToPineClientFilter([], updatedFilters)
+				: null;
+			const oData = pagination?.serverSide
+				? pickBy(
+						{
+							$filter: pineFilter,
+							$orderby: orderbyBuilder(sortInfo, customSort),
+							$top: itemsPerPage,
+							$skip: page * itemsPerPage,
+						},
+						(v) => v != null,
+					)
+				: null;
+			setInternalPineFilter(pineFilter);
+			onChange?.({
+				filters: updatedFilters,
+				page,
+				itemsPerPage,
+				oData,
+			});
+		},
+		[customSort, onChange, pagination?.serverSide],
+	);
+
 	const $setFilters = React.useCallback(
 		(updatedFilters: JSONSchema[]) => {
 			setFilters(updatedFilters);
@@ -227,28 +259,43 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 				internalPagination.itemsPerPage,
 			);
 		},
-		[setFilters, onChange],
+		[
+			setFilters,
+			internalOnChange,
+			internalPagination.itemsPerPage,
+			internalPagination.page,
+			sort,
+		],
 	);
 
 	const $setSelected = React.useCallback<
 		CollectionLensRendererProps<T>['changeSelected']
 	>(
-		(items, checkedState = undefined) => {
+		(items, newCheckedState = undefined) => {
 			setSelected(items);
-			setCheckedState(checkedState ?? 'none');
-			if (actionData) {
-				setActionData({ ...actionData, affectedEntries: items, checkedState });
-			}
+			setCheckedState(newCheckedState ?? 'none');
+			setActionData((oldState) =>
+				oldState
+					? {
+							...oldState,
+							affectedEntries: items,
+							checkedState: newCheckedState,
+						}
+					: undefined,
+			);
 		},
-		[setSelected, setActionData, actionData],
+		[setSelected, setActionData],
 	);
+
+	const serverSide = pagination?.serverSide;
+	const totalItems = serverSide ? pagination.totalItems : undefined;
 	const hideUtils = React.useMemo(
 		() =>
 			(!filters || filters.length === 0) &&
 			Array.isArray(data) &&
 			data.length === 0 &&
-			(!pagination?.serverSide || !pagination.totalItems),
-		[data, filters, pagination?.serverSide && pagination?.totalItems],
+			(!serverSide || !totalItems),
+		[data, filters, serverSide, totalItems],
 	);
 
 	const filtered = React.useMemo(() => {
@@ -260,23 +307,26 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 
 	React.useEffect(() => {
 		$setSelected([], 'none');
-	}, [filters]);
+	}, [filters, $setSelected]);
 
-	const onActionTriggered = React.useCallback((actionData: ActionData<T>) => {
-		setActionData(actionData);
-		if (actionData.action.actionFn) {
-			actionData.action.actionFn({
-				affectedEntries: actionData.affectedEntries,
-				checkedState: checkedState || 'none',
-				setSelected: $setSelected,
-			});
-		}
-	}, []);
+	const onActionTriggered = React.useCallback(
+		(acData: ActionData<T>) => {
+			setActionData(acData);
+			if (acData.action.actionFn) {
+				acData.action.actionFn({
+					affectedEntries: acData.affectedEntries,
+					checkedState: checkedState || 'none',
+					setSelected: $setSelected,
+				});
+			}
+		},
+		[$setSelected, checkedState],
+	);
 
 	const defaultLensSlug = getFromLocalStorage(`${model.resource}__view_lens`);
 
 	const lenses = React.useMemo(
-		() => getLenses(data, lensContext, customLenses),
+		() => getLenses<T>(data, lensContext, customLenses),
 		[data, lensContext, customLenses],
 	);
 
@@ -284,12 +334,12 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 
 	React.useEffect(() => {
 		const foundLens =
-			lenses.find((lens) => lens?.slug === defaultLensSlug) || lenses[0];
+			lenses.find((l) => l?.slug === defaultLensSlug) ?? lenses[0];
 		if (lens?.slug === foundLens?.slug) {
 			return;
 		}
 		setLens(foundLens);
-	}, [lenses]);
+	}, [lenses, defaultLensSlug, lens?.slug]);
 
 	const lensRendererOnEntityClick = React.useCallback<
 		NonNullable<typeof onEntityClick>
@@ -306,7 +356,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 				try {
 					const url = new URL(getBaseUrl(row));
 					window.open(url.toString(), '_blank');
-				} catch (err) {
+				} catch {
 					history.push?.(getBaseUrl(row));
 				}
 			}
@@ -336,15 +386,18 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							)
 						);
 					},
-					isDisabled: async ({ affectedEntries, checkedState }) =>
+					isDisabled: async ({
+						affectedEntries,
+						checkedState: rendererCheckedState,
+					}) =>
 						await getTagsDisabledReason(
 							affectedEntries,
 							tagField as keyof T,
-							checkedState,
+							rendererCheckedState,
 							sdkTags,
 							t,
 						),
-			  }
+				}
 			: null;
 
 		return {
@@ -354,7 +407,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 			tagField,
 			getBaseUrl,
 			onEntityClick,
-			actions: tagsAction ? (actions || []).concat(tagsAction) : actions,
+			actions: tagsAction ? (actions ?? []).concat(tagsAction) : actions,
 			customSort,
 			sdk,
 			internalPineFilter,
@@ -364,6 +417,8 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		model,
 		getBaseUrl,
 		onEntityClick,
+		refresh,
+		t,
 		actions,
 		customSort,
 		sdk,
@@ -389,6 +444,9 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 			autouiContext.tagField,
 			autouiContext.customSort,
 			model.priorities,
+			pagination?.serverSide,
+			t,
+			formats,
 		],
 	);
 
@@ -398,38 +456,6 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 			!!sdk?.tags,
 		[actions, sdk?.tags],
 	);
-
-	const internalOnChange = (
-		updatedFilters: JSONSchema[],
-		sortInfo: TableSortOptions<T> | null,
-		page: number,
-		itemsPerPage: number,
-	) => {
-		if (!onChange) {
-			return;
-		}
-		const pineFilter = pagination?.serverSide
-			? convertToPineClientFilter([], updatedFilters)
-			: null;
-		const oData = pagination?.serverSide
-			? pickBy(
-					{
-						$filter: pineFilter,
-						$orderby: orderbyBuilder(sortInfo, customSort),
-						$top: itemsPerPage,
-						$skip: page * itemsPerPage,
-					},
-					(v) => v != null,
-			  )
-			: null;
-		setInternalPineFilter(pineFilter);
-		onChange?.({
-			filters: updatedFilters,
-			page,
-			itemsPerPage,
-			oData,
-		});
-	};
 
 	if (loading && data == null) {
 		return (
@@ -509,17 +535,17 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 											<LensSelection
 												lenses={lenses}
 												lens={lens}
-												setLens={(lens) => {
-													setLens(lens);
+												setLens={(updatedLens) => {
+													setLens(updatedLens);
 													setToLocalStorage(
 														`${model.resource}__view_lens`,
-														lens.slug,
+														updatedLens.slug,
 													);
 
 													analytics.webTracker?.track('Change lens', {
 														current_url: location.origin + location.pathname,
 														resource: model.resource,
-														lens: lens.slug,
+														lens: updatedLens.slug,
 													});
 												}}
 											/>
@@ -559,9 +585,12 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							<LensSelection
 								lenses={lenses}
 								lens={lens}
-								setLens={(lens) => {
-									setLens(lens);
-									setToLocalStorage(`${model.resource}__view_lens`, lens.slug);
+								setLens={(updatedLens) => {
+									setLens(updatedLens);
+									setToLocalStorage(
+										`${model.resource}__view_lens`,
+										updatedLens.slug,
+									);
 								}}
 							/>
 						</HeaderGrid>
@@ -611,7 +640,9 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 					{actionData?.action?.renderer?.({
 						schema: actionData.schema,
 						affectedEntries: actionData.affectedEntries,
-						onDone: () => setActionData(undefined),
+						onDone: () => {
+							setActionData(undefined);
+						},
 						setSelected: $setSelected,
 					})}
 				</Box>
@@ -652,7 +683,7 @@ const getTitleAndLabel = (
 	refScheme: string | undefined,
 ) => {
 	const subSchema = getSubSchemaFromRefScheme(jsonSchema, refScheme);
-	const title = subSchema?.title || jsonSchema.title || propertyKey;
+	const title = subSchema?.title ?? jsonSchema.title ?? propertyKey;
 	const headerLink = getHeaderLink(subSchema);
 	let label: TableColumn<unknown>['label'] = title;
 
@@ -662,13 +693,13 @@ const getTitleAndLabel = (
 				<Link
 					mr={1}
 					blank
-					tooltip={t('info.learn_more', { title })}
+					tooltip={headerLink?.tooltip ?? t('info.learn_more', { title })}
 					color="info.main"
 					// Prevent header click from triggering sort or other parent events
 					onClick={(event) => {
 						event.stopPropagation();
 					}}
-					{...headerLink}
+					{...(headerLink?.href ? { href: headerLink.href } : {})}
 				>
 					<FontAwesomeIcon icon={faCircleQuestion} />
 				</Link>
@@ -692,8 +723,8 @@ const hasPropertyEnabled = (
 	return Array.isArray(value) && value.some((v) => v === propertyKey)
 		? true
 		: typeof value === 'boolean'
-		? true
-		: false;
+			? true
+			: false;
 };
 
 const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
@@ -768,10 +799,10 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 			)
 				? 'primary'
 				: definedPriorities.secondary.find(
-						(prioritizedKey) => prioritizedKey === key,
-				  )
-				? 'secondary'
-				: 'tertiary';
+							(prioritizedKey) => prioritizedKey === key,
+					  )
+					? 'secondary'
+					: 'tertiary';
 
 			const widgetSchema = { ...val, title: undefined };
 
@@ -807,13 +838,13 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 				sortable: xNoSort
 					? false
 					: typeof fieldCustomSort === 'function'
-					? fieldCustomSort
-					: isServerSide
-					? // This is a temporary solution to prevent clientside sorting for server side paginated tables
-					  // This is a noop for .sort
-					  // TODO: We should just avoid sorting in the Table component when isServerSide is true, look into this when rendition is gone
-					  () => 0
-					: getSortingFunction<T>(key, val),
+						? fieldCustomSort
+						: isServerSide
+							? // This is a temporary solution to prevent clientside sorting for server side paginated tables
+								// This is a noop for .sort
+								// TODO: We should just avoid sorting in the Table component when isServerSide is true, look into this when rendition is gone
+								() => 0
+							: getSortingFunction<T>(key, val),
 				render: (fieldVal: string, entry: T) => {
 					const calculatedField = autoUIAdaptRefScheme(fieldVal, val);
 					return (

@@ -1,7 +1,7 @@
 import type { TableSortOptions, Pagination, CheckedState } from 'rendition';
-import { AutoUIEntityPropertyDefinition } from '../../';
-import { AutoUIContext, AutoUIModel } from '../../schemaOps';
-import { Material } from '@balena/ui-shared-components';
+import type { AutoUIEntityPropertyDefinition } from '../../';
+import type { AutoUIContext, AutoUIModel } from '../../schemaOps';
+import type { Material } from '@balena/ui-shared-components';
 export { table } from './table';
 export { entity } from './entity';
 

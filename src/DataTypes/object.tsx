@@ -1,15 +1,11 @@
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import find from 'lodash/find';
-import {
-	CreateFilter,
-	KeysOfUnion,
-	getDataTypeSchema,
-	regexEscape,
-} from './utils';
+import type { CreateFilter, KeysOfUnion } from './utils';
+import { getDataTypeSchema, regexEscape } from './utils';
+import type { FormData } from '../components/Filters/SchemaSieve';
 import {
 	FULL_TEXT_SLUG,
 	createModelFilter,
-	FormData,
 } from '../components/Filters/SchemaSieve';
 import { isJSONSchema, getRefSchema } from '../AutoUI/schemaOps';
 import findKey from 'lodash/findKey';
@@ -17,18 +13,18 @@ import pick from 'lodash/pick';
 import mapValues from 'lodash/mapValues';
 
 const getKeyLabel = (schema: JSONSchema) => {
-	const s = find(schema.properties!, { description: 'key' })! as JSONSchema;
-	return s && s.title ? s.title : 'key';
+	const s = find(schema.properties, { description: 'key' }) as JSONSchema;
+	return s?.title ? s.title : 'key';
 };
 
 const getValueLabel = (schema: JSONSchema) => {
-	const s = find(schema.properties!, { description: 'value' })! as JSONSchema;
-	return s && s.title ? s.title : 'value';
+	const s = find(schema.properties, { description: 'value' }) as JSONSchema;
+	return s?.title ? s.title : 'value';
 };
 
 export const isKeyValueObj = (schema: JSONSchema) =>
-	!!find(schema.properties!, { description: 'key' }) ||
-	!!find(schema.properties!, { description: 'value' });
+	!!find(schema.properties, { description: 'key' }) ||
+	!!find(schema.properties, { description: 'value' });
 
 export const operators = (s: JSONSchema) => {
 	return {
@@ -98,7 +94,7 @@ const getValueForOperation = (
 			? 'value'
 			: null;
 	const schemaProperty = schemaField
-		? findKey(schema.properties!, { description: schemaField })
+		? findKey(schema.properties, { description: schemaField })
 		: null;
 
 	// Return the appropriate value format based on the operation type
@@ -438,9 +434,9 @@ export const rendererSchema = (
 	// Ideally objects should always render all properties and have as operators is/is_not/contains/not_contains
 	const properties = reworkTagsProperties(
 		refSchema.properties,
-		data?.operator && data.operator.includes('key')
+		data?.operator?.includes('key')
 			? 'key'
-			: data?.operator && data.operator.includes('value')
+			: data?.operator?.includes('value')
 				? 'value'
 				: null,
 	);

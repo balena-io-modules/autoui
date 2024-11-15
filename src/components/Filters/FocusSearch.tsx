@@ -1,7 +1,8 @@
 import React from 'react';
 import debounce from 'lodash/debounce';
-import { AutoUIModel, getPropertyScheme } from '../../AutoUI';
-import { AutoUIContext } from '../../AutoUI/schemaOps';
+import type { AutoUIModel } from '../../AutoUI';
+import { getPropertyScheme } from '../../AutoUI';
+import type { AutoUIContext } from '../../AutoUI/schemaOps';
 import { useHistory } from '../../hooks/useHistory';
 import { Material, Spinner, designTokens } from '@balena/ui-shared-components';
 import { ajvFilter, createFullTextSearchFilter } from './SchemaSieve';
@@ -60,42 +61,49 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 	const inputSearch = autouiContext.sdk?.inputSearch;
 
 	// Debounce function to limit the frequency of search term changes
-	const debouncedSearch = debounce(async (searchFilter) => {
-		setIsLoading(true);
-		if (inputSearch && searchFilter) {
-			// Keep the same structure we have on AutoUI/index.tsx internalOnChange
-			const pineFilter = convertToPineClientFilter([], searchFilter);
-			const oData = {
-				$filter: pineFilter,
-				// In case of need we can add an infinite scroll logic
-				$top: DEFAULT_ITEMS_PER_PAGE,
-				$skip: 0,
-			};
-			const results = await inputSearch({ oData });
-			setSearchResults(results);
-		} else if (searchFilter) {
-			setSearchResults(ajvFilter(searchFilter, filtered) || []);
-		} else {
-			setSearchResults([]);
-		}
-		setIsLoading(false);
-	}, 300);
+	const debouncedSearch = React.useMemo(
+		() =>
+			debounce(async (searchFilter) => {
+				setIsLoading(true);
+				if (inputSearch && searchFilter) {
+					// Keep the same structure we have on AutoUI/index.tsx internalOnChange
+					const pineFilter = convertToPineClientFilter([], searchFilter);
+					const oData = {
+						$filter: pineFilter,
+						// In case of need we can add an infinite scroll logic
+						$top: DEFAULT_ITEMS_PER_PAGE,
+						$skip: 0,
+					};
+					const results = await inputSearch({ oData });
+					setSearchResults(results);
+				} else if (searchFilter) {
+					setSearchResults(ajvFilter(searchFilter, filtered) || []);
+				} else {
+					setSearchResults([]);
+				}
+				setIsLoading(false);
+			}, 300),
+		[inputSearch, filtered],
+	);
 
 	React.useEffect(() => {
 		const filter = createFullTextSearchFilter(model.schema, searchTerm);
-		debouncedSearch(filter);
+		void debouncedSearch(filter);
 		return () => {
 			debouncedSearch.cancel();
 		};
-	}, [model.schema, searchTerm]);
+	}, [model.schema, searchTerm, debouncedSearch]);
 
 	const getEntityValue = (entity: T) => {
-		const property = model.priorities?.primary[0]!;
+		const property = model.priorities?.primary[0];
+		if (!property) {
+			return null;
+		}
 		const schemaProperty =
 			model.schema.properties?.[
 				property as keyof typeof model.schema.properties
 			];
-		const refScheme = schemaProperty ? getPropertyScheme(schemaProperty) : null;
+		const refScheme = getPropertyScheme(schemaProperty ?? null);
 		if (!refScheme || typeof schemaProperty === 'boolean') {
 			return entity[property];
 		}
@@ -127,7 +135,7 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 										try {
 											const url = new URL(autouiContext.getBaseUrl(entity));
 											window.open(url.toString(), '_blank');
-										} catch (err) {
+										} catch {
 											history.push?.(autouiContext.getBaseUrl(entity));
 										}
 									}

@@ -1,5 +1,6 @@
-import { CreateFilter, getDataTypeSchema, normalizeDateTime } from './utils';
-import { JSONSchema7 as JSONSchema } from 'json-schema';
+import type { CreateFilter } from './utils';
+import { getDataTypeSchema, normalizeDateTime } from './utils';
+import type { JSONSchema7 as JSONSchema } from 'json-schema';
 
 export const operators = () => ({
 	is: 'is',

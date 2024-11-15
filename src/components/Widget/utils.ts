@@ -1,5 +1,5 @@
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
-import { UiSchema as rjsfUiSchema } from '@rjsf/core';
+import type { UiSchema as rjsfUiSchema } from '@rjsf/core';
 import type { Overwrite } from '../../common';
 import get from 'lodash/get';
 import { format, formatDistance } from 'date-fns';
@@ -37,13 +37,14 @@ export interface WidgetProps<T extends object = object> {
 	extraContext?: T;
 }
 
-export interface Widget<T extends object = object, ExtraProps = {}> {
+export interface Widget<T extends object = object, ExtraProps = object> {
 	uiOptions?: UiOptions;
 	supportedTypes?: string[];
 	displayName: string;
 	(props: WidgetProps<T> & ExtraProps): JSX.Element | null;
 }
 
+/* eslint-disable id-denylist	*/
 export const JsonTypes = {
 	array: 'array',
 	object: 'object',
@@ -54,9 +55,10 @@ export const JsonTypes = {
 	null: 'null',
 } as const;
 
+/* eslint-disable id-denylist	*/
 export interface JsonTypesTypeMap {
 	array: unknown[];
-	object: {};
+	object: object;
 	number: number;
 	integer: number;
 	string: string;
@@ -97,7 +99,7 @@ export const widgetFactory = <ST extends Array<keyof JsonTypesTypeMap>>(
 ) => {
 	return <
 		T extends object,
-		ExtraProps extends {} = {},
+		ExtraProps extends object = object,
 		V extends WidgetProps['value'] | null = JsonTypesTypeMap[ST[number]],
 	>(
 		widgetFn: (
@@ -122,12 +124,10 @@ export const formatTimestamp = (
 		return '';
 	}
 	const uiFormat =
-		get(uiSchema, ['ui:options', 'dtFormat']) ||
+		get(uiSchema, ['ui:options', 'dtFormat']) ??
 		`${DATE_FORMAT}, ${TIME_FORMAT}`;
 	if (typeof uiFormat !== 'string') {
-		throw new Error(
-			`dtFormat must be a string to specify instead of ${typeof uiFormat}')`,
-		);
+		throw new Error(`dtFormat must be a string instead of ${typeof uiFormat}`);
 	}
 	return format(new Date(timestamp), uiFormat);
 };
@@ -136,7 +136,6 @@ export const truncateHash = (str: string, maxLength = 7) => {
 	if (!str || str.length < maxLength) {
 		return str;
 	}
-
 	return str.substring(0, maxLength);
 };
 

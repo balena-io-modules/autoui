@@ -1,13 +1,13 @@
 import React from 'react';
+import type { DropDownButtonProps } from '@balena/ui-shared-components';
 import {
 	DropDownButton,
 	Tooltip,
 	Material,
-	DropDownButtonProps,
 	designTokens,
 } from '@balena/ui-shared-components';
 import { faChartPie } from '@fortawesome/free-solid-svg-icons/faChartPie';
-import { JSONSchema7 as JSONSchema } from 'json-schema';
+import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -87,7 +87,7 @@ export const Views = ({ views, setFilters, deleteView, dark }: ViewsProps) => {
 				},
 			};
 		});
-	}, [views]);
+	}, [views, deleteView, setFilters, t]);
 
 	return (
 		<Tooltip
@@ -96,14 +96,13 @@ export const Views = ({ views, setFilters, deleteView, dark }: ViewsProps) => {
 			<DropDownButton<FiltersView>
 				disabled={!memoizedViews?.length}
 				items={memoizedViews ?? []}
-				children={
-					matches ? t('labels.views') : <FontAwesomeIcon icon={faChartPie} />
-				}
 				variant={!memoizedViews?.length && dark ? 'contained' : 'outlined'}
 				color={!memoizedViews?.length && dark ? 'primary' : 'secondary'}
 				startIcon={matches ? <FontAwesomeIcon icon={faChartPie} /> : null}
 				sx={{ ...(dark && darkStyles) }}
-			/>
+			>
+				{matches ? t('labels.views') : <FontAwesomeIcon icon={faChartPie} />}
+			</DropDownButton>
 		</Tooltip>
 	);
 };

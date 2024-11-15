@@ -12,8 +12,8 @@ export const PlaceholderTextWidget = widgetFactory('PlaceholderText', {}, [
 		value === null || value === ''
 			? 'Empty'
 			: typeof value !== 'string'
-			? value.toString()
-			: value;
+				? value.toString()
+				: value;
 	return (
 		<Typography
 			noWrap

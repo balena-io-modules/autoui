@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router';
-import { AutoUIModel, AutoUIBaseResource } from '../AutoUI/schemaOps';
-import { OpenApiJson } from './openApiJson';
+import type { AutoUIModel, AutoUIBaseResource } from '../AutoUI/schemaOps';
+import type { OpenApiJson } from './openApiJson';
 import {
 	getAllNaturalPropertiesKeys,
 	getSelectableOptions,
@@ -9,14 +9,15 @@ import {
 	pine,
 	getFromRef,
 } from './odata';
-import { AutoUI, autoUIRunTransformers, AutoUIAction } from '../AutoUI';
+import type { AutoUIAction } from '../AutoUI';
+import { AutoUI, autoUIRunTransformers } from '../AutoUI';
 import { findInObject } from '../AutoUI/utils';
 import isEmpty from 'lodash/isEmpty';
 import { ActionMethods } from '.';
-import { ActionSidebarProps } from './ActionSidebar';
+import type { ActionSidebarProps } from './ActionSidebar';
 import { useRequest } from 'rendition';
 import { useHistory } from '../hooks/useHistory';
-import { JSONSchema7 as JSONSchema } from 'json-schema';
+import type { JSONSchema7 as JSONSchema } from 'json-schema';
 
 interface ContentProps {
 	openApiJson: OpenApiJson;
@@ -67,7 +68,7 @@ const generateModel = (
 export const Content = ({ openApiJson, openActionSidebar }: ContentProps) => {
 	const { pathname } = useLocation();
 	const history = useHistory();
-	const resourceName = pathname.replace(/^\/([^\/]*).*$/, '$1');
+	const resourceName = pathname.replace(/^([^]*).*$/, '$1');
 	const id = pathname.substring(pathname.lastIndexOf('/') + 1);
 	const endsWithValidId = !isNaN(parseInt(id, 10));
 	const schema = getSchemaFromLocation(openApiJson, resourceName);
@@ -78,14 +79,14 @@ export const Content = ({ openApiJson, openActionSidebar }: ContentProps) => {
 
 	const [data] = useRequest<
 		() => Promise<unknown>,
-		AutoUIBaseResource<unknown> | Array<AutoUIBaseResource<unknown>> | undefined
+		AutoUIBaseResource<unknown> | Array<AutoUIBaseResource<unknown>>
 	>(
 		async () =>
 			await pine.get({
 				resource: resourceName,
 				...(endsWithValidId && { id }),
 				options: {
-					$select: [...getSelectableOptions(correspondingPath, [])],
+					$select: [...getSelectableOptions(correspondingPath)],
 				},
 			}),
 		[openApiJson, pathname],
@@ -138,13 +139,14 @@ export const Content = ({ openApiJson, openActionSidebar }: ContentProps) => {
 						return {
 							title: `Add ${resourceName}`,
 							type: 'create',
-							actionFn: () =>
+							actionFn: () => {
 								openActionSidebar({
 									action: ActionMethods.POST,
 									schema: requestSchema,
 									resourceName,
 									id,
-								}),
+								});
+							},
 						};
 					}
 					if (pathKey === ActionMethods.PATCH) {
@@ -159,7 +161,7 @@ export const Content = ({ openApiJson, openActionSidebar }: ContentProps) => {
 						type: 'delete',
 					};
 				});
-		}, [correspondingPath]);
+		}, [correspondingPath, id, openActionSidebar, openApiJson, resourceName]);
 
 	if (!model) {
 		return <>Could not generate a model</>;
@@ -175,7 +177,9 @@ export const Content = ({ openApiJson, openActionSidebar }: ContentProps) => {
 			actions={memoizedActions}
 			data={memoizedData}
 			{...(!endsWithValidId && {
-				onEntityClick: (entity) => history.push(`${pathname}/${entity.id}`),
+				onEntityClick: (entity) => {
+					history.push(`${pathname}/${entity.id}`);
+				},
 			})}
 		/>
 	);

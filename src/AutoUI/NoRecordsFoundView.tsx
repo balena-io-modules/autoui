@@ -1,12 +1,12 @@
 import React from 'react';
-import {
+import type {
 	ActionData,
 	AutoUIBaseResource,
 	AutoUIContext,
 	AutoUIModel,
 } from './schemaOps';
 import { Create } from './Actions/Create';
-import { NoDataInfo } from '.';
+import type { NoDataInfo } from '.';
 import { useTranslation } from '../hooks/useTranslation';
 import {
 	Callout,

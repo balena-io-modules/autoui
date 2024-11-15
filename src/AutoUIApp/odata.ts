@@ -1,12 +1,12 @@
-import { Methods, OpenApiJson } from './openApiJson';
+import type { Methods, OpenApiJson } from './openApiJson';
 import PineClientFetch from 'pinejs-client-fetch';
 import get from 'lodash/get';
-import { JSONSchema7 as JSONSchema } from 'json-schema';
+import type { JSONSchema7 as JSONSchema } from 'json-schema';
 
 export const pine = new PineClientFetch(
 	{
 		apiPrefix:
-			process.env.REACT_APP_API_HOST || process.env.STORYBOOK_APP_API_HOST,
+			process.env.REACT_APP_API_HOST ?? process.env.STORYBOOK_APP_API_HOST,
 	},
 	{ fetch },
 );
@@ -32,10 +32,7 @@ export const getAllNaturalPropertiesKeys = (
 		.map(([key]) => key);
 };
 
-export const getSelectableOptions = (
-	pathObject: Methods | null,
-	_parameters: string[],
-) => {
+export const getSelectableOptions = (pathObject: Methods | null) => {
 	return (
 		pathObject?.get?.parameters?.find((p) => p.name === '$select')?.schema
 			?.items?.enum ?? []

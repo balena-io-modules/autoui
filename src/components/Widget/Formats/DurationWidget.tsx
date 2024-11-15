@@ -22,14 +22,15 @@ export const DurationWidget = widgetFactory('Duration', {}, [JsonTypes.object])(
 				return '';
 			}
 			const customInterval: { [key: string]: string } = {};
-			for (const [key, value] of Object.entries(interval)) {
-				if (value == null) {
+			for (const [key, intervalValue] of Object.entries(interval)) {
+				if (intervalValue == null) {
 					continue;
 				}
-				customInterval[key] = value < 10 ? `0${value}` : `${value}`;
+				customInterval[key] =
+					intervalValue < 10 ? `0${intervalValue}` : `${intervalValue}`;
 			}
 			let durationText = '';
-			if (!!interval.years) {
+			if (interval.years) {
 				durationText += `${customInterval.years}y `;
 			}
 			if (durationText.length > 0 || !!interval.months) {
@@ -43,7 +44,7 @@ export const DurationWidget = widgetFactory('Duration', {}, [JsonTypes.object])(
 			customInterval.seconds ??= '00';
 			durationText += `${customInterval.hours}:${customInterval.minutes}:${customInterval.seconds}`;
 			return durationText;
-		}, []);
+		}, [value.end, value.start]);
 
 		return <Typography>{duration}</Typography>;
 	},

@@ -1,7 +1,7 @@
 import React from 'react';
+import type { IChangeEvent } from '@balena/ui-shared-components';
 import {
 	DialogWithCloseButton,
-	IChangeEvent,
 	Material,
 	RJSForm,
 	SelectWidget,
@@ -121,17 +121,18 @@ const getDefaultValue = (
 	data: FormData | undefined,
 	propertySchema: JSONSchema | undefined,
 ) => {
+	if (data?.value !== undefined) {
+		return data.value;
+	}
+	if (!propertySchema) {
+		return undefined;
+	}
 	const schemaEnum = findInObject(propertySchema, 'enum');
 	const schemaOneOf = findInObject(propertySchema, 'oneOf');
 
-	if (data?.value !== undefined) {
-		return data.value;
-	} else if (schemaEnum?.[0] !== undefined) {
-		return schemaEnum?.[0];
-	} else if (schemaOneOf?.[0]?.const !== undefined) {
-		return schemaOneOf?.[0]?.const;
-	}
-	return undefined;
+	return schemaEnum?.[0] !== undefined
+		? schemaEnum?.[0]
+		: schemaOneOf?.[0]?.const;
 };
 
 const normalizeFormData = (
@@ -155,7 +156,7 @@ const normalizeFormData = (
 		const model = getDataModel(refSchema);
 		const operator = model
 			? Object.keys(model.operators).find((o) => o === d?.operator) ??
-			  Object.keys(model.operators)[0]
+				Object.keys(model.operators)[0]
 			: undefined;
 
 		return {
@@ -186,17 +187,16 @@ export const FiltersDialog = ({
 	const [isFirstValidation, setIsFirstValidation] = React.useState(true);
 
 	const handleChange = React.useCallback(
-		({ formData: data }: IChangeEvent<FormData[]>) => {
-			if (Array.isArray(formData) && formData.length !== data.length) {
+		({ formData: fData }: IChangeEvent<FormData[]>) => {
+			if (Array.isArray(formData) && formData.length !== fData.length) {
 				setIsFirstValidation(true);
 			}
 			// Unfortunately we cannot detect which field is changing so we need to set a previous state
 			// github.com/rjsf-team/react-jsonschema-form/issues/718
 			const newFormData = Array.isArray(formData)
-				? data.map((d, i) => {
+				? fData.map((d, i) => {
 						if (
-							formData &&
-							formData[i]?.field &&
+							formData?.[i]?.field &&
 							formData[i]?.operator &&
 							(d.field !== formData[i].field ||
 								d.operator !== formData[i].operator)
@@ -205,24 +205,26 @@ export const FiltersDialog = ({
 							return { ...d, value: undefined };
 						}
 						return d;
-				  })
-				: data;
+					})
+				: fData;
 
 			setFormData(normalizeFormData(newFormData, schema));
 		},
-		[setFormData, formData],
+		[setFormData, formData, schema],
 	);
 
-	const handleSubmit = ({ formData }: IChangeEvent<FormData[] | FormData>) => {
+	const handleSubmit = ({
+		formData: submittedFormData,
+	}: IChangeEvent<FormData[] | FormData>) => {
 		setIsFirstValidation(false);
 		if (!onClose) {
 			return;
 		}
-		const filters = Array.isArray(formData)
-			? createFilter(schema, formData)
-			: formData.value
-			? createFullTextSearchFilter(schema, formData.value)
-			: null;
+		const filters = Array.isArray(submittedFormData)
+			? createFilter(schema, submittedFormData)
+			: submittedFormData.value
+				? createFullTextSearchFilter(schema, submittedFormData.value)
+				: null;
 		onClose(filters);
 	};
 
@@ -295,7 +297,7 @@ export const FiltersDialog = ({
 			schema: {
 				type: 'array',
 				minItems: 1,
-				items: formData.map((data, index) => {
+				items: formData.map((fd, index) => {
 					const schemaField: JSONSchema = {
 						$id: `filter-dialog-item-${index}`,
 						title: 'Field',
@@ -303,15 +305,14 @@ export const FiltersDialog = ({
 						oneOf,
 					};
 					const { propertySchema, model } = getPropertySchemaAndModel(
-						data?.field ?? oneOf[0].const,
+						fd?.field ?? oneOf[0].const,
 						schema,
 					);
 					if (!model) {
 						return {};
 					}
 					const rendererSchema =
-						model.rendererSchema(schemaField, index, propertySchema, data) ??
-						{};
+						model.rendererSchema(schemaField, index, propertySchema, fd) ?? {};
 					// This if statement is needed to display objects in a nice way.
 					// Would be nice to find a better way and keep schema and uiSchema separated
 					if (propertySchema?.type === 'object') {

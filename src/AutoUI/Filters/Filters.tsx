@@ -2,10 +2,10 @@ import React from 'react';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import { PersistentFilters } from './PersistentFilters';
 import { useHistory } from '../../hooks/useHistory';
+import type { FiltersView } from '../../components/Filters';
 import {
 	type FilterRenderMode,
 	Filters as FiltersComponent,
-	FiltersView,
 } from '../../components/Filters';
 import {
 	modifySchemaWithRefSchemes,
@@ -51,8 +51,9 @@ export const Filters = ({
 		[filteredSchema],
 	);
 
-	const onFiltersChange = (filters: JSONSchema[]) => {
-		const reworkedFilters = removeRefSchemeSeparatorsFromFilters(filters);
+	const onFiltersChange = (updatedFilters: JSONSchema[]) => {
+		const reworkedFilters =
+			removeRefSchemeSeparatorsFromFilters(updatedFilters);
 		changeFilters(reworkedFilters);
 	};
 

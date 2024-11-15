@@ -1,7 +1,8 @@
 import { isJSONSchema } from '../AutoUI/schemaOps';
 import { FULL_TEXT_SLUG } from '../components/Filters/SchemaSieve';
-import { CreateFilter, getDataTypeSchema } from './utils';
-import { JSONSchema7 as JSONSchema } from 'json-schema';
+import type { CreateFilter } from './utils';
+import { getDataTypeSchema } from './utils';
+import type { JSONSchema7 as JSONSchema } from 'json-schema';
 export const operators = () => ({
 	is: 'is',
 	is_not: 'is not',
@@ -25,7 +26,7 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 						isJSONSchema(o) &&
 						o.title?.toLowerCase().includes(value.toLowerCase()),
 				)
-				.map((v: JSONSchema) => ({ const: v.const })) || null;
+				.map((v: JSONSchema) => ({ const: v.const })) ?? null;
 
 		if (!constValues?.length) {
 			return {};

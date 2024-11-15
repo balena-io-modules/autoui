@@ -12,7 +12,7 @@ import {
 	type JSONSchema7Definition as JSONSchemaDefinition,
 	type JSONSchema7TypeName as JSONSchemaTypeName,
 } from 'json-schema';
-import { CreateFilter } from './utils';
+import type { CreateFilter } from './utils';
 import {
 	type FormData,
 	getPropertySchema,
@@ -41,6 +41,7 @@ export type TransformedDataTypeModule = Omit<DataTypeModule, 'operators'> & {
 	operatorsOneOf: JSONSchema[];
 };
 
+/* eslint-disable id-denylist	*/
 const dataTypeMap: Record<PartialJSONSchemaTypeName, DataTypeModule> = {
 	array: arrayType,
 	string: stringType,
@@ -100,7 +101,7 @@ export const getDataModel = (
 			if (!dataTypeKey) {
 				return null;
 			}
-			module = dataTypeMap[dataTypeKey as PartialJSONSchemaTypeName];
+			module = dataTypeMap[dataTypeKey as keyof typeof dataTypeMap];
 		}
 		return transformModule(module, property);
 	} catch (error) {

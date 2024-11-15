@@ -1,20 +1,20 @@
-import {
+import type {
 	AutoUIBaseResource,
 	Permissions,
 	Priorities,
 	AutoUITagsSdk,
-	getPropertyScheme,
 } from './schemaOps';
+import { getPropertyScheme } from './schemaOps';
 import castArray from 'lodash/castArray';
 import get from 'lodash/get';
-import { TFunction } from '../hooks/useTranslation';
-import { TableSortFunction, CheckedState } from 'rendition';
+import type { TFunction } from '../hooks/useTranslation';
+import type { TableSortFunction, CheckedState } from 'rendition';
 import { JsonTypes } from '../components/Widget/utils';
-import { JSONSchema7 as JSONSchema } from 'json-schema';
+import type { JSONSchema7 as JSONSchema } from 'json-schema';
 
 export const DEFAULT_ITEMS_PER_PAGE = 50;
 
-export const diff = <T extends unknown>(a: T, b: T) => {
+export const diff = <T>(a: T, b: T) => {
 	if (a === b) {
 		return 0;
 	}
@@ -26,15 +26,12 @@ export const stopEvent = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
 	event.stopPropagation();
 };
 
-export const getFromLocalStorage = <T extends any>(
-	key: string,
-): T | undefined => {
+export const getFromLocalStorage = <T>(key: string): T | undefined => {
 	try {
 		const val = localStorage.getItem(key);
 		if (val != null) {
 			return JSON.parse(val);
 		}
-
 		return undefined;
 	} catch (err) {
 		console.error(err);
@@ -42,7 +39,7 @@ export const getFromLocalStorage = <T extends any>(
 	}
 };
 
-export const setToLocalStorage = (key: string, value: any) => {
+export const setToLocalStorage = (key: string, value: unknown) => {
 	try {
 		localStorage.setItem(key, JSON.stringify(value));
 	} catch (err) {
@@ -50,16 +47,14 @@ export const setToLocalStorage = (key: string, value: any) => {
 	}
 };
 
-export const findInObject = (obj: any, key: string): any => {
+export const findInObject = (obj: Record<string, any>, key: string): any => {
 	let result;
 	for (const property in obj) {
-		if (obj.hasOwnProperty(property)) {
+		if (Object.prototype.hasOwnProperty.call(obj, property)) {
 			if (property === key) {
-				return obj[key]; // returns the value
+				return obj[key];
 			} else if (typeof obj[property] === 'object') {
-				// in case it is an object
 				result = findInObject(obj[property], key);
-
 				if (typeof result !== 'undefined') {
 					return result;
 				}
@@ -68,8 +63,8 @@ export const findInObject = (obj: any, key: string): any => {
 	}
 };
 
-export const ObjectFromEntries = (entries: any[]) => {
-	const obj = {} as any;
+export const ObjectFromEntries = (entries: Array<[string, any]>) => {
+	const obj: Record<string, any> = {};
 	for (const [key, value] of entries) {
 		obj[key] = value;
 	}
@@ -94,12 +89,11 @@ export const getTagsDisabledReason = async <T extends AutoUIBaseResource<T>>(
 					return (
 						!entry.__permissions.delete &&
 						!entry.__permissions.create.includes(tagField) &&
-						!entry.__permissions.update.includes(tagField as keyof T)
+						!entry.__permissions.update.includes(tagField)
 					);
-			  });
+				});
 
 	if (lacksPermissionsOnSelected) {
-		// TODO: Pass the resource name instead.
 		return t('info.edit_tag_no_permissions', { resource: 'item' });
 	}
 	return null;
@@ -154,11 +148,7 @@ export const autoUIGetDisabledReason = <T extends AutoUIBaseResource<T>>(
 	}
 };
 
-const sortFn = (
-	a: string | unknown,
-	b: string | unknown,
-	ref: string | string[],
-) => {
+const sortFn = (a: unknown, b: unknown, ref: string | string[]) => {
 	const aa = get(a, ref) ?? '';
 	const bb = get(b, ref) ?? '';
 	if (typeof aa === 'string' && typeof bb === 'string') {
@@ -193,7 +183,5 @@ export const getSelected = <T, K extends keyof T>(
 	if (!priorities) {
 		return true;
 	}
-	return (
-		priorities?.primary.includes(key) || priorities?.secondary.includes(key)
-	);
+	return priorities.primary.includes(key) || priorities.secondary.includes(key);
 };

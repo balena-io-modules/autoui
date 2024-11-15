@@ -4,8 +4,9 @@ import { Sidebar } from './Sidebar';
 import { Router, Switch, Route } from 'react-router-dom';
 import { Content } from './Content';
 import { createGlobalStyle } from 'styled-components';
-import { OpenApiJson } from './openApiJson';
-import { ActionSidebar, ActionSidebarProps } from './ActionSidebar';
+import type { OpenApiJson } from './openApiJson';
+import type { ActionSidebarProps } from './ActionSidebar';
+import { ActionSidebar } from './ActionSidebar';
 import { Provider } from 'rendition';
 import { useHistory } from '../hooks/useHistory';
 import { Material } from '@balena/ui-shared-components';
@@ -46,9 +47,9 @@ export interface AutoUIAppProps {
 }
 
 export const AutoUIApp = ({ openApiJson, title, logo }: AutoUIAppProps) => {
-	const actionSidebarWrapper = useClickOutsideOrEsc<HTMLDivElement>(() =>
-		setActionSidebar(null),
-	);
+	const actionSidebarWrapper = useClickOutsideOrEsc<HTMLDivElement>(() => {
+		setActionSidebar(null);
+	});
 	const history = useHistory();
 	const [actionSidebar, setActionSidebar] = React.useState<Omit<
 		ActionSidebarProps,
@@ -98,7 +99,9 @@ export const AutoUIApp = ({ openApiJson, title, logo }: AutoUIAppProps) => {
 							<ActionSidebar
 								{...actionSidebar}
 								openApiJson={openApiJson}
-								onClose={() => setActionSidebar(null)}
+								onClose={() => {
+									setActionSidebar(null);
+								}}
 							/>
 						</Box>
 					)}

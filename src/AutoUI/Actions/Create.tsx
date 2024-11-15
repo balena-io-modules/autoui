@@ -1,11 +1,11 @@
 import React from 'react';
-import {
+import type {
+	ActionData,
 	AutoUIContext,
 	AutoUIModel,
 	AutoUIBaseResource,
-	autoUIJsonSchemaPick,
 } from '../schemaOps';
-import { ActionData } from '../schemaOps';
+import { autoUIJsonSchemaPick } from '../schemaOps';
 import { getCreateDisabledReason } from '../utils';
 import { useTranslation } from '../../hooks/useTranslation';
 import { ActionContent, LOADING_DISABLED_REASON } from './ActionContent';
@@ -30,15 +30,12 @@ export const Create = <T extends AutoUIBaseResource<T>>({
 }: CreateProps<T>) => {
 	const { t } = useTranslation();
 	const { actions } = autouiContext;
-	const createActions = actions?.filter((action) => action.type === 'create');
+	const createActions = actions?.filter((a) => a.type === 'create');
 	const [disabledReasonsByAction, setDisabledReasonsByAction] = React.useState<
 		Record<string, string | undefined | null>
 	>(() => {
 		return Object.fromEntries(
-			(createActions ?? []).map((action) => [
-				action.title,
-				LOADING_DISABLED_REASON,
-			]),
+			(createActions ?? []).map((a) => [a.title, LOADING_DISABLED_REASON]),
 		);
 	});
 
@@ -64,15 +61,15 @@ export const Create = <T extends AutoUIBaseResource<T>>({
 				<Button
 					data-action={`create-${model.resource}`}
 					variant="contained"
-					onClick={() =>
+					onClick={() => {
 						onActionTriggered({
 							action,
 							schema: autoUIJsonSchemaPick(
 								model.schema,
 								model.permissions.create,
 							),
-						})
-					}
+						});
+					}}
 					startIcon={<FontAwesomeIcon icon={faMagic} />}
 					disabled={!!disabledReason}
 				>

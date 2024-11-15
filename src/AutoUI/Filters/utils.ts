@@ -171,7 +171,7 @@ export const modifySchemaWithRefSchemes = (schema: JSONSchema): JSONSchema => {
 			}
 			const description = parseDescription(value);
 			const refScheme =
-				description?.['x-foreign-key-scheme'] || description?.['x-ref-scheme'];
+				description?.['x-foreign-key-scheme'] ?? description?.['x-ref-scheme'];
 			delete description?.['x-foreign-key-scheme'];
 			delete description?.['x-ref-scheme'];
 

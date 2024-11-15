@@ -1,4 +1,4 @@
-import { JSONSchema7 as JSONSchema } from 'json-schema';
+import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import { convertToPineClientFilter } from './jsonToOData';
 
 type FilterTest = {
@@ -48,7 +48,7 @@ const filterTests: FilterTest[] = [
 							commit: {
 								not: {
 									type: 'string',
-									// @ts-expect-error
+									// @ts-expect-error regexp is an ajv specific property
 									regexp: {
 										pattern: 'test',
 										flags: 'i',

@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useLocation } from 'react-router';
-import { OpenApiJson } from './openApiJson';
+import type { OpenApiJson } from './openApiJson';
 import { designTokens, Material } from '@balena/ui-shared-components';
 const { Box, styled, Typography, Tooltip } = Material;
 

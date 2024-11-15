@@ -1,18 +1,10 @@
 import React from 'react';
-import {
-	ResourceTagSubmitInfo,
-	Spinner,
-	SubmitInfo,
-	TagManagementModal,
-	useRequest,
-} from 'rendition';
+import type { ResourceTagSubmitInfo, SubmitInfo } from 'rendition';
+import { Spinner, TagManagementModal, useRequest } from 'rendition';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import { useTranslation } from '../../hooks/useTranslation';
-import {
-	AutoUIContext,
-	AutoUIBaseResource,
-	parseDescriptionProperty,
-} from '../schemaOps';
+import type { AutoUIContext, AutoUIBaseResource } from '../schemaOps';
+import { parseDescriptionProperty } from '../schemaOps';
 import { enqueueSnackbar, closeSnackbar } from '@balena/ui-shared-components';
 import get from 'lodash/get';
 
@@ -110,7 +102,7 @@ export const Tags = <T extends AutoUIBaseResource<T>>({
 				setIsBusyMessage(undefined);
 			}
 		},
-		[sdk?.tags, refresh, selected],
+		[sdk?.tags, refresh, setIsBusyMessage, t],
 	);
 
 	if (!autouiContext.tagField || !autouiContext.nameField || !items) {
@@ -124,11 +116,13 @@ export const Tags = <T extends AutoUIBaseResource<T>>({
 				itemType={autouiContext.resource}
 				titleField={getItemName ?? (autouiContext.nameField as keyof T)}
 				tagField={autouiContext.tagField as keyof T}
-				done={(tagSubmitInfo) => {
-					changeTags(tagSubmitInfo);
+				done={async (tagSubmitInfo) => {
+					await changeTags(tagSubmitInfo);
 					onDone();
 				}}
-				cancel={() => onDone()}
+				cancel={() => {
+					onDone();
+				}}
 			/>
 		</Spinner>
 	);

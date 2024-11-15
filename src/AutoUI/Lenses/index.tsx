@@ -7,7 +7,7 @@ import skhema from 'skhema';
 import jsone from 'json-e';
 import * as types from './types';
 import type { JSONSchema7 } from 'json-schema';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 import map from 'lodash/map';
 import uniq from 'lodash/uniq';
 
@@ -41,8 +41,8 @@ interface LensData {
 const lenses: LensTemplate[] = Object.values(types);
 
 // Returns an array of lenses that can be used to render `data`.
-export const getLenses = <T extends any>(
-	data: T[] | T,
+export const getLenses = <T extends object>(
+	data: T[] | T | undefined,
 	context: object = {},
 	customLenses?: LensTemplate[],
 ) => {
@@ -90,7 +90,7 @@ export const getLenses = <T extends any>(
 		.map((value) => value.lens);
 };
 
-export const getLens = <T extends any>(data: T[], context?: object) => {
+export const getLens = <T extends object>(data: T[], context?: object) => {
 	return getLenses(data, context)?.[0];
 };
 
@@ -99,7 +99,7 @@ export const getLensBySlug = (slug: string) => {
 	return (
 		find(fullList, {
 			slug,
-		}) || null
+		}) ?? null
 	);
 };
 

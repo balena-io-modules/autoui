@@ -1,6 +1,7 @@
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import * as React from 'react';
-import { Tag, type TagProps, TagItem } from 'rendition';
+import { Tag } from 'rendition';
+import type { TagItem, TagProps } from 'rendition';
 import {
 	FULL_TEXT_SLUG,
 	parseFilterDescription,
@@ -26,7 +27,7 @@ const transformToReadableValue = (
 	);
 	if (schemaEnum && schemaEnumNames) {
 		const index = schemaEnum.findIndex((a) => isEqual(a, value));
-		return (schemaEnumNames as string[])[index];
+		return schemaEnumNames[index];
 	}
 
 	const oneOf: JSONSchema['oneOf'] = findInObject(schema, 'oneOf');
@@ -41,11 +42,11 @@ const transformToReadableValue = (
 	if (typeof value === 'object') {
 		if (Object.keys(value).length > 1) {
 			return Object.entries(value)
-				.map(([key, value]) => {
+				.map(([key, v]) => {
 					const property = schema.properties?.[key];
 					return isJSONSchema(property)
-						? `${property.title ?? key}: ${value}`
-						: `${key}: ${value}`;
+						? `${property.title ?? key}: ${v}`
+						: `${key}: ${v}`;
 				})
 				.join(', ');
 		}
@@ -76,7 +77,7 @@ export const FilterDescription = ({
 							operator: 'contains',
 							value: transformToReadableValue(parsedFilterDescription),
 						},
-				  ]
+					]
 				: undefined;
 		}
 

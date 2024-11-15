@@ -1,5 +1,5 @@
 import React from 'react';
-import { LensTemplate } from '.';
+import type { LensTemplate } from '.';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Material } from '@balena/ui-shared-components';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -35,7 +35,9 @@ export const LensSelection = ({
 						value={item.slug}
 						data-test={`lens-selector--${item.slug}`}
 						data-slug={item.slug}
-						onClick={() => setLens(item)}
+						onClick={() => {
+							setLens(item);
+						}}
 					>
 						<FontAwesomeIcon icon={item.data.icon} />
 					</ToggleButton>
