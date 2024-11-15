@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update ui-shared-components
+      hash: 48ca53e98e43d1a6b29fa06690c6423d7a70f548
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Jonathan Berger
+  version: 6.1.9
+  title: ""
+  date: 2024-11-15T12:02:19.385Z
+- commits:
     - subject: Update UI shared components
       hash: 9fff1d51c6d4556307076b5d9564edaa586be447
       body: ""
