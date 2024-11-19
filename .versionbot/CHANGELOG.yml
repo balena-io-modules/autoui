@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update ui-shared-components
+      hash: 62ffa7d7872f12a6f9234e07c39914cfaececb04
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Jonathan Berger
+  version: 6.1.11
+  title: ""
+  date: 2024-11-19T18:53:19.629Z
+- commits:
     - subject: Fix linter issues
       hash: c8a6e540caedd93a6c00b67da1cf6117125211a8
       body: ""
