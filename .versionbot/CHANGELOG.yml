@@ -1,5 +1,16 @@
 - commits:
     - subject: Update UI shared components
+      hash: 25c750f84980d07ddae61882f7d8e6dfe7f74a4e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 6.1.13
+  title: ""
+  date: 2024-11-20T15:55:38.135Z
+- commits:
+    - subject: Update UI shared components
       hash: 22f3cb8326093d5209f127da61631900c27d64c9
       body: ""
       footer:
