@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update UI shared components
+      hash: 22f3cb8326093d5209f127da61631900c27d64c9
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 6.1.12
+  title: ""
+  date: 2024-11-20T15:00:15.325Z
+- commits:
     - subject: Update ui-shared-components
       hash: 62ffa7d7872f12a6f9234e07c39914cfaececb04
       body: ""
