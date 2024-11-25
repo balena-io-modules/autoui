@@ -1,5 +1,16 @@
 - commits:
     - subject: Update ui-shared-components
+      hash: 5306c9e0ffcc54554ad74b5ad00f83e37e32300e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 6.1.15
+  title: ""
+  date: 2024-11-25T13:39:32.530Z
+- commits:
+    - subject: Update ui-shared-components
       hash: 3a44378bf03ccb884acf0ba1df844d64a1f9492b
       body: ""
       footer:
