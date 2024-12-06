@@ -1,4 +1,22 @@
 - commits:
+    - subject: Replace rendition table with MUI table
+      hash: 32e14f6df43357c42a06603a14d6ebd9f58e5e40
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Andrea Rosci
+    - subject: Update ui-shared-components
+      hash: 7cb6d6c2d9f263fa5348412a436d3398093f16e4
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 7.0.0
+  title: ""
+  date: 2024-12-06T12:36:36.061Z
+- commits:
     - subject: Update ui-shared-components
       hash: 5306c9e0ffcc54554ad74b5ad00f83e37e32300e
       body: ""
