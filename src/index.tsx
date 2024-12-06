@@ -68,3 +68,5 @@ export {
 export * from './AutoUI/Lenses/types';
 
 export { AutoUIApp, AutoUIAppProps } from './AutoUIApp';
+
+export { Pagination } from './components/Table/utils';

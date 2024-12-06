@@ -15,8 +15,8 @@ const translationMap = {
 	'info.edit_tag_no_permissions':
 		"You don't have permission to edit the tags on the selected {{resource}}",
 	'info.no_selected': "You haven't selected anything yet",
-	'info.not_defined': 'Not defined',
-	'info.learn_more': 'Learn more about {{title}}',
+	'info.click_to_read_more': 'Read more about {{title}}',
+	'info.already_visible': 'This column is already visible',
 	'labels.lenses': 'Lenses',
 	'labels.modify': 'Modify',
 	'loading.resource': 'Loading {{resource}}',
@@ -42,12 +42,14 @@ const translationMap = {
 	'aria_labels.create_view': 'Create named view',
 	'aria_labels.add_filter_in_or': 'Add filter with OR condition',
 	'aria_labels.remove_filter': 'Remove selected filter',
+	'aria_labels.save_tag_columns': 'Save added tag columns',
 
 	'actions.clear_all': 'Clear filters',
 	'actions.save_view': 'Save view',
 	'actions.cancel': 'Cancel',
 	'actions.add_alternative': 'Add alternative',
 	'actions.remove_filter': 'Remove filter',
+	'actions.add_columns': 'Add columns',
 
 	'commons.or': 'or',
 };

@@ -155,8 +155,8 @@ const normalizeFormData = (
 			: propertySchema;
 		const model = getDataModel(refSchema);
 		const operator = model
-			? Object.keys(model.operators).find((o) => o === d?.operator) ??
-				Object.keys(model.operators)[0]
+			? (Object.keys(model.operators).find((o) => o === d?.operator) ??
+				Object.keys(model.operators)[0])
 			: undefined;
 
 		return {

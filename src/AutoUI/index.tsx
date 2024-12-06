@@ -44,12 +44,6 @@ import {
 } from './utils';
 import { FocusSearch } from '../components/Filters/FocusSearch';
 import { Widget } from '../components/Widget';
-import type {
-	TableColumn,
-	Pagination,
-	TableSortOptions,
-	CheckedState,
-} from 'rendition';
 import { Link } from 'rendition';
 import type { LensTemplate } from './Lenses';
 import { getLenses } from './Lenses';
@@ -73,9 +67,13 @@ import {
 } from '@balena/ui-shared-components';
 import type { FiltersView } from '../components/Filters';
 import { ajvFilter } from '../components/Filters/SchemaSieve';
-import type { Format } from '../components/Widget/utils';
-import type { Dictionary } from '../common';
+import type {
+	TableSortOptions,
+	Pagination,
+	CheckedState,
+} from '../components/Table/utils';
 import { defaultFormats } from '../components/Widget/Formats';
+import type { Format } from '~/components/Widget/utils';
 const { Box, styled } = Material;
 
 const HeaderGrid = styled(Box)(({ theme }) => ({
@@ -128,7 +126,7 @@ export interface AutoUIProps<T> extends Omit<Material.BoxProps, 'onChange'> {
 	/** Event emitted on entity click */
 	onEntityClick?: (
 		entry: T,
-		event: React.MouseEvent<HTMLAnchorElement>,
+		event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
 	) => void;
 	// TODO: onChange should also be called when data in the table is sorted and when columns change
 	/** Function that gets called when filters change */
@@ -155,6 +153,11 @@ export interface AutoUIProps<T> extends Omit<Material.BoxProps, 'onChange'> {
 	noDataInfo?: NoDataInfo;
 	persistFilters?: boolean;
 }
+
+// TODO: Refactor into multiple layers: one for handling
+// loading and another for managing all necessary data,
+// to achieve a cleaner architecture. This will also improve the
+// any typing we have in lenses today.
 
 export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	model: modelRaw,
@@ -191,15 +194,19 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	}, [modelRaw]);
 
 	const [filters, setFilters] = React.useState<JSONSchema[]>([]);
-	const [sort, setSort] = React.useState<TableSortOptions<T> | null>(
-		() => getFromLocalStorage(`${model.resource}__sort`) ?? null,
-	);
-	const [internalPagination, setInternalPagination] = React.useState<{
-		page: number;
-		itemsPerPage: number;
-	}>({
-		page: 0,
-		itemsPerPage: pagination?.itemsPerPage ?? DEFAULT_ITEMS_PER_PAGE,
+	// TODO: this logic should be moved in the lens/table.tsx.
+	// With the layer refactor we should have a lens.data.renderer should
+	// only handle a onChange event that has all the info. the lens should handle all cases
+	const [sort, setSort] = React.useState<TableSortOptions | null>(null);
+	const [internalPagination, setInternalPagination] = React.useState<
+		Pick<Pagination, 'currentPage' | 'itemsPerPage'>
+	>({
+		currentPage: pagination?.currentPage ?? 0,
+		// In the first case we need the || as the result might be NaN (Number(undefined)) or 0 Number(null)).
+		itemsPerPage:
+			(Number(getFromLocalStorage(`${model.resource}__items_per_page`)) ||
+				pagination?.itemsPerPage) ??
+			DEFAULT_ITEMS_PER_PAGE,
 	});
 	const [views, setViews] = React.useState<FiltersView[]>([]);
 	const [selected, setSelected] = React.useState<T[] | undefined>([]);
@@ -217,7 +224,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	const internalOnChange = React.useCallback(
 		(
 			updatedFilters: JSONSchema[],
-			sortInfo: TableSortOptions<T> | null,
+			sortInfo: TableSortOptions | null,
 			page: number,
 			itemsPerPage: number,
 		) => {
@@ -255,7 +262,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 			internalOnChange(
 				updatedFilters,
 				sort,
-				internalPagination.page,
+				internalPagination.currentPage,
 				internalPagination.itemsPerPage,
 			);
 		},
@@ -263,7 +270,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 			setFilters,
 			internalOnChange,
 			internalPagination.itemsPerPage,
-			internalPagination.page,
+			internalPagination.currentPage,
 			sort,
 		],
 	);
@@ -288,7 +295,12 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	);
 
 	const serverSide = pagination?.serverSide;
-	const totalItems = serverSide ? pagination.totalItems : undefined;
+	const totalItems = serverSide
+		? pagination.totalItems
+		: Array.isArray(data)
+			? data.length
+			: undefined;
+
 	const hideUtils = React.useMemo(
 		() =>
 			(!filters || filters.length === 0) &&
@@ -325,16 +337,15 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 
 	const defaultLensSlug = getFromLocalStorage(`${model.resource}__view_lens`);
 
-	const lenses = React.useMemo(
-		() => getLenses<T>(data, lensContext, customLenses),
-		[data, lensContext, customLenses],
-	);
+	const lenses = React.useMemo(() => {
+		return getLenses<T>(data, lensContext, customLenses);
+	}, [data, lensContext, customLenses]);
 
-	const [lens, setLens] = React.useState<LensTemplate>(lenses[0]);
+	const [lens, setLens] = React.useState<LensTemplate | undefined>(lenses?.[0]);
 
 	React.useEffect(() => {
 		const foundLens =
-			lenses.find((l) => l?.slug === defaultLensSlug) ?? lenses[0];
+			lenses?.find((l) => l?.slug === defaultLensSlug) ?? lenses?.[0];
 		if (lens?.slug === foundLens?.slug) {
 			return;
 		}
@@ -432,7 +443,6 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 				t,
 				schema: model.schema,
 				idField: autouiContext.idField,
-				tagField: autouiContext.tagField,
 				isServerSide: pagination?.serverSide ?? false,
 				customSort: autouiContext.customSort,
 				priorities: model.priorities,
@@ -441,7 +451,6 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 		[
 			model.schema,
 			autouiContext.idField,
-			autouiContext.tagField,
 			autouiContext.customSort,
 			model.priorities,
 			pagination?.serverSide,
@@ -480,7 +489,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							<>
 								{!hideUtils ? (
 									<Box
-										mb={3}
+										mb={1}
 										display={
 											// This hides the Filters component during the initial load but keeps them mounted so that
 											// it can trigger onChange on mount to communicate to the parent component the pineOptions
@@ -532,23 +541,25 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 													)}
 												/>
 											</Box>
-											<LensSelection
-												lenses={lenses}
-												lens={lens}
-												setLens={(updatedLens) => {
-													setLens(updatedLens);
-													setToLocalStorage(
-														`${model.resource}__view_lens`,
-														updatedLens.slug,
-													);
+											{lenses && lens && (
+												<LensSelection
+													lenses={lenses}
+													lens={lens}
+													setLens={(updatedLens) => {
+														setLens(updatedLens);
+														setToLocalStorage(
+															`${model.resource}__view_lens`,
+															updatedLens.slug,
+														);
 
-													analytics.webTracker?.track('Change lens', {
-														current_url: location.origin + location.pathname,
-														resource: model.resource,
-														lens: updatedLens.slug,
-													});
-												}}
-											/>
+														analytics.webTracker?.track('Change lens', {
+															current_url: location.origin + location.pathname,
+															resource: model.resource,
+															lens: updatedLens.slug,
+														});
+													}}
+												/>
+											)}
 										</HeaderGrid>
 										<Filters
 											renderMode={['summaryWithSaveViews']}
@@ -580,7 +591,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							</>
 						)
 					}
-					{!Array.isArray(data) && (
+					{!Array.isArray(data) && lenses && lens && (
 						<HeaderGrid>
 							<LensSelection
 								lenses={lenses}
@@ -604,14 +615,17 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							properties={properties}
 							hasUpdateActions={hasUpdateActions}
 							changeSelected={$setSelected}
+							checkedState={checkedState}
+							sort={sort}
 							onSort={(sortInfo) => {
 								setSort(sortInfo);
 								internalOnChange(
 									filters,
 									sortInfo,
-									internalPagination.page,
+									internalPagination.currentPage,
 									internalPagination.itemsPerPage,
 								);
+								setToLocalStorage(`${autouiContext.resource}__sort`, sortInfo);
 							}}
 							data={data}
 							autouiContext={autouiContext}
@@ -621,18 +635,26 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 									: undefined
 							}
 							model={model}
-							onPageChange={(page, itemsPerPage) => {
-								setInternalPagination({ page, itemsPerPage });
-								internalOnChange(filters, sort, page, itemsPerPage);
-
+							onPageChange={(currentPage, itemsPerPage) => {
+								setInternalPagination({
+									currentPage,
+									itemsPerPage,
+								});
+								internalOnChange(filters, sort, currentPage, itemsPerPage);
+								setToLocalStorage(
+									`${model.resource}__items_per_page`,
+									itemsPerPage,
+								);
 								analytics.webTracker?.track('Change table page', {
 									current_url: location.origin + location.pathname,
 									resource: model.resource,
-									page,
+									page: currentPage,
 									itemsPerPage,
 								});
 							}}
-							pagination={pagination}
+							pagination={
+								{ ...(pagination ?? {}), ...internalPagination } as Pagination
+							}
 							rowKey={rowKey}
 						/>
 					)}
@@ -669,14 +691,24 @@ export {
 	generateSchemaFromRefScheme,
 };
 
-export type AutoUIEntityPropertyDefinition<T> = Required<
-	Pick<
-		TableColumn<T>,
-		'title' | 'label' | 'field' | 'key' | 'selected' | 'sortable' | 'render'
-	>
-> & { type: string; priority: string };
+export type AutoUIEntityPropertyDefinition<T> = {
+	title: string;
+	label: string | JSX.Element;
+	field: Extract<keyof T, string>;
+	key: string;
+	selected: boolean;
+	sortable: boolean | ((a: T, b: T) => number);
+	render: (
+		value: any,
+		row: T,
+	) => string | number | JSX.Element | null | undefined;
 
-const getTitleAndLabel = (
+	type: string;
+	priority: string;
+	refScheme?: string;
+};
+
+const getTitleAndLabel = <T extends object>(
 	t: TFunction,
 	jsonSchema: JSONSchema,
 	propertyKey: string,
@@ -685,7 +717,7 @@ const getTitleAndLabel = (
 	const subSchema = getSubSchemaFromRefScheme(jsonSchema, refScheme);
 	const title = subSchema?.title ?? jsonSchema.title ?? propertyKey;
 	const headerLink = getHeaderLink(subSchema);
-	let label: TableColumn<unknown>['label'] = title;
+	let label: AutoUIEntityPropertyDefinition<T>['label'] = title;
 
 	if (headerLink?.href || headerLink?.tooltip) {
 		label = (
@@ -731,7 +763,6 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 	t,
 	schema,
 	idField,
-	tagField,
 	isServerSide,
 	customSort,
 	priorities,
@@ -740,7 +771,6 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 	t: TFunction;
 	schema: JSONSchema;
 	idField: AutoUIContext<T>['idField'];
-	tagField: AutoUIContext<T>['tagField'];
 	isServerSide: boolean;
 	customSort?: AutoUIContext<T>['customSort'];
 	priorities?: Priorities<T>;
@@ -782,7 +812,6 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 		.filter(([key, val]: [Extract<keyof T, string>, JSONSchema]) => {
 			const entryDescription = parseDescription(val);
 			return (
-				key !== tagField &&
 				key !== idField &&
 				(!entryDescription || !('x-filter-only' in entryDescription))
 			);
@@ -825,7 +854,6 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 					);
 				}
 			}
-
 			return {
 				...getTitleAndLabel(t, val, key, refScheme?.[0]),
 				field: key,
@@ -835,15 +863,11 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 				priority,
 				type: 'predefined',
 				refScheme: refScheme?.[0],
-				sortable: xNoSort
-					? false
-					: typeof fieldCustomSort === 'function'
-						? fieldCustomSort
-						: isServerSide
-							? // This is a temporary solution to prevent clientside sorting for server side paginated tables
-								// This is a noop for .sort
-								// TODO: We should just avoid sorting in the Table component when isServerSide is true, look into this when rendition is gone
-								() => 0
+				sortable:
+					xNoSort || val.format === 'tag'
+						? false
+						: typeof fieldCustomSort === 'function'
+							? fieldCustomSort
 							: getSortingFunction<T>(key, val),
 				render: (fieldVal: string, entry: T) => {
 					const calculatedField = autoUIAdaptRefScheme(fieldVal, val);

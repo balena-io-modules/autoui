@@ -1,7 +1,11 @@
-import type { TableSortOptions, Pagination, CheckedState } from 'rendition';
 import type { AutoUIEntityPropertyDefinition } from '../../';
 import type { AutoUIContext, AutoUIModel } from '../../schemaOps';
 import type { Material } from '@balena/ui-shared-components';
+import type {
+	CheckedState,
+	Pagination,
+	TableSortOptions,
+} from '../../../components/Table/utils';
 export { table } from './table';
 export { entity } from './entity';
 
@@ -21,14 +25,16 @@ export interface CollectionLensRendererProps<T>
 	extends LensRendererBaseProps<T> {
 	filtered: T[];
 	selected: T[] | undefined;
+	checkedState?: CheckedState;
+	sort: TableSortOptions | null;
 	changeSelected: (
 		selected: T[] | undefined,
 		allChecked?: CheckedState,
 	) => void;
 	data: T[];
 	onPageChange?: (page: number, itemsPerPage: number) => void;
-	onSort?: (sort: TableSortOptions<T>) => void;
-	pagination?: Pagination;
+	onSort?: (sort: TableSortOptions) => void;
+	pagination: Pagination;
 	rowKey?: keyof T;
 }
 

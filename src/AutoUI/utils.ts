@@ -8,9 +8,9 @@ import { getPropertyScheme } from './schemaOps';
 import castArray from 'lodash/castArray';
 import get from 'lodash/get';
 import type { TFunction } from '../hooks/useTranslation';
-import type { TableSortFunction, CheckedState } from 'rendition';
 import { JsonTypes } from '../components/Widget/utils';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
+import type { CheckedState } from '../components/Table/utils';
 
 export const DEFAULT_ITEMS_PER_PAGE = 50;
 
@@ -160,7 +160,7 @@ const sortFn = (a: unknown, b: unknown, ref: string | string[]) => {
 export const getSortingFunction = <T>(
 	schemaKey: keyof T,
 	schemaValue: JSONSchema,
-): TableSortFunction<T> => {
+) => {
 	const types = castArray(schemaValue.type);
 	const refScheme = getPropertyScheme(schemaValue);
 	if (types.includes(JsonTypes.string)) {
