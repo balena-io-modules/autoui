@@ -10,7 +10,7 @@
     "README.md"
   ],
   "dependencies": {
-    "@balena/ui-shared-components": "^9.8.0",
+    "@balena/ui-shared-components": "^10.0.0-build-markdown-allowed-components-be8ff5716e1dab36b7f99a032ed8357a2084397d-1",
     "@rjsf/validator-ajv8": "^5.21.1",
     "ajv": "^8.12.0",
     "ajv-formats": "^3.0.1",
