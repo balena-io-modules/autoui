@@ -36,6 +36,7 @@ function TableCellComponent<T extends object>({
 				verticalAlign: 'middle',
 				whiteSpace: 'nowrap',
 				boxSizing: 'border-box',
+				cursor: href ? 'pointer' : 'default',
 				'&:hover': {
 					color: 'inherit',
 				},

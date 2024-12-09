@@ -17,7 +17,6 @@ export function useColumns<T>(
 		const storedColumns = getFromLocalStorage<
 			Array<AutoUIEntityPropertyDefinition<T>>
 		>(`${resourceName}__columns`);
-
 		if (storedColumns) {
 			const storedColumnsMap = new Map(storedColumns.map((s) => [s.key, s]));
 

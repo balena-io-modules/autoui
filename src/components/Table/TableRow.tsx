@@ -49,9 +49,6 @@ export const TableRow = <T extends object>({
 			aria-checked={checked}
 			tabIndex={-1}
 			selected={checked || checkedState === 'all'}
-			sx={{
-				cursor: 'pointer',
-			}}
 		>
 			{handleToggleCheck && (
 				<MaterialTableCell
