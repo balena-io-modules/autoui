@@ -858,7 +858,7 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 				...getTitleAndLabel(t, val, key, refScheme?.[0]),
 				field: key,
 				// This is used for storing columns and views
-				key: `${key}_${index}`,
+				key: refScheme ? `${key}_${refScheme[0]}_${index}` : `${key}_${index}`,
 				selected: getSelected(key as keyof T, priorities),
 				priority,
 				type: 'predefined',

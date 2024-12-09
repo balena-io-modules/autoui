@@ -91,6 +91,7 @@ const sortData = <T extends object>(
 	columns: Array<AutoUIEntityPropertyDefinition<T>>,
 	sort: TableSortOptions | null,
 ): T[] => {
+	console.log(data, columns, sort);
 	if (!sort?.field) {
 		return data;
 	}
