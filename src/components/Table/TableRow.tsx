@@ -14,7 +14,7 @@ export interface TableRowProps<T> {
 	row: T;
 	rowKey: keyof T;
 	rowIndex: number;
-	handleToggleCheck: (row: T) => (
+	handleToggleCheck?: (row: T) => (
 		event: React.MouseEvent<HTMLButtonElement, MouseEvent> & {
 			target: {
 				checked: boolean;
@@ -53,23 +53,25 @@ export const TableRow = <T extends object>({
 				cursor: 'pointer',
 			}}
 		>
-			<MaterialTableCell
-				data-display="table-cell"
-				data-table="table_cell__sticky"
-				padding="checkbox"
-				sx={{
-					whiteSpace: 'nowrap',
-				}}
-			>
-				<Checkbox
-					color="primary"
-					onClick={handleToggleCheck(row)}
-					checked={checkedState === 'all' || checked}
-					inputProps={{
-						'aria-labelledby': labelId,
+			{handleToggleCheck && (
+				<MaterialTableCell
+					data-display="table-cell"
+					data-table="table_cell__sticky"
+					padding="checkbox"
+					sx={{
+						whiteSpace: 'nowrap',
 					}}
-				/>
-			</MaterialTableCell>
+				>
+					<Checkbox
+						color="primary"
+						onClick={handleToggleCheck(row)}
+						checked={checkedState === 'all' || checked}
+						inputProps={{
+							'aria-labelledby': labelId,
+						}}
+					/>
+				</MaterialTableCell>
+			)}
 			{columns.map((c: any, columnIndex: number) => {
 				return c.selected ? (
 					<TableCell

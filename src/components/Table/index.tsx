@@ -242,7 +242,7 @@ export const Table = <T extends object>({
 									row={row}
 									rowKey={rowKey}
 									rowIndex={rowIndex}
-									handleToggleCheck={handleToggleCheck}
+									{...(onCheck && { handleToggleCheck })}
 									checkedState={checkedState}
 									checked={checked}
 									labelId={labelId}
