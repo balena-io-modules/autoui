@@ -35,27 +35,30 @@ export const TableHeader = <T extends object>({
 }: TableHeaderProps<T>) => {
 	return (
 		<TableHead sx={{ borderCollapse: 'collapse' }}>
-			<TableCell data-table="table_cell__sticky_header" padding="checkbox">
-				<Checkbox
-					color="primary"
-					indeterminate={checkedState === 'some'}
-					checked={
-						(rowCount > 0 && numSelected === rowCount) || checkedState === 'all'
-					}
-					onChange={() => {
-						const state =
-							checkedState === 'some'
-								? 'none'
-								: checkedState === 'all'
+			{onSelectAllClick && (
+				<TableCell data-table="table_cell__sticky_header" padding="checkbox">
+					<Checkbox
+						color="primary"
+						indeterminate={checkedState === 'some'}
+						checked={
+							(rowCount > 0 && numSelected === rowCount) ||
+							checkedState === 'all'
+						}
+						onChange={() => {
+							const state =
+								checkedState === 'some'
 									? 'none'
-									: 'all';
-						onSelectAllClick?.(undefined, state);
-					}}
-					inputProps={{
-						'aria-label': 'select all rows',
-					}}
-				/>
-			</TableCell>
+									: checkedState === 'all'
+										? 'none'
+										: 'all';
+							onSelectAllClick?.(undefined, state);
+						}}
+						inputProps={{
+							'aria-label': 'select all rows',
+						}}
+					/>
+				</TableCell>
+			)}
 			{columns.map(
 				(column, index) =>
 					column.selected && (

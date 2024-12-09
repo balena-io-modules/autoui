@@ -4,6 +4,7 @@ import type { AutoUIEntityPropertyDefinition } from '../../AutoUI';
 import { getFromLocalStorage, setToLocalStorage } from '../../AutoUI/utils';
 import type { TagField } from './utils';
 
+export const TAG_COLUMN_PREFIX = 'tag_column_';
 // Move columns logic inside a dedicated hook to make the refactor easier and move this logic without effort.
 export function useColumns<T>(
 	resourceName: string,
@@ -24,7 +25,9 @@ export function useColumns<T>(
 				const defaultColumn = defaultColumnsMap.get(d.key);
 				const columnLabel = defaultColumn?.label ?? d.label;
 				return {
-					...(defaultColumn ?? { render: tagKeyRender(d.title) }),
+					...(d.key.startsWith(TAG_COLUMN_PREFIX)
+						? { render: tagKeyRender(d.title) }
+						: defaultColumn),
 					...d,
 					label: columnLabel,
 				};

@@ -39,6 +39,7 @@ function TableCellComponent<T extends object>({
 				'&:hover': {
 					color: 'inherit',
 				},
+				height: '50px',
 			})}
 			href={href}
 			data-key={row[rowKey]}

@@ -9,7 +9,10 @@ import type {
 	TableSortOptions,
 	TagField,
 } from '../../../components/Table/utils';
-import { useColumns } from '../../../components/Table/useColumns';
+import {
+	TAG_COLUMN_PREFIX,
+	useColumns,
+} from '../../../components/Table/useColumns';
 import { useTagActions } from '../../../components/Table/useTagActions';
 import { AddTagHandler } from '../../../components/Table/AddTagHandler';
 
@@ -20,8 +23,6 @@ import {
 	useAnalyticsContext,
 } from '@balena/ui-shared-components';
 const { Box, styled, Tooltip, Typography } = Material;
-
-const TAG_COLUMN_PREFIX = 'tag_column_';
 
 const TagContainer = styled(Box)(() => ({
 	border: `0.5px solid ${designTokens.color.border.accent.value}`,
@@ -64,7 +65,7 @@ const tagKeyRender = (key: string) => {
 		if (!tags?.length) {
 			return null;
 		}
-		const tag = tags?.find((t) => t.tag_key === key);
+		const tag = tags.find((t) => t.tag_key === key);
 		return tag ? <TagLabel value={tag.value} /> : null;
 	}
 
