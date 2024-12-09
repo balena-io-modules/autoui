@@ -148,6 +148,18 @@ export const autoUIGetDisabledReason = <T extends AutoUIBaseResource<T>>(
 	}
 };
 
+const splitPath = (path: string) => {
+	const regex = /([^.[]+)|\[(\d+)\]/g;
+	const parts = [];
+	let match;
+
+	while ((match = regex.exec(path)) !== null) {
+		parts.push(match[1] || match[2]);
+	}
+
+	return parts;
+};
+
 const sortFn = (a: unknown, b: unknown, ref: string | string[]) => {
 	const aa = get(a, ref) ?? '';
 	const bb = get(b, ref) ?? '';
@@ -163,15 +175,17 @@ export const getSortingFunction = <T>(
 ) => {
 	const types = castArray(schemaValue.type);
 	const refScheme = getPropertyScheme(schemaValue);
+	const splitRefScheme = refScheme?.[0] ? splitPath(refScheme[0]) : null;
 	if (types.includes(JsonTypes.string)) {
 		return (a: T, b: T) => sortFn(a, b, schemaKey as string);
 	}
-	if (types.includes(JsonTypes.object) && refScheme) {
-		return (a: T, b: T) => sortFn(a, b, [schemaKey as string, ...refScheme]);
-	}
-	if (types.includes(JsonTypes.array) && refScheme) {
+	if (types.includes(JsonTypes.object) && splitRefScheme) {
 		return (a: T, b: T) =>
-			sortFn(a, b, [schemaKey as string, '0', ...refScheme]);
+			sortFn(a, b, [schemaKey as string, ...splitRefScheme]);
+	}
+	if (types.includes(JsonTypes.array) && splitRefScheme) {
+		return (a: T, b: T) =>
+			sortFn(a, b, [schemaKey as string, '0', ...splitRefScheme]);
 	}
 	return (a: T, b: T) => diff(a[schemaKey], b[schemaKey]);
 };

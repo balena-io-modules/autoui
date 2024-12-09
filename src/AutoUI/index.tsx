@@ -834,8 +834,11 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 					: 'tertiary';
 
 			const widgetSchema = { ...val, title: undefined };
-
-			const fieldCustomSort = customSort?.[key];
+			// TODO: Refactor this logic to create an object structure and retrieve the correct property using the refScheme.
+			// The customSort should look like: { user: { owns_items: [{ uuid: 'xx09x0' }] } }
+			// The refScheme will reference the property path, e.g., owns_items[0].uuid.
+			const fieldCustomSort =
+				customSort?.[`${key}_${refScheme}`] ?? customSort?.[key];
 			if (fieldCustomSort != null) {
 				if (
 					isServerSide &&
@@ -858,7 +861,7 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 				...getTitleAndLabel(t, val, key, refScheme?.[0]),
 				field: key,
 				// This is used for storing columns and views
-				key: `${key}_${index}`,
+				key: refScheme ? `${key}_${refScheme[0]}_${index}` : `${key}_${index}`,
 				selected: getSelected(key as keyof T, priorities),
 				priority,
 				type: 'predefined',
