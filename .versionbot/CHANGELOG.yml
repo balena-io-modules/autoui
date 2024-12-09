@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix tags columns and show checkbox only if necessary
+      hash: f7c12d0037b99ba9069829ffc625b7b94f281602
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Jonathan Berger
+  version: 7.0.1
+  title: ""
+  date: 2024-12-09T10:43:51.218Z
+- commits:
     - subject: Replace rendition table with MUI table
       hash: 32e14f6df43357c42a06603a14d6ebd9f58e5e40
       body: ""
