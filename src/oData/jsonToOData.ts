@@ -174,7 +174,7 @@ const handleOperators = (
 	if (!filter.anyOf && !filter.allOf) {
 		throw new Error('Calling handleOperators without anyOf and allOf');
 	}
-	const operator = filter.anyOf ?? filter.oneOf ? '$or' : '$and';
+	const operator = (filter.anyOf ?? filter.oneOf) ? '$or' : '$and';
 	const filters = filter.anyOf ?? filter.oneOf ?? filter.allOf;
 	return convertToPineClientFilter(
 		parentKeys,
