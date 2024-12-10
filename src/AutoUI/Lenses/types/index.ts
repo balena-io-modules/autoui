@@ -36,6 +36,7 @@ export interface CollectionLensRendererProps<T>
 	onSort?: (sort: TableSortOptions) => void;
 	pagination: Pagination;
 	rowKey?: keyof T;
+	persistColumns?: boolean;
 }
 
 export interface EntityLensRendererProps<T> extends LensRendererBaseProps<T> {

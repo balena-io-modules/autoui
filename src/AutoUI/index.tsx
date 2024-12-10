@@ -152,6 +152,7 @@ export interface AutoUIProps<T> extends Omit<Material.BoxProps, 'onChange'> {
 	rowKey?: keyof T;
 	noDataInfo?: NoDataInfo;
 	persistFilters?: boolean;
+	persistColumns?: boolean;
 }
 
 // TODO: Refactor into multiple layers: one for handling
@@ -177,6 +178,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	rowKey,
 	noDataInfo,
 	persistFilters = true,
+	persistColumns = true,
 	...boxProps
 }: AutoUIProps<T>) => {
 	const { t } = useTranslation();
@@ -243,7 +245,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							$skip: page * itemsPerPage,
 						},
 						(v) => v != null,
-					)
+				  )
 				: null;
 			setInternalPineFilter(pineFilter);
 			onChange?.({
@@ -287,7 +289,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							...oldState,
 							affectedEntries: items,
 							checkedState: newCheckedState,
-						}
+					  }
 					: undefined,
 			);
 		},
@@ -298,8 +300,8 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	const totalItems = serverSide
 		? pagination.totalItems
 		: Array.isArray(data)
-			? data.length
-			: undefined;
+		? data.length
+		: undefined;
 
 	const hideUtils = React.useMemo(
 		() =>
@@ -408,7 +410,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							sdkTags,
 							t,
 						),
-				}
+			  }
 			: null;
 
 		return {
@@ -656,6 +658,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 								{ ...(pagination ?? {}), ...internalPagination } as Pagination
 							}
 							rowKey={rowKey}
+							persistColumns={persistColumns}
 						/>
 					)}
 
@@ -755,8 +758,8 @@ const hasPropertyEnabled = (
 	return Array.isArray(value) && value.some((v) => v === propertyKey)
 		? true
 		: typeof value === 'boolean'
-			? true
-			: false;
+		? true
+		: false;
 };
 
 const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
@@ -828,10 +831,10 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 			)
 				? 'primary'
 				: definedPriorities.secondary.find(
-							(prioritizedKey) => prioritizedKey === key,
-					  )
-					? 'secondary'
-					: 'tertiary';
+						(prioritizedKey) => prioritizedKey === key,
+				  )
+				? 'secondary'
+				: 'tertiary';
 
 			const widgetSchema = { ...val, title: undefined };
 
@@ -867,8 +870,8 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 					xNoSort || val.format === 'tag'
 						? false
 						: typeof fieldCustomSort === 'function'
-							? fieldCustomSort
-							: getSortingFunction<T>(key, val),
+						? fieldCustomSort
+						: getSortingFunction<T>(key, val),
 				render: (fieldVal: string, entry: T) => {
 					const calculatedField = autoUIAdaptRefScheme(fieldVal, val);
 					return (

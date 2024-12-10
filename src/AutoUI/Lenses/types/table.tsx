@@ -163,12 +163,14 @@ const TableRenderer = ({
 	model,
 	sort,
 	rowKey = 'id',
+	persistColumns = true,
 }: CollectionLensRendererProps<any>) => {
 	const { state: analytics } = useAnalyticsContext();
 	const [columns, setColumns] = useColumns(
 		autouiContext.resource,
 		properties,
 		tagKeyRender,
+		persistColumns,
 	);
 
 	const { actions, showAddTagDialog, setShowAddTagDialog, tagKeys } =

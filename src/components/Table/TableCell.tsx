@@ -14,7 +14,7 @@ export interface TableCellProps<T> {
 		| undefined;
 	row: T;
 	rowKey: keyof T;
-	column: AutoUIEntityPropertyDefinition<T>;
+	column?: AutoUIEntityPropertyDefinition<T>;
 	url: URL | null;
 }
 
@@ -48,7 +48,7 @@ function TableCellComponent<T extends object>({
 			}}
 			target={url ? '_blank' : undefined}
 		>
-			{column.render(row[column.field], row)}
+			{column?.render?.(row[column.field], row)}
 		</Link>
 	);
 }

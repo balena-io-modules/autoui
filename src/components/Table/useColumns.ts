@@ -12,13 +12,14 @@ export function useColumns<T>(
 	tagKeyRender: (
 		key: string,
 	) => (tags: TagField[] | undefined) => React.JSX.Element | null,
+	persistent: boolean = true,
 ) {
 	const [columns, setColumns] = useState(() => {
 		const storedColumns = getFromLocalStorage<
 			Array<AutoUIEntityPropertyDefinition<T>>
 		>(`${resourceName}__columns`);
 
-		if (storedColumns) {
+		if (persistent && storedColumns) {
 			const defaultColumnsMap = new Map(defaultColumns.map((s) => [s.key, s]));
 
 			return storedColumns.map((d) => {
