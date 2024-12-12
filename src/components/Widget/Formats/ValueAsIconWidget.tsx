@@ -6,7 +6,7 @@ import { JsonTypes, widgetFactory } from '../utils';
 import { Material } from '@balena/ui-shared-components';
 const { Box, Typography } = Material;
 
-export const BooleanAsIconWidget = widgetFactory('BooleanAsIcon', {}, [
+export const ValueAsIconWidget = widgetFactory('ValueAsIcon', {}, [
 	JsonTypes.boolean,
 	JsonTypes.null,
 ])(({ value }) => {
