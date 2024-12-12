@@ -19,19 +19,28 @@ export function useColumns<T>(
 		>(`${resourceName}__columns`);
 
 		if (storedColumns) {
-			const defaultColumnsMap = new Map(defaultColumns.map((s) => [s.key, s]));
+			const storedColumnsMap = new Map(storedColumns.map((s) => [s.key, s]));
 
-			return storedColumns.map((d) => {
-				const defaultColumn = defaultColumnsMap.get(d.key);
-				const columnLabel = defaultColumn?.label ?? d.label;
+			const tagColumns = storedColumns.filter((c) =>
+				c.key.startsWith(TAG_COLUMN_PREFIX),
+			);
+
+			const cols = [...defaultColumns, ...tagColumns].map((d) => {
+				const storedColumn = storedColumnsMap.get(d.key);
 				return {
-					...(d.key.startsWith(TAG_COLUMN_PREFIX)
-						? { render: tagKeyRender(d.title) }
-						: defaultColumn),
 					...d,
-					label: columnLabel,
+					render: d.key.startsWith(TAG_COLUMN_PREFIX)
+						? tagKeyRender(d.title)
+						: d.render,
+					selected: storedColumn?.selected ?? d.selected,
 				};
 			});
+			// Remove incorrectly saved column configurations and handle any structural changes.
+			const safeFilteredCols = cols.filter(
+				(c) => typeof c.render === 'function',
+			);
+
+			return safeFilteredCols;
 		} else {
 			return defaultColumns;
 		}
