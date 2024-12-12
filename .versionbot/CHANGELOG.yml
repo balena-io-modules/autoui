@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix regex escape check for object type filters
+      hash: b6e3094585cd61ffde053f9a7782eb70867e3d5f
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 7.1.4
+  title: ""
+  date: 2024-12-12T17:06:39.672Z
+- commits:
     - subject: add a limit for integer filters
       hash: b5acdf0be14bb1990db01bdccffc0dc55c24bfbf
       body: ""
