@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix sorting when the target is a nested schema property
+      hash: c073e3e09e995f34bf7e65f729143d97a4e1e108
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 7.1.1
+  title: ""
+  date: 2024-12-12T16:05:11.867Z
+- commits:
     - subject: "BooleanAsIconWidget: Add support for `JsonTypes.number`"
       hash: 446b577dca0128c6bb0c3afdfe51e748bfa8e7b0
       body: ""
