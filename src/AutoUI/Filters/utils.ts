@@ -10,6 +10,8 @@ import {
 	parseDescription,
 	parseDescriptionProperty,
 } from '../schemaOps';
+import isEmpty from 'lodash/isEmpty';
+import get from 'lodash/get';
 
 const X_FOREIGN_KEY_SCHEMA_SEPARATOR = '___ref_scheme_separator_';
 
@@ -29,7 +31,8 @@ export const removeFieldsWithNoFilter = (schema: JSONSchema): JSONSchema => {
 				newProperties[key] = value;
 				continue;
 			}
-			// Apply removal logic in case our parent has defined an array x-no-filter for its children
+
+			// Apply removal logic if parent has defined an array x-no-filter for its children
 			// TODO: This only works with immediate children and NOT with nested properties.
 			if (parentXNoFilterSet?.has(key)) {
 				continue;
@@ -65,6 +68,18 @@ export const removeFieldsWithNoFilter = (schema: JSONSchema): JSONSchema => {
 				}
 			}
 
+			const hasEmptyProperties =
+				newValue.properties && isEmpty(newValue.properties);
+
+			const hasEmptyItemsProperties =
+				isJSONSchema(newValue.items) &&
+				'properties' in newValue.items &&
+				isEmpty(newValue.items.properties);
+
+			if (hasEmptyProperties || hasEmptyItemsProperties) {
+				continue;
+			}
+
 			newProperties[key] = newValue;
 		}
 
@@ -95,7 +110,7 @@ export const constructSchemaProperties = (
 	transformedXRefScheme: string[] | undefined,
 	description?: string,
 	title?: string,
-): JSONSchemaDefinition => {
+): JSONSchemaDefinition | null => {
 	// Return the original schema if there is nothing to transform or no path is provided.
 	if (
 		schemaOrProperties == null ||
@@ -130,11 +145,9 @@ export const constructSchemaProperties = (
 			schemaOrProperties as NonNullable<JSONSchema['properties']>
 		)[firstRefSchemeKey as keyof typeof schemaOrProperties];
 
-		// Throw an error if the property key does not exist in the schema.
+		// skip the case were the property has been removed in a previous step
 		if (!property) {
-			throw new Error(
-				`ERROR: x-ref-scheme/x-foreign-scheme bad declaration, key ${firstRefSchemeKey} not found`,
-			);
+			return null;
 		}
 
 		// Recursively construct properties for the specific key found in the ref scheme.
@@ -182,6 +195,11 @@ export const modifySchemaWithRefSchemes = (schema: JSONSchema): JSONSchema => {
 					const title = getRefSchemeTitle(transformedXRefScheme, value);
 					const entireRefScheme =
 						getRefSchemePrefix(value) + transformedXRefScheme;
+					// In case we pass a x-no-filter in a x-foreign-key-scheme and this property has been filtered out, we just continue
+					const propertyExist = get(properties, `${key}.${entireRefScheme}`);
+					if (!propertyExist) {
+						continue;
+					}
 					if (transformedXRefScheme && description) {
 						description['x-ref-scheme'] = [transformedXRefScheme];
 					}
@@ -189,12 +207,16 @@ export const modifySchemaWithRefSchemes = (schema: JSONSchema): JSONSchema => {
 						refScheme.length > 1
 							? `${key}${X_FOREIGN_KEY_SCHEMA_SEPARATOR}${xRefScheme}`
 							: key;
-					newProperties[propertyKey] = constructSchemaProperties(
+					const property = constructSchemaProperties(
 						value,
 						entireRefScheme?.split('.'),
 						JSON.stringify(description),
 						title,
 					);
+					if (!property) {
+						continue;
+					}
+					newProperties[propertyKey] = property;
 				}
 			} else {
 				newProperties[key] = value;
