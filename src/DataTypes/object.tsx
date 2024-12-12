@@ -165,7 +165,7 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 	const containsFilter = (v: any) => ({
 		description: v,
 		regexp: {
-			pattern: regexEscape(v),
+			pattern: regexEscape(String(v)),
 			flags: 'i',
 		},
 	});
