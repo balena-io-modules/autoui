@@ -249,7 +249,12 @@ export const orderbyBuilder = <T>(
 	if (!field) {
 		return null;
 	}
-	const customOrderByKey = customSort?.[field];
+	// TODO: Refactor this logic to create an object structure and retrieve the correct property using the refScheme.
+	// The customSort should look like: { user: { owns_items: [{ uuid: 'xx09x0' }] } }
+	// The refScheme will reference the property path, e.g., owns_items[0].uuid.
+	const customOrderByKey =
+		customSort?.[`${field}_${refScheme}`] ?? customSort?.[field];
+
 	if (typeof customOrderByKey === 'string') {
 		return [`${customOrderByKey} ${direction}`, `id ${direction}`];
 	}
