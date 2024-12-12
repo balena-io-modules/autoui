@@ -1,4 +1,15 @@
 - commits:
+    - subject: "BooleanAsIconWidget: Add support for `JsonTypes.number`"
+      hash: 446b577dca0128c6bb0c3afdfe51e748bfa8e7b0
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: myarmolinsky
+  version: 7.1.0
+  title: ""
+  date: 2024-12-12T15:55:19.587Z
+- commits:
     - subject: Fix stored columns missing render function
       hash: 2acaf378bb9c76154205e34e9f90a97491cdce50
       body: ""
