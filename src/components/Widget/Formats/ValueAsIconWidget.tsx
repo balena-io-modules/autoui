@@ -6,11 +6,12 @@ import { JsonTypes, widgetFactory } from '../utils';
 import { Material } from '@balena/ui-shared-components';
 const { Box, Typography } = Material;
 
-export const BooleanAsIconWidget = widgetFactory('BooleanAsIcon', {}, [
+export const ValueAsIconWidget = widgetFactory('ValueAsIcon', {}, [
 	JsonTypes.boolean,
+	JsonTypes.number,
 	JsonTypes.null,
 ])(({ value }) => {
-	const text = value ? 'true' : 'false';
+	const text = Boolean(value) ? 'true' : 'false';
 	return (
 		<Box alignItems="center" gap={2}>
 			<FontAwesomeIcon icon={value ? faCheckCircle : faTimesCircle} />{' '}

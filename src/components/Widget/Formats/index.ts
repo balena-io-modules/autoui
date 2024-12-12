@@ -5,7 +5,7 @@ import { HashWidget } from './HashWidget';
 import { TemperatureWidget } from './TemperatureWidget';
 import { PercentageWidget } from './PercentageWidget';
 import { DisabledTextWidget } from './DisabledTextWidget';
-import { BooleanAsIconWidget } from './BooleanAsIconWidget';
+import { ValueAsIconWidget } from './ValueAsIconWidget';
 import { PlaceholderTextWidget } from './PlaceholderTextWidget';
 import { WrapWidget } from './WrapWidget';
 import type { Format, Widget } from '../utils';
@@ -57,9 +57,10 @@ export const defaultFormats: Format[] = [
 		widget: WrapWidget,
 	},
 	{
+		// TODO: rename to `value-as-icon` in the next major
 		name: 'boolean-as-icon',
 		format: '.*',
-		widget: BooleanAsIconWidget,
+		widget: ValueAsIconWidget,
 	},
 	{
 		name: 'placeholder-text',

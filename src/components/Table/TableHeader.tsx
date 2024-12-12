@@ -86,7 +86,7 @@ export const TableHeader = <T extends object>({
 									) : null}
 								</TableSortLabel>
 							) : (
-								column.label ?? column.title
+								(column.label ?? column.title)
 							)}
 						</TableCell>
 					),
