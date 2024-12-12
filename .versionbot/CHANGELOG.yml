@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix stored columns missing render function
+      hash: 2acaf378bb9c76154205e34e9f90a97491cdce50
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 7.0.3
+  title: ""
+  date: 2024-12-12T12:47:46.737Z
+- commits:
     - subject: Update UI shared components
       hash: 51f98ab86122d875e369f7ac1f9279beccf07d09
       body: ""
