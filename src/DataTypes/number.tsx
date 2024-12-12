@@ -3,6 +3,9 @@ import type { CreateFilter } from './utils';
 import { getDataTypeSchema } from './utils';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
 
+// This is the max safe integer supported DB: 2**31-1
+const MAX_SAFE_DB_INT4 = 2147483647;
+
 export const operators = () => ({
 	is: 'is',
 	is_not: 'is not',
@@ -29,7 +32,12 @@ export const createFilter: CreateFilter<OperatorSlug> = (
 
 	const fieldType = propertySchema?.type ?? 'number';
 
-	if (val == null || isNaN(val) || (fieldType === 'integer' && val % 1 !== 0)) {
+	if (
+		val == null ||
+		isNaN(val) ||
+		(fieldType === 'integer' &&
+			(!Number.isInteger(val) || val >= MAX_SAFE_DB_INT4))
+	) {
 		return {};
 	}
 
