@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix select all on client side paginated tables
+      hash: cf07ec7b96988793647d49c9cb3738de672f5c02
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 7.1.5
+  title: ""
+  date: 2024-12-17T19:42:30.158Z
+- commits:
     - subject: Fix regex escape check for object type filters
       hash: b6e3094585cd61ffde053f9a7782eb70867e3d5f
       body: ""
