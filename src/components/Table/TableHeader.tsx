@@ -8,6 +8,8 @@ const { Box, TableCell, TableHead, TableSortLabel, Checkbox } = Material;
 
 interface TableHeaderProps<T> {
 	columns: Array<AutoUIEntityPropertyDefinition<T>>;
+	data: T[];
+	isServerSide?: boolean;
 	numSelected?: number;
 	checkedState?: CheckedState;
 	onRequestSort: (
@@ -24,6 +26,8 @@ interface TableHeaderProps<T> {
 }
 
 export const TableHeader = <T extends object>({
+	data,
+	isServerSide,
 	columns,
 	onSelectAllClick,
 	order,
@@ -51,7 +55,7 @@ export const TableHeader = <T extends object>({
 									: checkedState === 'all'
 										? 'none'
 										: 'all';
-							onSelectAllClick?.(undefined, state);
+							onSelectAllClick?.(isServerSide ? undefined : data, state);
 						}}
 						inputProps={{
 							'aria-label': 'select all rows',
@@ -86,7 +90,7 @@ export const TableHeader = <T extends object>({
 									) : null}
 								</TableSortLabel>
 							) : (
-								(column.label ?? column.title)
+								column.label ?? column.title
 							)}
 						</TableCell>
 					),
