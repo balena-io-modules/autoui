@@ -217,6 +217,8 @@ export const Table = <T extends object>({
 					<TableHeader
 						data-display="table-head"
 						columns={columns}
+						data={data}
+						isServerSide={pagination?.serverSide}
 						numSelected={numSelected}
 						checkedState={checkedState}
 						order={sort.direction}
