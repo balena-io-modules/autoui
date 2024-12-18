@@ -1,7 +1,6 @@
 import * as React from 'react';
 import qs from 'qs';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
-import type { History } from 'history';
 import type { FiltersProps } from '../../components/Filters';
 import { Filters } from '../../components/Filters';
 import type { FilterDescription } from '../../components/Filters/SchemaSieve';
@@ -13,7 +12,7 @@ import {
 } from '../../components/Filters/SchemaSieve';
 import { isJSONSchema } from '../../AutoUI/schemaOps';
 import { useAnalyticsContext } from '@balena/ui-shared-components';
-import { useLocation } from 'react-router';
+import { NavigateFunction, useLocation } from 'react-router-dom';
 
 export interface ListQueryStringFilterObject {
 	n: string;
@@ -52,7 +51,7 @@ export function listFilterQuery(filters: JSONSchema[], stringify = true) {
 			filter.title === FULL_TEXT_SLUG
 				? [parseFilterDescription(filter)].filter(
 						(f): f is FilterDescription => !!f,
-					)
+				  )
 				: filter.anyOf
 						?.filter((f): f is JSONSchema => isJSONSchema(f))
 						.map(
@@ -60,7 +59,7 @@ export function listFilterQuery(filters: JSONSchema[], stringify = true) {
 								({
 									...parseFilterDescription(f),
 									operatorSlug: f.title,
-								}) as FilterDescription & { operatorSlug?: string },
+								} as FilterDescription & { operatorSlug?: string }),
 						)
 						.filter((f) => !!f);
 
@@ -80,14 +79,14 @@ export function listFilterQuery(filters: JSONSchema[], stringify = true) {
 	return stringify
 		? qs.stringify(queryStringFilters, {
 				strictNullHandling: true,
-			})
+		  })
 		: queryStringFilters;
 }
 
 export const loadRulesFromUrl = (
 	searchLocation: string,
 	schema: JSONSchema,
-	history: History,
+	navigate: NavigateFunction,
 ): JSONSchema[] => {
 	const { properties } = schema;
 	if (!searchLocation || !properties) {
@@ -158,7 +157,7 @@ export const loadRulesFromUrl = (
 
 				// In case of invalid signatures, remove search params to avoid Errors.
 				if (isSignaturesInvalid) {
-					history.replace({ search: '' });
+					navigate({ search: '' }, { replace: true });
 					return;
 				}
 
@@ -181,7 +180,7 @@ export const loadRulesFromUrl = (
 };
 
 interface PersistentFiltersProps extends FiltersProps {
-	history: History;
+	navigate: NavigateFunction;
 }
 
 export const PersistentFilters = ({
@@ -190,17 +189,16 @@ export const PersistentFilters = ({
 	filters,
 	onViewsChange,
 	onFiltersChange,
-	history,
+	navigate,
 	onSearch,
 	...otherProps
 }: PersistentFiltersProps &
 	Required<Pick<PersistentFiltersProps, 'renderMode'>>) => {
 	const { state: analytics } = useAnalyticsContext();
-	const { pathname } = useLocation();
-	const locationSearch = history?.location?.search ?? '';
+	const { pathname, search } = useLocation();
 	const storedFilters = React.useMemo(() => {
-		return loadRulesFromUrl(locationSearch, schema, history);
-	}, [locationSearch, schema, history]);
+		return loadRulesFromUrl(search, schema, navigate);
+	}, [search, schema, navigate]);
 
 	const onFiltersUpdate = React.useCallback(
 		(updatedFilters: JSONSchema[]) => {
@@ -210,14 +208,14 @@ export const PersistentFilters = ({
 				strictNullHandling: true,
 			});
 
-			history?.replace?.({
+			navigate?.({
 				pathname,
 				search: filterQuery,
 			});
 
 			onFiltersChange?.(updatedFilters);
 
-			if (filterQuery !== locationSearch.substring(1)) {
+			if (filterQuery !== search.substring(1)) {
 				analytics.webTracker?.track('Update table filters', {
 					current_url: location.origin + location.pathname,
 					// Need to reduce to a nested object instead of nested array for Amplitude to pick up on the property
@@ -225,7 +223,7 @@ export const PersistentFilters = ({
 				});
 			}
 		},
-		[onFiltersChange, analytics.webTracker, history, locationSearch, pathname],
+		[onFiltersChange, analytics.webTracker, navigate, search, pathname],
 	);
 
 	// When the component mounts, filters from the page URL,

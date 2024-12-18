@@ -1,14 +1,14 @@
 import React from 'react';
 import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
-import { Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Content } from './Content';
 import { createGlobalStyle } from 'styled-components';
 import type { OpenApiJson } from './openApiJson';
 import type { ActionSidebarProps } from './ActionSidebar';
 import { ActionSidebar } from './ActionSidebar';
 import { Provider } from 'rendition';
-import { useHistory } from '../hooks/useHistory';
+// import { useHistory } from '../hooks/useHistory';
 import { Material } from '@balena/ui-shared-components';
 import { useClickOutsideOrEsc } from '../hooks/useClickOutsideOrEsc';
 const { Box } = Material;
@@ -50,7 +50,7 @@ export const AutoUIApp = ({ openApiJson, title, logo }: AutoUIAppProps) => {
 	const actionSidebarWrapper = useClickOutsideOrEsc<HTMLDivElement>(() => {
 		setActionSidebar(null);
 	});
-	const history = useHistory();
+	// const history = useHistory();
 	const [actionSidebar, setActionSidebar] = React.useState<Omit<
 		ActionSidebarProps,
 		'openApiJson'
@@ -58,7 +58,7 @@ export const AutoUIApp = ({ openApiJson, title, logo }: AutoUIAppProps) => {
 
 	return (
 		<Provider>
-			<Router history={history}>
+			<BrowserRouter>
 				<GlobalStyle />
 				<Navbar height={NAVBAR_HEIGHT} title={title} logo={logo} />
 				<Box sx={{ display: 'flex', position: 'relative' }}>
@@ -79,12 +79,12 @@ export const AutoUIApp = ({ openApiJson, title, logo }: AutoUIAppProps) => {
 						py={1}
 						style={{ overflow: 'auto' }}
 					>
-						<Switch>
+						<Routes>
 							{Object.keys(openApiJson.paths).map((path) => (
 								<Route
 									key={path}
 									path={path}
-									render={() => (
+									element={() => (
 										<Content
 											openApiJson={openApiJson}
 											openActionSidebar={setActionSidebar}
@@ -92,7 +92,7 @@ export const AutoUIApp = ({ openApiJson, title, logo }: AutoUIAppProps) => {
 									)}
 								/>
 							))}
-						</Switch>
+						</Routes>
 					</Box>
 					{actionSidebar && (
 						<Box display="flex" ref={actionSidebarWrapper}>
@@ -106,7 +106,7 @@ export const AutoUIApp = ({ openApiJson, title, logo }: AutoUIAppProps) => {
 						</Box>
 					)}
 				</Box>
-			</Router>
+			</BrowserRouter>
 		</Provider>
 	);
 };
