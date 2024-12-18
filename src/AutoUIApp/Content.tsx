@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from 'react-router';
+import { useLocation } from 'react-router-dom';
 import type { AutoUIModel, AutoUIBaseResource } from '../AutoUI/schemaOps';
 import type { OpenApiJson } from './openApiJson';
 import {
@@ -16,7 +16,7 @@ import isEmpty from 'lodash/isEmpty';
 import { ActionMethods } from '.';
 import type { ActionSidebarProps } from './ActionSidebar';
 import { useRequest } from 'rendition';
-import { useHistory } from '../hooks/useHistory';
+import { useNavigate } from '../hooks/useNavigate';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
 
 interface ContentProps {
@@ -67,7 +67,7 @@ const generateModel = (
 
 export const Content = ({ openApiJson, openActionSidebar }: ContentProps) => {
 	const { pathname } = useLocation();
-	const history = useHistory();
+	const navigate = useNavigate();
 	const resourceName = pathname.replace(/^([^]*).*$/, '$1');
 	const id = pathname.substring(pathname.lastIndexOf('/') + 1);
 	const endsWithValidId = !isNaN(parseInt(id, 10));
@@ -178,7 +178,7 @@ export const Content = ({ openApiJson, openActionSidebar }: ContentProps) => {
 			data={memoizedData}
 			{...(!endsWithValidId && {
 				onEntityClick: (entity) => {
-					history.push(`${pathname}/${entity.id}`);
+					navigate?.(`${pathname}/${entity.id}`);
 				},
 			})}
 		/>

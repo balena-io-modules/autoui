@@ -1,7 +1,7 @@
 import React from 'react';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
 import { PersistentFilters } from './PersistentFilters';
-import { useHistory } from '../../hooks/useHistory';
+import { useNavigate } from '../../hooks/useNavigate';
 import type { FiltersView } from '../../components/Filters';
 import {
 	type FilterRenderMode,
@@ -38,7 +38,7 @@ export const Filters = ({
 	onSearch,
 	persistFilters,
 }: FiltersProps) => {
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	const filteredSchema = React.useMemo(
 		() => removeFieldsWithNoFilter(schema),
@@ -59,10 +59,10 @@ export const Filters = ({
 
 	return (
 		<>
-			{!!history && persistFilters ? (
+			{!!navigate && persistFilters ? (
 				<PersistentFilters
 					viewsRestorationKey={viewsRestorationKey}
-					history={history}
+					navigate={navigate}
 					schema={reworkedSchema}
 					filters={filters}
 					views={views}
