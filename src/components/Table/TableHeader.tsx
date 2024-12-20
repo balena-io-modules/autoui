@@ -55,7 +55,11 @@ export const TableHeader = <T extends object>({
 									: checkedState === 'all'
 										? 'none'
 										: 'all';
-							onSelectAllClick?.(isServerSide ? undefined : data, state);
+							const clientSelected = state === 'all' ? data : undefined;
+							onSelectAllClick?.(
+								isServerSide ? undefined : clientSelected,
+								state,
+							);
 						}}
 						inputProps={{
 							'aria-label': 'select all rows',
