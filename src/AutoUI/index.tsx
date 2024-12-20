@@ -145,8 +145,6 @@ export interface AutoUIProps<T> extends Omit<Material.BoxProps, 'onChange'> {
 	pagination?: Pagination;
 	/** All the lenses available for this AutoUI component. Any default lenses will automatically be added to this array. */
 	customLenses?: LensTemplate[];
-	/** Additional context for picking the right lens */
-	lensContext?: object;
 	/** Loading property to show the Spinner */
 	loading?: boolean;
 	rowKey?: keyof T;
@@ -172,7 +170,6 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	onChange,
 	pagination,
 	customLenses,
-	lensContext,
 	loading = false,
 	rowKey,
 	noDataInfo,
@@ -338,8 +335,8 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	const defaultLensSlug = getFromLocalStorage(`${model.resource}__view_lens`);
 
 	const lenses = React.useMemo(() => {
-		return getLenses<T>(data, lensContext, customLenses);
-	}, [data, lensContext, customLenses]);
+		return getLenses<T>(data, customLenses);
+	}, [data, customLenses]);
 
 	const [lens, setLens] = React.useState<LensTemplate | undefined>(lenses?.[0]);
 
