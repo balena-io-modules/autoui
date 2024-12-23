@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix table select all for client side data when selection is none
+      hash: 046b20aa6cefb34bda9c646c26a4719dcdeb47be
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 7.1.6
+  title: ""
+  date: 2024-12-23T10:31:07.383Z
+- commits:
     - subject: Fix select all on client side paginated tables
       hash: cf07ec7b96988793647d49c9cb3738de672f5c02
       body: ""
