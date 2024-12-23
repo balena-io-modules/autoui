@@ -16,14 +16,12 @@
     "ajv-formats": "^3.0.1",
     "ajv-keywords": "^5.1.0",
     "date-fns": "^3.6.0",
-    "json-e": "^4.4.3",
     "json-schema": "^0.4.0",
     "lodash": "^4.17.21",
     "qs": "^6.10.3",
     "react-router": "^5.3.3",
     "react-router-dom": "^5.3.3",
     "rendition": "^35.2.0",
-    "skhema": "^5.3.4",
     "styled-components": "^5.3.5"
   },
   "devDependencies": {
