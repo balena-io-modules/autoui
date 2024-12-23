@@ -3,7 +3,7 @@ import debounce from 'lodash/debounce';
 import type { AutoUIModel } from '../../AutoUI';
 import { getPropertyScheme } from '../../AutoUI';
 import type { AutoUIContext } from '../../AutoUI/schemaOps';
-import { useHistory } from '../../hooks/useHistory';
+import { useNavigate } from '../../hooks/useNavigate';
 import { Material, Spinner, designTokens } from '@balena/ui-shared-components';
 import { ajvFilter, createFullTextSearchFilter } from './SchemaSieve';
 import { Typography } from '@mui/material';
@@ -55,7 +55,7 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 	model,
 	rowKey = 'id',
 }: FocusSearchProps<T>) => {
-	const history = useHistory();
+	const navigate = useNavigate();
 	const [searchResults, setSearchResults] = React.useState<T[]>([]);
 	const [isLoading, setIsLoading] = React.useState<boolean>(false);
 	const inputSearch = autouiContext.sdk?.inputSearch;
@@ -131,12 +131,12 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 								key={entity[rowKey]}
 								onClick={(e) => {
 									e.preventDefault();
-									if (autouiContext.getBaseUrl && history) {
+									if (autouiContext.getBaseUrl && navigate) {
 										try {
 											const url = new URL(autouiContext.getBaseUrl(entity));
 											window.open(url.toString(), '_blank');
 										} catch {
-											history.push?.(autouiContext.getBaseUrl(entity));
+											navigate(autouiContext.getBaseUrl(entity));
 										}
 									}
 								}}

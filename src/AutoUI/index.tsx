@@ -49,7 +49,7 @@ import type { LensTemplate } from './Lenses';
 import { getLenses } from './Lenses';
 import type { TFunction } from '../hooks/useTranslation';
 import { useTranslation } from '../hooks/useTranslation';
-import { useHistory } from '../hooks/useHistory';
+import { useNavigate } from '../hooks/useNavigate';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleQuestion } from '@fortawesome/free-regular-svg-icons';
 import {
@@ -178,7 +178,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 }: AutoUIProps<T>) => {
 	const { t } = useTranslation();
 	const { state: analytics } = useAnalyticsContext();
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	const modelRef = React.useRef(modelRaw);
 	// This allows the component to work even if
@@ -240,7 +240,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							$skip: page * itemsPerPage,
 						},
 						(v) => v != null,
-					)
+				  )
 				: null;
 			setInternalPineFilter(pineFilter);
 			onChange?.({
@@ -284,7 +284,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							...oldState,
 							affectedEntries: items,
 							checkedState: newCheckedState,
-						}
+					  }
 					: undefined,
 			);
 		},
@@ -295,8 +295,8 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	const totalItems = serverSide
 		? pagination.totalItems
 		: Array.isArray(data)
-			? data.length
-			: undefined;
+		? data.length
+		: undefined;
 
 	const hideUtils = React.useMemo(
 		() =>
@@ -359,17 +359,17 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 				return;
 			}
 
-			if (getBaseUrl && !event.ctrlKey && !event.metaKey && history) {
+			if (getBaseUrl && !event.ctrlKey && !event.metaKey && navigate) {
 				event.preventDefault();
 				try {
 					const url = new URL(getBaseUrl(row));
 					window.open(url.toString(), '_blank');
 				} catch {
-					history.push?.(getBaseUrl(row));
+					navigate(getBaseUrl(row));
 				}
 			}
 		},
-		[onEntityClick, getBaseUrl, history],
+		[onEntityClick, getBaseUrl, navigate],
 	);
 
 	const autouiContext = React.useMemo((): AutoUIContext<T> => {
@@ -405,7 +405,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							sdkTags,
 							t,
 						),
-				}
+			  }
 			: null;
 
 		return {
@@ -752,8 +752,8 @@ const hasPropertyEnabled = (
 	return Array.isArray(value) && value.some((v) => v === propertyKey)
 		? true
 		: typeof value === 'boolean'
-			? true
-			: false;
+		? true
+		: false;
 };
 
 const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
@@ -825,10 +825,10 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 			)
 				? 'primary'
 				: definedPriorities.secondary.find(
-							(prioritizedKey) => prioritizedKey === key,
-					  )
-					? 'secondary'
-					: 'tertiary';
+						(prioritizedKey) => prioritizedKey === key,
+				  )
+				? 'secondary'
+				: 'tertiary';
 
 			const widgetSchema = { ...val, title: undefined };
 			// TODO: Refactor this logic to create an object structure and retrieve the correct property using the refScheme.
@@ -867,8 +867,8 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 					xNoSort || val.format === 'tag'
 						? false
 						: typeof fieldCustomSort === 'function'
-							? fieldCustomSort
-							: getSortingFunction<T>(key, val),
+						? fieldCustomSort
+						: getSortingFunction<T>(key, val),
 				render: (fieldVal: string, entry: T) => {
 					const calculatedField = autoUIAdaptRefScheme(fieldVal, val);
 					return (
