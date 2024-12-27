@@ -136,7 +136,17 @@ export const FocusSearch = <T extends { id: number; [key: string]: any }>({
 											const url = new URL(autouiContext.getBaseUrl(entity));
 											window.open(url.toString(), '_blank');
 										} catch {
-											history.push?.(autouiContext.getBaseUrl(entity));
+											if (
+												typeof history === 'object' &&
+												'push' in history &&
+												typeof history.push === 'function'
+											) {
+												// react-router-dom v5 history object
+												history.push(autouiContext.getBaseUrl(entity));
+											} else if (typeof history === 'function') {
+												// react-router-dom v6 navigate function
+												history(autouiContext.getBaseUrl(entity));
+											}
 										}
 									}
 								}}

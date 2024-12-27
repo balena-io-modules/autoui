@@ -1,7 +1,6 @@
 import * as React from 'react';
 import qs from 'qs';
 import type { JSONSchema7 as JSONSchema } from 'json-schema';
-import type { History } from 'history';
 import type { FiltersProps } from '../../components/Filters';
 import { Filters } from '../../components/Filters';
 import type { FilterDescription } from '../../components/Filters/SchemaSieve';
@@ -13,7 +12,6 @@ import {
 } from '../../components/Filters/SchemaSieve';
 import { isJSONSchema } from '../../AutoUI/schemaOps';
 import { useAnalyticsContext } from '@balena/ui-shared-components';
-import { useLocation } from 'react-router';
 
 export interface ListQueryStringFilterObject {
 	n: string;
@@ -52,7 +50,7 @@ export function listFilterQuery(filters: JSONSchema[], stringify = true) {
 			filter.title === FULL_TEXT_SLUG
 				? [parseFilterDescription(filter)].filter(
 						(f): f is FilterDescription => !!f,
-					)
+				  )
 				: filter.anyOf
 						?.filter((f): f is JSONSchema => isJSONSchema(f))
 						.map(
@@ -60,7 +58,7 @@ export function listFilterQuery(filters: JSONSchema[], stringify = true) {
 								({
 									...parseFilterDescription(f),
 									operatorSlug: f.title,
-								}) as FilterDescription & { operatorSlug?: string },
+								} as FilterDescription & { operatorSlug?: string }),
 						)
 						.filter((f) => !!f);
 
@@ -80,14 +78,14 @@ export function listFilterQuery(filters: JSONSchema[], stringify = true) {
 	return stringify
 		? qs.stringify(queryStringFilters, {
 				strictNullHandling: true,
-			})
+		  })
 		: queryStringFilters;
 }
 
 export const loadRulesFromUrl = (
 	searchLocation: string,
 	schema: JSONSchema,
-	history: History,
+	history: unknown,
 ): JSONSchema[] => {
 	const { properties } = schema;
 	if (!searchLocation || !properties) {
@@ -158,7 +156,18 @@ export const loadRulesFromUrl = (
 
 				// In case of invalid signatures, remove search params to avoid Errors.
 				if (isSignaturesInvalid) {
-					history.replace({ search: '' });
+					if (
+						history != null &&
+						typeof history === 'object' &&
+						'replace' in history &&
+						typeof history.replace === 'function'
+					) {
+						// react-router-dom v5 history object
+						history?.replace?.({ search: '' });
+					} else if (typeof history === 'function') {
+						// react-router-dom v6 navigate function
+						history({ search: '' }, { replace: true });
+					}
 					return;
 				}
 
@@ -181,7 +190,7 @@ export const loadRulesFromUrl = (
 };
 
 interface PersistentFiltersProps extends FiltersProps {
-	history: History;
+	history: unknown;
 }
 
 export const PersistentFilters = ({
@@ -196,11 +205,10 @@ export const PersistentFilters = ({
 }: PersistentFiltersProps &
 	Required<Pick<PersistentFiltersProps, 'renderMode'>>) => {
 	const { state: analytics } = useAnalyticsContext();
-	const { pathname } = useLocation();
-	const locationSearch = history?.location?.search ?? '';
+	const { pathname, search } = document.location;
 	const storedFilters = React.useMemo(() => {
-		return loadRulesFromUrl(locationSearch, schema, history);
-	}, [locationSearch, schema, history]);
+		return loadRulesFromUrl(search, schema, history);
+	}, [schema, history]);
 
 	const onFiltersUpdate = React.useCallback(
 		(updatedFilters: JSONSchema[]) => {
@@ -210,14 +218,31 @@ export const PersistentFilters = ({
 				strictNullHandling: true,
 			});
 
-			history?.replace?.({
-				pathname,
-				search: filterQuery,
-			});
+			if (
+				history != null &&
+				typeof history === 'object' &&
+				'replace' in history &&
+				typeof history.replace === 'function'
+			) {
+				// react-router-dom v5 history object
+				history.replace({
+					pathname,
+					search: filterQuery,
+				});
+			} else if (typeof history === 'function') {
+				// react-router-dom v6 navigate function
+				history(
+					{
+						pathname,
+						search: filterQuery,
+					},
+					{ replace: true },
+				);
+			}
 
 			onFiltersChange?.(updatedFilters);
 
-			if (filterQuery !== locationSearch.substring(1)) {
+			if (filterQuery !== search.substring(1)) {
 				analytics.webTracker?.track('Update table filters', {
 					current_url: location.origin + location.pathname,
 					// Need to reduce to a nested object instead of nested array for Amplitude to pick up on the property
@@ -225,7 +250,7 @@ export const PersistentFilters = ({
 				});
 			}
 		},
-		[onFiltersChange, analytics.webTracker, history, locationSearch, pathname],
+		[onFiltersChange, analytics.webTracker, history],
 	);
 
 	// When the component mounts, filters from the page URL,
