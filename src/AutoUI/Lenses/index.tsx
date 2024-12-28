@@ -35,7 +35,13 @@ export const getLenses = <T extends object>(
 		return [];
 	}
 
-	const filteredLenses: LensTemplate[] = lenses.concat(customLenses ?? []);
+	const filteredLenses: LensTemplate[] = lenses
+		.concat(customLenses ?? [])
+		.filter((l) =>
+			Array.isArray(data)
+				? l.data.format !== 'summary'
+				: l.data.format !== 'table',
+		);
 
 	const slugs = filteredLenses.map((lens) => lens.slug);
 	if (slugs.length > uniq(slugs).length) {
