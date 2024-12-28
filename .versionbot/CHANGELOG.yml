@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix broken lens getter
+      hash: cd49a6ef8a00c5584bad53e48345794134e811aa
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 7.2.1
+  title: ""
+  date: 2024-12-28T15:58:16.557Z
+- commits:
     - subject: Simplify lens logic and remove problematic dependencies (archive helper)
       hash: 99f43bbfe808e793a97fc01e71079b576ba8d9c0
       body: ""
