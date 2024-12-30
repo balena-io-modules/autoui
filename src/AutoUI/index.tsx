@@ -46,7 +46,7 @@ import { FocusSearch } from '../components/Filters/FocusSearch';
 import { Widget } from '../components/Widget';
 import { Link } from 'rendition';
 import type { LensTemplate } from './Lenses';
-import { getLenses } from './Lenses';
+import { getLenses, lensWithMoreProperties } from './Lenses';
 import type { TFunction } from '../hooks/useTranslation';
 import { useTranslation } from '../hooks/useTranslation';
 import { useHistory } from '../hooks/useHistory';
@@ -342,7 +342,9 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 
 	React.useEffect(() => {
 		const foundLens =
-			lenses?.find((l) => l?.slug === defaultLensSlug) ?? lenses?.[0];
+			lenses?.find((l) => l?.slug === defaultLensSlug) ??
+			lensWithMoreProperties(lenses) ??
+			lenses?.[0];
 		if (lens?.slug === foundLens?.slug) {
 			return;
 		}
