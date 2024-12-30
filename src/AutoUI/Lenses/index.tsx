@@ -1,10 +1,8 @@
-import find from 'lodash/find';
-import flatten from 'lodash/flatten';
-import values from 'lodash/values';
 import * as types from './types';
 import type { JSONSchema7 } from 'json-schema';
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 import uniq from 'lodash/uniq';
+import { findInObject } from '../utils';
 
 export interface LensTemplate<T = any> {
 	slug: string;
@@ -55,19 +53,24 @@ export const getLens = <T extends object>(data: T[]) => {
 	return getLenses(data)?.[0];
 };
 
-export const getLensBySlug = (slug: string) => {
-	const fullList = flatten(values(lenses));
-	return (
-		find(fullList, {
-			slug,
-		}) ?? null
-	);
-};
+export const lensWithMoreProperties = <T extends object>(
+	lenses?: LensTemplate[],
+) => {
+	if (!lenses) {
+		return;
+	}
+	let filteredLens: LensTemplate<T> | null = null;
+	let maxKeys = 0;
 
-export const getLensForTarget = (target: string) => {
-	return find(lenses, (lens) => {
-		return (
-			lens.data.pathRegExp && new RegExp(lens.data.pathRegExp).test(target)
-		);
-	});
+	for (const lens of lenses) {
+		const properties = findInObject(lens.data.filter, 'properties') || {};
+		const keyCount = Object.keys(properties).length;
+
+		if (keyCount > maxKeys) {
+			filteredLens = lens;
+			maxKeys = keyCount;
+		}
+	}
+
+	return filteredLens;
 };
