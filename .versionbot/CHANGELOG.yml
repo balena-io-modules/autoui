@@ -1,4 +1,15 @@
 - commits:
+    - subject: Restore minimal logic to retrieve the default lens
+      hash: d08939f1fdfef0fbe8a9131e970b6159e00dc06d
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+  version: 7.2.2
+  title: ""
+  date: 2024-12-30T14:22:35.233Z
+- commits:
     - subject: Fix broken lens getter
       hash: cd49a6ef8a00c5584bad53e48345794134e811aa
       body: ""
