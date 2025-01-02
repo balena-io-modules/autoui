@@ -178,7 +178,18 @@ export const Content = ({ openApiJson, openActionSidebar }: ContentProps) => {
 			data={memoizedData}
 			{...(!endsWithValidId && {
 				onEntityClick: (entity) => {
-					history.push(`${pathname}/${entity.id}`);
+					if (
+						history != null &&
+						typeof history === 'object' &&
+						'push' in history &&
+						typeof history.push === 'function'
+					) {
+						// react-router-dom v5 history object
+						history.push(`${pathname}/${entity.id}`);
+					} else if (typeof history === 'function') {
+						// react-router-dom v6 navigate function
+						history(`${pathname}/${entity.id}`);
+					}
 				},
 			})}
 		/>

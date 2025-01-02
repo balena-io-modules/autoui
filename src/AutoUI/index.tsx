@@ -240,7 +240,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							$skip: page * itemsPerPage,
 						},
 						(v) => v != null,
-					)
+				  )
 				: null;
 			setInternalPineFilter(pineFilter);
 			onChange?.({
@@ -284,7 +284,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							...oldState,
 							affectedEntries: items,
 							checkedState: newCheckedState,
-						}
+					  }
 					: undefined,
 			);
 		},
@@ -295,8 +295,8 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 	const totalItems = serverSide
 		? pagination.totalItems
 		: Array.isArray(data)
-			? data.length
-			: undefined;
+		? data.length
+		: undefined;
 
 	const hideUtils = React.useMemo(
 		() =>
@@ -367,7 +367,17 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 					const url = new URL(getBaseUrl(row));
 					window.open(url.toString(), '_blank');
 				} catch {
-					history.push?.(getBaseUrl(row));
+					if (
+						typeof history === 'object' &&
+						'push' in history &&
+						typeof history.push === 'function'
+					) {
+						// react-router-dom v5 history object
+						history.push(getBaseUrl(row));
+					} else if (typeof history === 'function') {
+						// react-router-dom v6 navigate function
+						history(getBaseUrl(row));
+					}
 				}
 			}
 		},
@@ -407,7 +417,7 @@ export const AutoUI = <T extends AutoUIBaseResource<T>>({
 							sdkTags,
 							t,
 						),
-				}
+			  }
 			: null;
 
 		return {
@@ -754,8 +764,8 @@ const hasPropertyEnabled = (
 	return Array.isArray(value) && value.some((v) => v === propertyKey)
 		? true
 		: typeof value === 'boolean'
-			? true
-			: false;
+		? true
+		: false;
 };
 
 const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
@@ -827,10 +837,10 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 			)
 				? 'primary'
 				: definedPriorities.secondary.find(
-							(prioritizedKey) => prioritizedKey === key,
-					  )
-					? 'secondary'
-					: 'tertiary';
+						(prioritizedKey) => prioritizedKey === key,
+				  )
+				? 'secondary'
+				: 'tertiary';
 
 			const widgetSchema = { ...val, title: undefined };
 			// TODO: Refactor this logic to create an object structure and retrieve the correct property using the refScheme.
@@ -869,8 +879,8 @@ const getColumnsFromSchema = <T extends AutoUIBaseResource<T>>({
 					xNoSort || val.format === 'tag'
 						? false
 						: typeof fieldCustomSort === 'function'
-							? fieldCustomSort
-							: getSortingFunction<T>(key, val),
+						? fieldCustomSort
+						: getSortingFunction<T>(key, val),
 				render: (fieldVal: string, entry: T) => {
 					const calculatedField = autoUIAdaptRefScheme(fieldVal, val);
 					return (

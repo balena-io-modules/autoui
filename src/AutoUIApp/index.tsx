@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
-import { Router, Switch, Route } from 'react-router-dom';
+import { Router, Switch, Route, BrowserRouter } from 'react-router-dom';
 import { Content } from './Content';
 import { createGlobalStyle } from 'styled-components';
 import type { OpenApiJson } from './openApiJson';
@@ -11,6 +11,7 @@ import { Provider } from 'rendition';
 import { useHistory } from '../hooks/useHistory';
 import { Material } from '@balena/ui-shared-components';
 import { useClickOutsideOrEsc } from '../hooks/useClickOutsideOrEsc';
+import { History } from 'history';
 const { Box } = Material;
 
 const SIDEBAR_WIDTH = 166;
@@ -56,9 +57,19 @@ export const AutoUIApp = ({ openApiJson, title, logo }: AutoUIAppProps) => {
 		'openApiJson'
 	> | null>();
 
+	const RouterComponent = React.useCallback(
+		({ children }: { children: Array<JSX.Element> }) =>
+			typeof history === 'object' ? (
+				<Router history={history as History}>{children}</Router>
+			) : (
+				<BrowserRouter>{children}</BrowserRouter>
+			),
+		[history],
+	);
+
 	return (
 		<Provider>
-			<Router history={history}>
+			<RouterComponent>
 				<GlobalStyle />
 				<Navbar height={NAVBAR_HEIGHT} title={title} logo={logo} />
 				<Box sx={{ display: 'flex', position: 'relative' }}>
@@ -106,7 +117,7 @@ export const AutoUIApp = ({ openApiJson, title, logo }: AutoUIAppProps) => {
 						</Box>
 					)}
 				</Box>
-			</Router>
+			</RouterComponent>
 		</Provider>
 	);
 };
