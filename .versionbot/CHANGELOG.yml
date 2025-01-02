@@ -1,4 +1,22 @@
 - commits:
+    - subject: Support both `react-router-dom` v5 `history` and v6 `navigate`
+      hash: 3ce7f124506ba89efe3b660e17c1964256c4d361
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: myarmolinsky
+    - subject: Update @balena/ui-shared-components
+      hash: 000fef0fabf13389f81ab7c55f25474535d9e7d6
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 7.3.0
+  title: ""
+  date: 2025-01-02T14:35:58.317Z
+- commits:
     - subject: Restore minimal logic to retrieve the default lens
       hash: d08939f1fdfef0fbe8a9131e970b6159e00dc06d
       body: ""
