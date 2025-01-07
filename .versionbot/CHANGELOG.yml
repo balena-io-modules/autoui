@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update `@balena/ui-shared-components`
+      hash: 970c5ad3b880be484c644ea7b9ed431176171f2e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 7.3.1
+  title: ""
+  date: 2025-01-07T14:42:59.448Z
+- commits:
     - subject: Support both `react-router-dom` v5 `history` and v6 `navigate`
       hash: 3ce7f124506ba89efe3b660e17c1964256c4d361
       body: ""
