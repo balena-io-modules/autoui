@@ -84,11 +84,12 @@ export const Sidebar = ({
 								<Typography
 									fontWeight="bold"
 									lineHeight={1.33}
-									color={(theme) =>
-										isCurrent
-											? theme.palette.text.primary
-											: theme.palette.text.secondary
-									}
+									sx={{
+										color: (theme) =>
+											isCurrent
+												? theme.palette.text.primary
+												: theme.palette.text.secondary,
+									}}
 									display={isCollapsed ? 'none' : undefined}
 									noWrap
 								>
