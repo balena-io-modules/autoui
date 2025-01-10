@@ -1,5 +1,16 @@
 - commits:
     - subject: Update `@balena/ui-shared-components`
+      hash: da23f82139e1f86b1b4bb095cba6302813083d51
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+  version: 7.3.2
+  title: ""
+  date: 2025-01-10T15:09:57.251Z
+- commits:
+    - subject: Update `@balena/ui-shared-components`
       hash: 970c5ad3b880be484c644ea7b9ed431176171f2e
       body: ""
       footer:
