@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update MUI to v6
+      hash: e99cb02e3fa037e726c1e6e1d003f28605441f5b
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Jonathan Berger
+  version: 7.3.3
+  title: ""
+  date: 2025-01-14T13:14:37.504Z
+- commits:
     - subject: Update `@balena/ui-shared-components`
       hash: da23f82139e1f86b1b4bb095cba6302813083d51
       body: ""
